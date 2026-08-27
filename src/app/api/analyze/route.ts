@@ -1,6 +1,5 @@
 import {NextRequest,NextResponse} from "next/server";
-// @ts-expect-error - pdf-parse/lib/pdf-parse.js bypasses index.parent debug bug
-import pdf from "pdf-parse/lib/pdf-parse.js";
+import { parsePDF } from "@/lib/parser/pdf-parser";
 
 
 export async function POST(req:NextRequest,res:NextResponse){
@@ -40,15 +39,10 @@ export async function POST(req:NextRequest,res:NextResponse){
             )
         }
 
-        // 5 Read file and convert to Buffer
-        const bytes = await resume.arrayBuffer();
-        const buffer = Buffer.from(bytes);
+        // 5 Extract text from PDF using helper
+        const pdfData = await parsePDF(resume);
 
-        // 6 Extract text from PDF
-        const pdfData = await pdf(buffer);
-        const extractedText = pdfData.text;
-
-        // 7 Return success with extracted text
+        // 6 Return success with extracted text
         return NextResponse.json({
             success:true,
             message:"pdf proccessed successfully",
@@ -57,9 +51,9 @@ export async function POST(req:NextRequest,res:NextResponse){
                 size: resume.size,
                 type: resume.type,
             },
-            extractedText: extractedText,
-            textLength: extractedText.length,
-            pageCount: pdfData.numpages,
+            extractedText: pdfData.text,
+            textLength: pdfData.textLength,
+            pageCount: pdfData.pageCount,
         },{status:200});
     } catch (error){
         console.error("error processing pdf", error);
