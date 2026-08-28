@@ -1,6 +1,6 @@
 import {NextRequest,NextResponse} from "next/server";
 import { parsePDF } from "@/lib/parser/pdf-parser";
-
+import { structureResume } from "@/lib/parser/resume-structurer";
 
 export async function POST(req:NextRequest,res:NextResponse){
     
@@ -42,7 +42,10 @@ export async function POST(req:NextRequest,res:NextResponse){
         // 5 Extract text from PDF using helper
         const pdfData = await parsePDF(resume);
 
-        // 6 Return success with extracted text
+        // 6 Structure the extracted resume text (skills, etc.)
+        const structuredData = structureResume(pdfData.text);
+
+        // 7 Return success with extracted text and structured data
         return NextResponse.json({
             success:true,
             message:"pdf proccessed successfully",
@@ -54,6 +57,7 @@ export async function POST(req:NextRequest,res:NextResponse){
             extractedText: pdfData.text,
             textLength: pdfData.textLength,
             pageCount: pdfData.pageCount,
+            structuredData: structuredData,
         },{status:200});
     } catch (error){
         console.error("error processing pdf", error);
