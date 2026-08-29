@@ -85,7 +85,7 @@ function extractEmail(text: string): string | undefined {
 } 
 
 /**
- * Extract phone number from text
+ * Extract phone number from text using regex 
  */
 function extractPhone(text: string): string | undefined {
     const match = text.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
