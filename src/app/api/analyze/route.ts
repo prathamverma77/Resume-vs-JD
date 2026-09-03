@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { parsePDF } from "@/lib/parser/pdf-parser";
 import { structureResume } from "@/lib/parser/resume-structurer";
 import { parseJD } from "@/lib/parser/jd-parser";
+import { calculateScore } from "@/lib/scoring/score-engine";
 
 export async function POST(req: NextRequest) {
     try {
@@ -57,10 +58,16 @@ export async function POST(req: NextRequest) {
         // 7. Parse Job Description using parseJD (if JD text provided)
         const parsedJD = jdText ? parseJD(jdText) : null;
 
-        // 8. Return unified response with both Resume and JD parsed data
+        // 8. Calculate Match Score (if parsed JD exists)
+        const matchAnalysis = parsedJD
+            ? calculateScore(structuredResume, parsedJD)
+            : null;
+
+        // 9. Return unified response with Resume, JD, and Match Score Analysis
         return NextResponse.json({
             success: true,
             message: "Resume and Job Description processed successfully",
+            matchAnalysis: matchAnalysis,
             resume: {
                 fileInfo: {
                     name: resume.name,
