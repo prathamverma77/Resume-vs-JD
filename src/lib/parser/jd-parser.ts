@@ -394,3 +394,5 @@ function cleanEducation(line: string): string {
         .trim()
         .slice(0, 100);
 }
+
+//parsed and structured the whole jd
