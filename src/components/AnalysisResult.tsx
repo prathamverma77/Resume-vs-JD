@@ -144,9 +144,12 @@ export default function AnalysisResult({ data, onCompareAgain }: AnalysisResultP
               {match.matchingSkills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-medium"
+                  className="px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-medium inline-flex items-center gap-1.5"
                 >
-                  ✓ {skill}
+                  <svg className="w-3 h-3 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                  {skill}
                 </span>
               ))}
             </div>
@@ -166,15 +169,19 @@ export default function AnalysisResult({ data, onCompareAgain }: AnalysisResultP
               {match.missingRequiredSkills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="px-2.5 py-1 rounded-md bg-amber-50 border border-amber-200/80 text-amber-800 text-xs font-medium"
+                  className="px-2.5 py-1 rounded-md bg-amber-50 border border-amber-200/80 text-amber-800 text-xs font-medium inline-flex items-center gap-1.5"
                 >
-                  ! {skill}
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                  {skill}
                 </span>
               ))}
             </div>
           ) : (
-            <p className="text-xs text-emerald-600 font-medium text-[11px]">
-              ✓ All required skills present in candidate resume!
+            <p className="text-xs text-emerald-600 font-medium text-[11px] inline-flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+              All required skills present in candidate resume.
             </p>
           )}
         </div>
