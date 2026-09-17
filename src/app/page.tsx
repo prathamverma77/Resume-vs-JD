@@ -110,46 +110,56 @@ export default function Home() {
     setErrorMsg(null);
   };
 
+  const charCount = jobDescription.length;
+  const wordCount = jobDescription.trim() ? jobDescription.trim().split(/\s+/).length : 0;
+
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[var(--bg-primary)] text-[var(--text-main)] font-sans antialiased selection:bg-sky-100">
+    <div className="min-h-screen flex flex-col justify-between text-[var(--text-main)] font-sans antialiased selection:bg-blue-100">
       {/* Top Navbar */}
-      <header className="w-full border-b border-[var(--border-color)] bg-[var(--bg-surface)] px-6 py-4">
+      <header className="w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-30 px-6 py-3.5 transition-all">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[var(--secondary)] flex items-center justify-center text-white font-bold text-sm tracking-tight shadow-xs">
-              M
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-500 flex items-center justify-center text-white font-black text-base shadow-sm shadow-blue-500/20 tracking-tight">
+              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
-            <span className="font-bold text-lg tracking-tight text-[var(--text-main)]">
-              MatchEngine
-            </span>
+            <div>
+              <span className="font-bold text-lg tracking-tight text-slate-900 block leading-tight">
+                MatchEngine
+              </span>
+              <span className="text-[10px] font-medium text-slate-400 tracking-wide uppercase">
+                Resume vs. JD AI
+              </span>
+            </div>
           </div>
 
           {analysisResult && (
             <button
               type="button"
               onClick={handleCompareAgain}
-              className="text-xs font-medium text-[var(--primary)] hover:underline flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100/80 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              &larr; Back to Input
+              &larr; Back to Editor
             </button>
           )}
         </div>
       </header>
 
       {/* Main Content Container */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6 md:py-8 flex flex-col justify-between">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8 md:py-10 flex flex-col justify-between">
         <div>
           {/* Hero Header */}
-          <div className="text-center mb-6 md:mb-8 max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 border border-sky-200/70 text-[var(--primary)] text-xs font-medium mb-3 shadow-2xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] animate-pulse" />
-              Resume vs. JD Matcher
+          <div className="text-center mb-8 max-w-2xl mx-auto animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 text-blue-700 text-xs font-semibold mb-3.5 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+              <span>Smart Resume Matcher</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[var(--text-main)] mb-2">
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 mb-3 leading-snug">
               Compare Resume Against Job Requirements
             </h1>
-            <p className="text-sm md:text-base text-[var(--text-muted)]">
-              Upload candidate resume PDF and paste target job description to analyze compatibility.
+            <p className="text-sm md:text-base text-slate-600 max-w-lg mx-auto leading-relaxed">
+              Upload candidate resume PDF/DOCX and paste target job requirements to generate a detailed compatibility report.
             </p>
           </div>
 
@@ -158,15 +168,18 @@ export default function Home() {
             <AnalysisResult data={analysisResult} onCompareAgain={handleCompareAgain} />
           ) : (
             <>
-              {/* Two Column Input Grid (Symmetrically Aligned) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 items-stretch mb-6">
+              {/* Two Column Input Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch mb-8">
                 {/* Left Column: Resume Upload */}
-                <div className="flex flex-col h-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl p-5 shadow-xs">
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="text-sm font-semibold text-[var(--text-main)]">
-                      Resume
-                    </label>
-                    <span className="text-xs text-[var(--text-muted)]">.pdf, .docx</span>
+                <div className="flex flex-col h-full bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center justify-between mb-3.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-blue-600" />
+                      <label className="text-sm font-bold text-slate-900 tracking-tight">
+                        Candidate Resume
+                      </label>
+                    </div>
+                    <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">.PDF / .DOCX</span>
                   </div>
 
                   <input
@@ -183,15 +196,15 @@ export default function Home() {
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
-                      className={`flex-1 min-h-[240px] md:min-h-[280px] border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
+                      className={`group flex-1 min-h-[250px] md:min-h-[290px] border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 ${
                         isDragging
-                          ? "border-[var(--primary)] bg-sky-50/60 scale-[1.005]"
-                          : "border-slate-300 hover:border-[var(--primary)] hover:bg-slate-50/60"
+                          ? "border-blue-600 bg-blue-50/70 scale-[1.01] shadow-inner"
+                          : "border-slate-300/90 hover:border-blue-500 hover:bg-slate-50/70"
                       }`}
                     >
-                      <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-[var(--text-muted)] mb-3 transition-transform group-hover:scale-105">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-3.5 group-hover:scale-110 transition-transform duration-200 shadow-2xs">
                         <svg
-                          className="w-6 h-6 stroke-slate-500"
+                          className="w-7 h-7 stroke-blue-600"
                           fill="none"
                           viewBox="0 0 24 24"
                           strokeWidth="1.75"
@@ -203,29 +216,31 @@ export default function Home() {
                           />
                         </svg>
                       </div>
-                      <p className="text-sm font-medium text-[var(--text-main)] mb-1">
-                        Drag and drop your resume here
+                      <p className="text-sm font-semibold text-slate-800 mb-1 group-hover:text-blue-600 transition-colors">
+                        Drag and drop your resume file
                       </p>
-                      <p className="text-xs text-[var(--text-muted)] mb-3">
-                        or <span className="text-[var(--primary)] font-medium underline underline-offset-2">browse files</span> from your computer
+                      <p className="text-xs text-slate-500 mb-3">
+                        or <span className="text-blue-600 font-semibold underline underline-offset-2">browse computer</span>
                       </p>
-                      <span className="text-[11px] text-slate-400">PDF or DOCX up to 5MB</span>
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-400 bg-slate-100/80 px-2.5 py-1 rounded-full font-medium">
+                        <span>Max file size: 5MB</span>
+                      </div>
                     </div>
                   ) : (
                     /* Selected File Preview Card */
-                    <div className="flex-1 min-h-[240px] md:min-h-[280px] bg-slate-50/70 border border-slate-200 rounded-lg p-4 flex flex-col justify-between">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-sky-100 text-[var(--primary)] flex items-center justify-center shrink-0">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    <div className="flex-1 min-h-[250px] md:min-h-[290px] bg-slate-50/80 border border-slate-200/90 rounded-xl p-5 flex flex-col justify-between">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3.5 overflow-hidden">
+                          <div className="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/20">
+                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                             </svg>
                           </div>
                           <div className="overflow-hidden">
-                            <p className="text-sm font-medium text-[var(--text-main)] truncate max-w-[200px] md:max-w-[220px]" title={file.name}>
+                            <p className="text-sm font-bold text-slate-900 truncate max-w-[190px] md:max-w-[210px]" title={file.name}>
                               {file.name}
                             </p>
-                            <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                            <p className="text-xs text-slate-500 font-medium mt-0.5">
                               {formatFileSize(file.size)}
                             </p>
                           </div>
@@ -233,7 +248,7 @@ export default function Home() {
                         <button
                           type="button"
                           onClick={handleRemoveFile}
-                          className="text-slate-400 hover:text-red-500 hover:bg-slate-200/60 p-1.5 rounded-md transition-colors cursor-pointer"
+                          className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-colors cursor-pointer"
                           title="Remove file"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -242,19 +257,19 @@ export default function Home() {
                         </button>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs text-[var(--text-muted)]">
-                        <span className="flex items-center gap-1.5 text-emerald-600 font-medium">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      <div className="mt-4 pt-3.5 border-t border-slate-200 flex items-center justify-between text-xs">
+                        <span className="flex items-center gap-1.5 text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200/60">
+                          <svg className="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                           </svg>
                           Ready for analysis
                         </span>
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
-                          className="text-[var(--primary)] hover:underline font-medium cursor-pointer"
+                          className="text-blue-600 hover:text-blue-800 font-semibold hover:underline cursor-pointer"
                         >
-                          Change file
+                          Replace file
                         </button>
                       </div>
                     </div>
@@ -262,39 +277,48 @@ export default function Home() {
                 </div>
 
                 {/* Right Column: Job Description Textarea */}
-                <div className="flex flex-col h-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl p-5 shadow-xs">
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="text-sm font-semibold text-[var(--text-main)]">
-                      Job Description
-                    </label>
-                    {jobDescription && (
-                      <button
-                        type="button"
-                        onClick={() => setJobDescription("")}
-                        className="text-xs text-[var(--text-muted)] hover:text-slate-900 cursor-pointer"
-                      >
-                        Clear text
-                      </button>
+                <div className="flex flex-col h-full bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center justify-between mb-3.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-indigo-600" />
+                      <label className="text-sm font-bold text-slate-900 tracking-tight">
+                        Job Description
+                      </label>
+                    </div>
+                    {jobDescription ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-medium text-slate-400">
+                          {wordCount} words &bull; {charCount} chars
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setJobDescription("")}
+                          className="text-xs text-slate-400 hover:text-rose-600 font-medium cursor-pointer"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-[11px] text-slate-400 font-medium">Text or Requirements</span>
                     )}
                   </div>
 
                   <textarea
                     value={jobDescription}
                     onChange={(e) => setJobDescription(e.target.value)}
-                    placeholder="Paste the job description or requirements here..."
-                    className="flex-1 w-full min-h-[240px] md:min-h-[280px] p-3.5 text-sm text-[var(--text-main)] bg-slate-50/50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent resize-none leading-relaxed transition-all"
+                    placeholder="Paste the job description, required skills, and key responsibilities here..."
+                    className="flex-1 w-full min-h-[250px] md:min-h-[290px] p-4 text-sm text-slate-800 bg-slate-50/60 border border-slate-200/90 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white resize-none leading-relaxed transition-all placeholder:text-slate-400 font-sans"
                   />
                 </div>
               </div>
 
-              {/* Action Area (Centered Below Grid) */}
+              {/* Action Area */}
               <div className="w-full flex flex-col items-center justify-center mt-2 mb-4">
                 <button
                   type="button"
                   onClick={handleCompareClick}
                   disabled={isAnalyzing}
-                  style={{ backgroundColor: "var(--primary)" }}
-                  className="w-full md:w-80 h-12 rounded-lg text-white font-medium text-sm tracking-wide shadow-sm hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full md:w-80 h-12 rounded-xl text-white font-semibold text-sm tracking-wide bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2.5 cursor-pointer"
                 >
                   {isAnalyzing ? (
                     <>
@@ -302,12 +326,12 @@ export default function Home() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
-                      Comparing...
+                      <span>Analyzing Compatibility...</span>
                     </>
                   ) : (
                     <>
-                      Compare Match
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <span>Compare & Match</span>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                       </svg>
                     </>
@@ -315,7 +339,10 @@ export default function Home() {
                 </button>
 
                 {errorMsg && (
-                  <div className="mt-3 px-4 py-2 bg-rose-50 border border-rose-200 rounded-md text-xs font-medium text-rose-700">
+                  <div className="mt-3 px-4 py-2.5 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-700 flex items-center gap-2 animate-fade-in">
+                    <svg className="w-4 h-4 text-rose-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                    </svg>
                     {errorMsg}
                   </div>
                 )}
@@ -325,17 +352,21 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Small Clean Footer with Portfolio Link */}
-      <footer className="w-full border-t border-[var(--border-color)] bg-[var(--bg-surface)] py-3.5 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[var(--text-muted)]">
-          <span>MatchEngine &copy; {new Date().getFullYear()} &bull; Resume vs. JD Analyzer</span>
-          <div>
-            Made by{" "}
+      {/* Footer */}
+      <footer className="w-full border-t border-slate-200/80 bg-white/60 backdrop-blur-xs py-4 px-6">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 font-medium">
+          <span className="flex items-center gap-1.5">
+            <span>MatchEngine &copy; {new Date().getFullYear()}</span>
+            <span className="text-slate-300">&bull;</span>
+            <span>Resume vs. JD Matcher</span>
+          </span>
+          <div className="flex items-center gap-1">
+            <span>Crafted by</span>
             <a
               href="https://pratham-portfolio-sooty.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-[var(--primary)] hover:underline"
+              className="font-semibold text-blue-600 hover:text-blue-800 hover:underline transition-colors"
             >
               Pratham Verma
             </a>
@@ -345,3 +376,4 @@ export default function Home() {
     </div>
   );
 }
+
