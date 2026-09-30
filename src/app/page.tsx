@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, ChangeEvent, DragEvent } from "react";
 import AnalysisResult from "@/components/AnalysisResult";
+import ProjectUses from "@/components/ProjectUses";
 import { AnalyzeApiResponse } from "@/types/analysis";
 
 export default function Home() {
@@ -349,6 +350,9 @@ export default function Home() {
               </div>
             </>
           )}
+
+          {/* Project Uses & Purpose Section */}
+          <ProjectUses />
         </div>
       </main>
 
