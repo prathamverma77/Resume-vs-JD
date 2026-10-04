@@ -117,7 +117,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col justify-between text-[var(--text-main)] font-sans antialiased selection:bg-blue-100">
       {/* Top Navbar */}
-      <header className="w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-30 px-6 py-3.5 transition-all">
+      <header className="w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-30 px-4 md:px-6 py-3.5 transition-all">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-500 flex items-center justify-center text-white font-black text-base shadow-sm shadow-blue-500/20 tracking-tight">
@@ -148,10 +148,10 @@ export default function Home() {
       </header>
 
       {/* Main Content Container */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8 md:py-10 flex flex-col justify-between">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 md:px-6 py-8 md:py-10 flex flex-col justify-between">
         <div>
           {/* Hero Header */}
-          <div className="text-center mb-8 max-w-2xl mx-auto animate-fade-in">
+          <div className="text-center mb-8 max-w-4xl mx-auto animate-fade-in">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 text-blue-700 text-xs font-semibold mb-3.5 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
               <span>Smart Resume Matcher</span>
@@ -159,7 +159,7 @@ export default function Home() {
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 mb-3 leading-snug">
               Compare Resume Against Job Requirements
             </h1>
-            <p className="text-sm md:text-base text-slate-600 max-w-lg mx-auto leading-relaxed">
+            <p className="text-sm md:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
               Upload candidate resume PDF/DOCX and paste target job requirements to generate a detailed compatibility report.
             </p>
           </div>
@@ -357,20 +357,20 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t border-slate-200/80 bg-white/60 backdrop-blur-xs py-4 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 font-medium">
+      <footer className="w-full border-t border-slate-800 bg-slate-900 text-slate-400 py-5 px-4 md:px-6">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-medium">
           <span className="flex items-center gap-1.5">
-            <span>MatchEngine &copy; {new Date().getFullYear()}</span>
-            <span className="text-slate-300">&bull;</span>
-            <span>Resume vs. JD Matcher</span>
+            <span className="text-slate-300">MatchEngine &copy; {new Date().getFullYear()}</span>
+            <span className="text-slate-700">&bull;</span>
+            <span className="text-slate-400">Resume vs. JD Matcher</span>
           </span>
-          <div className="flex items-center gap-1">
-            <span>Crafted by</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-slate-400">Crafted by</span>
             <a
               href="https://pratham-portfolio-sooty.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+              className="font-semibold text-blue-400 hover:text-blue-300 hover:underline transition-colors"
             >
               Pratham Verma
             </a>
