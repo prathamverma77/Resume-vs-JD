@@ -42,27 +42,42 @@ export default function Home() {
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const droppedFile = e.dataTransfer.files[0];
-      if (
+      const isPdf =
         droppedFile.type === "application/pdf" ||
-        droppedFile.name.endsWith(".pdf") ||
-        droppedFile.name.endsWith(".docx")
-      ) {
+        droppedFile.name.toLowerCase().endsWith(".pdf");
+
+      if (isPdf) {
         setFile(droppedFile);
+        setErrorMsg(null);
       } else {
-        alert("Please upload a valid .pdf or .docx file.");
+        setErrorMsg("Only PDF files are supported. Please upload a valid .pdf file.");
       }
     }
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      const isPdf =
+        selectedFile.type === "application/pdf" ||
+        selectedFile.name.toLowerCase().endsWith(".pdf");
+
+      if (isPdf) {
+        setFile(selectedFile);
+        setErrorMsg(null);
+      } else {
+        setErrorMsg("Only PDF files are supported. Please upload a valid .pdf file.");
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      }
     }
   };
 
   const handleRemoveFile = (e: React.MouseEvent) => {
     e.stopPropagation();
     setFile(null);
+    setErrorMsg(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -70,20 +85,49 @@ export default function Home() {
 
   // Connect to POST /api/analyze
   const handleCompareClick = async () => {
+    setErrorMsg(null);
+
+    // 1. Client-side file validation
     if (!file) {
-      alert("Please upload a resume PDF file to compare.");
+      setErrorMsg("Please upload a candidate resume PDF file to compare.");
+      return;
+    }
+
+    if (file.size === 0) {
+      setErrorMsg("The selected resume file is empty (0 bytes). Please upload a valid PDF.");
+      return;
+    }
+
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+      setErrorMsg("The uploaded resume file exceeds the 5MB size limit. Please choose a smaller file.");
+      return;
+    }
+
+    // 2. Client-side JD validation
+    const trimmedJD = jobDescription.trim();
+    if (!trimmedJD) {
+      setErrorMsg("Please paste the job description to compare against the resume.");
+      return;
+    }
+
+    if (trimmedJD.length < 30) {
+      setErrorMsg("The job description is too short (minimum 30 characters required for an accurate match).");
+      return;
+    }
+
+    const MAX_JD_LENGTH = 30000;
+    if (trimmedJD.length > MAX_JD_LENGTH) {
+      setErrorMsg(`The job description is unusually long (maximum ${MAX_JD_LENGTH.toLocaleString()} characters). Please trim unnecessary text.`);
       return;
     }
 
     setIsAnalyzing(true);
-    setErrorMsg(null);
 
     try {
       const formData = new FormData();
       formData.append("resume", file);
-      if (jobDescription.trim()) {
-        formData.append("jobDescription", jobDescription.trim());
-      }
+      formData.append("jobDescription", trimmedJD);
 
       const response = await fetch("/api/analyze", {
         method: "POST",
@@ -99,7 +143,7 @@ export default function Home() {
       }
     } catch (err) {
       console.error("Comparison API error:", err);
-      setErrorMsg("An unexpected error occurred while processing the request.");
+      setErrorMsg("An unexpected network or server error occurred while processing the request.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -160,7 +204,7 @@ export default function Home() {
               Compare Resume Against Job Requirements
             </h1>
             <p className="text-sm md:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              Upload candidate resume PDF/DOCX and paste target job requirements to generate a detailed compatibility report.
+              Upload candidate resume PDF and paste target job requirements to generate a detailed compatibility report.
             </p>
           </div>
 
@@ -180,13 +224,13 @@ export default function Home() {
                         Candidate Resume
                       </label>
                     </div>
-                    <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">.PDF / .DOCX</span>
+                    <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">.PDF Only</span>
                   </div>
 
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    accept=".pdf,application/pdf"
                     onChange={handleFileChange}
                     className="hidden"
                   />
@@ -288,8 +332,8 @@ export default function Home() {
                     </div>
                     {jobDescription ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-medium text-slate-400">
-                          {wordCount} words &bull; {charCount} chars
+                        <span className={`text-[11px] font-medium ${charCount > 30000 ? "text-rose-600 font-bold" : "text-slate-400"}`}>
+                          {wordCount} words &bull; {charCount.toLocaleString()} chars{charCount > 30000 ? " (exceeds 30k limit)" : ""}
                         </span>
                         <button
                           type="button"
@@ -300,7 +344,7 @@ export default function Home() {
                         </button>
                       </div>
                     ) : (
-                      <span className="text-[11px] text-slate-400 font-medium">Text or Requirements</span>
+                      <span className="text-[11px] text-slate-400 font-medium">Min 30 characters</span>
                     )}
                   </div>
 

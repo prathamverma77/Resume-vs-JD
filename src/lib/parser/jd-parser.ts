@@ -225,8 +225,7 @@ function findSection(text: string, keywords: string[]): string | null {
     if (foundIndex === -1) return null;
     
     // Get everything after the header until the next section
-    let sectionLines: string[] = [];
-    let nextSectionFound = false;
+    const sectionLines: string[] = [];
     
     // Common section headers to stop at
     const stopHeaders = [
@@ -244,7 +243,6 @@ function findSection(text: string, keywords: string[]): string | null {
         if (stopHeaders.some(header => lowerLine.includes(header) && line.length < 50)) {
             // Check if it looks like a header (short, uppercase, or ends with colon)
             if (line.length < 40 || line === line.toUpperCase() || line.endsWith(':')) {
-                nextSectionFound = true;
                 break;
             }
         }
@@ -254,7 +252,7 @@ function findSection(text: string, keywords: string[]): string | null {
         
         sectionLines.push(line);
     }
-    
+
     return sectionLines.join('\n') || null;
 }
 
@@ -313,7 +311,6 @@ function extractSkillsFromText(text: string): string[] {
     ];
     
     const foundSkills: string[] = [];
-    const lowerText = text.toLowerCase();
     
     for (const skill of techKeywords) {
         // Create regex to match whole word
