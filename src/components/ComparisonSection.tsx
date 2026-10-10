@@ -27,7 +27,7 @@ export default function ComparisonSection({
   onError,
 }: ComparisonSectionProps) {
   return (
-    <>
+    <section id="analyzer" className="w-full scroll-mt-20">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch mb-8">
         <ResumeUpload
           file={file}
@@ -45,6 +45,6 @@ export default function ComparisonSection({
         onCompare={onCompare}
         errorMsg={errorMsg}
       />
-    </>
+    </section>
   );
 }

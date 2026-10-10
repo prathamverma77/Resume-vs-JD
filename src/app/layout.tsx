@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AnalysisProvider } from "@/context/AnalysisContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,18 +15,35 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "MatchEngine — Resume vs. Job Description Compatibility Analyzer",
-  description: "Evaluate candidate resume compatibility against target job descriptions, extract technical skills, identify requirement gaps, and receive tailored recommendations.",
-  keywords: ["resume matcher", "job description analyzer", "ATS match score", "resume keyword checker"],
-  authors: [{ name: "Pratham Verma", url: "https://pratham-portfolio-sooty.vercel.app/" }],
+  description:
+    "Evaluate candidate resume compatibility against target job descriptions, extract technical skills, identify requirement gaps, and receive tailored recommendations.",
+  keywords: [
+    "resume matcher",
+    "job description analyzer",
+    "ATS match score",
+    "resume keyword checker",
+  ],
+  authors: [
+    {
+      name: "Pratham Verma",
+      url: "https://pratham-portfolio-sooty.vercel.app/",
+    },
+  ],
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <AnalysisProvider>{children}</AnalysisProvider>
+      </body>
     </html>
   );
 }

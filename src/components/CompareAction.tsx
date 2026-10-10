@@ -15,6 +15,12 @@ export default function CompareAction({
 }: CompareActionProps) {
   return (
     <div className="w-full flex flex-col items-center justify-center mt-2 mb-4">
+      <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 mb-2.5">
+        <span className="w-5 h-5 rounded-md bg-blue-100 text-blue-700 font-bold text-[11px] flex items-center justify-center">
+          3
+        </span>
+        <span>Step 3: Analyze Compatibility</span>
+      </div>
       <button
         type="button"
         onClick={onCompare}

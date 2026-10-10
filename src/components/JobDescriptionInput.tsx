@@ -18,9 +18,11 @@ export default function JobDescriptionInput({
     <div className="flex flex-col h-full bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
       <div className="flex items-center justify-between mb-3.5">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-indigo-600" />
+          <span className="w-5 h-5 rounded-md bg-indigo-100 text-indigo-700 font-bold text-[11px] flex items-center justify-center">
+            2
+          </span>
           <label className="text-sm font-bold text-slate-900 tracking-tight">
-            Job Description
+            Step 2: Add Job Description
           </label>
         </div>
         {value ? (

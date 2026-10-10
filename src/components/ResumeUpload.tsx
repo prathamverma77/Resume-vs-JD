@@ -86,9 +86,11 @@ export default function ResumeUpload({
     <div className="flex flex-col h-full bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
       <div className="flex items-center justify-between mb-3.5">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-blue-600" />
+          <span className="w-5 h-5 rounded-md bg-blue-100 text-blue-700 font-bold text-[11px] flex items-center justify-center">
+            1
+          </span>
           <label className="text-sm font-bold text-slate-900 tracking-tight">
-            Candidate Resume
+            Step 1: Upload Resume
           </label>
         </div>
         <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">

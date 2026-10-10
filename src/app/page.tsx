@@ -1,21 +1,26 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Navbar,
   HeroSection,
   ComparisonSection,
-  AnalysisResult,
-  ProjectUses,
+  HowItWorks,
+  Features,
+  FAQ,
   Footer,
 } from "@/components";
+import { useAnalysis } from "@/context/AnalysisContext";
 import { AnalyzeApiResponse } from "@/types/analysis";
 
 export default function Home() {
+  const router = useRouter();
+  const { setAnalysisResult } = useAnalysis();
+
   const [file, setFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
-  const [analysisResult, setAnalysisResult] = useState<AnalyzeApiResponse | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Connect to POST /api/analyze
@@ -29,7 +34,9 @@ export default function Home() {
     }
 
     if (file.size === 0) {
-      setErrorMsg("The selected resume file is empty (0 bytes). Please upload a valid PDF.");
+      setErrorMsg(
+        "The selected resume file is empty (0 bytes). Please upload a valid PDF."
+      );
       return;
     }
 
@@ -44,7 +51,9 @@ export default function Home() {
     // 2. Client-side JD validation
     const trimmedJD = jobDescription.trim();
     if (!trimmedJD) {
-      setErrorMsg("Please paste the job description to compare against the resume.");
+      setErrorMsg(
+        "Please paste the job description to compare against the resume."
+      );
       return;
     }
 
@@ -79,6 +88,7 @@ export default function Home() {
 
       if (response.ok && data.success) {
         setAnalysisResult(data);
+        router.push("/results");
       } else {
         setErrorMsg(data.message || "Failed to analyze resume.");
       }
@@ -92,42 +102,41 @@ export default function Home() {
     }
   };
 
-  // Compare Again Reset Handler
-  const handleCompareAgain = () => {
-    setAnalysisResult(null);
-    setErrorMsg(null);
-  };
-
   return (
     <div className="min-h-screen flex flex-col justify-between text-[var(--text-main)] font-sans antialiased selection:bg-blue-100">
-      <Navbar showBack={Boolean(analysisResult)} onBack={handleCompareAgain} />
+      {/* Section 1: Navbar */}
+      <Navbar />
 
+      {/* Main Content Container */}
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 md:px-6 py-8 md:py-10 flex flex-col justify-between">
         <div>
+          {/* Section 2: Hero */}
           <HeroSection />
 
-          {analysisResult ? (
-            <AnalysisResult
-              data={analysisResult}
-              onCompareAgain={handleCompareAgain}
-            />
-          ) : (
-            <ComparisonSection
-              file={file}
-              onFileChange={setFile}
-              jobDescription={jobDescription}
-              onJobDescriptionChange={setJobDescription}
-              isAnalyzing={isAnalyzing}
-              onCompare={handleCompareClick}
-              errorMsg={errorMsg}
-              onError={setErrorMsg}
-            />
-          )}
+          {/* Section 3: Resume Analysis Form (3 Logical Steps) */}
+          <ComparisonSection
+            file={file}
+            onFileChange={setFile}
+            jobDescription={jobDescription}
+            onJobDescriptionChange={setJobDescription}
+            isAnalyzing={isAnalyzing}
+            onCompare={handleCompareClick}
+            errorMsg={errorMsg}
+            onError={setErrorMsg}
+          />
 
-          <ProjectUses />
+          {/* Section 4: How It Works */}
+          <HowItWorks />
+
+          {/* Section 5: Features / What You'll Get */}
+          <Features />
+
+          {/* Section 6: Privacy and FAQ */}
+          <FAQ />
         </div>
       </main>
 
+      {/* Section 7: Footer */}
       <Footer />
     </div>
   );
