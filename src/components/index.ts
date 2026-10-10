@@ -1,0 +1,9 @@
+export { default as Navbar } from "./Navbar";
+export { default as HeroSection } from "./HeroSection";
+export { default as ResumeUpload } from "./ResumeUpload";
+export { default as JobDescriptionInput } from "./JobDescriptionInput";
+export { default as CompareAction } from "./CompareAction";
+export { default as ComparisonSection } from "./ComparisonSection";
+export { default as AnalysisResult } from "./AnalysisResult";
+export { default as ProjectUses } from "./ProjectUses";
+export { default as Footer } from "./Footer";
