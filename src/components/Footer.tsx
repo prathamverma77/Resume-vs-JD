@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import Link from "next/link";
 
 export default function Footer() {
@@ -33,7 +33,13 @@ export default function Footer() {
             href="/#faq"
             className="hover:text-slate-200 transition-colors"
           >
-            FAQ & Privacy
+            FAQ
+          </Link>
+          <Link
+            href="/privacy-policy"
+            className="hover:text-blue-400 transition-colors"
+          >
+            Privacy Policy
           </Link>
         </nav>
 
