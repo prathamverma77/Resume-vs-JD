@@ -10,3 +10,4 @@ export { default as FAQ } from "./FAQ";
 export { default as AnalysisResult } from "./AnalysisResult";
 export { default as ProjectUses } from "./ProjectUses";
 export { default as Footer } from "./Footer";
+export { default as ThemeToggle } from "./ThemeToggle";

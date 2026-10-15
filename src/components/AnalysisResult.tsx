@@ -23,12 +23,12 @@ export default function AnalysisResult({
   // Determine badge colors based on score
   const getScoreBadgeColor = (val: number) => {
     if (val >= 80)
-      return "bg-emerald-50 text-emerald-800 border-emerald-300/80 shadow-emerald-500/10";
+      return "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-300/80 dark:border-emerald-800/80 shadow-emerald-500/10";
     if (val >= 60)
-      return "bg-blue-50 text-blue-800 border-blue-300/80 shadow-blue-500/10";
+      return "bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-300/80 dark:border-blue-800/80 shadow-blue-500/10";
     if (val >= 40)
-      return "bg-amber-50 text-amber-800 border-amber-300/80 shadow-amber-500/10";
-    return "bg-rose-50 text-rose-800 border-rose-300/80 shadow-rose-500/10";
+      return "bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300/80 dark:border-amber-800/80 shadow-amber-500/10";
+    return "bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-300/80 dark:border-rose-900/80 shadow-rose-500/10";
   };
 
   const getScoreColorHex = (val: number) => {
@@ -39,10 +39,10 @@ export default function AnalysisResult({
   };
 
   const getScoreTextColor = (val: number) => {
-    if (val >= 80) return "text-emerald-600";
-    if (val >= 60) return "text-blue-600";
-    if (val >= 40) return "text-amber-600";
-    return "text-rose-600";
+    if (val >= 80) return "text-emerald-600 dark:text-emerald-400";
+    if (val >= 60) return "text-blue-600 dark:text-blue-400";
+    if (val >= 40) return "text-amber-600 dark:text-amber-400";
+    return "text-rose-600 dark:text-rose-400";
   };
 
   // Radial progress meter calculations
@@ -91,11 +91,11 @@ export default function AnalysisResult({
   };
 
   return (
-    <div className="w-full bg-white border border-slate-200/90 rounded-2xl p-6 md:p-8 shadow-md animate-fade-in space-y-7">
+    <div className="w-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-md animate-fade-in space-y-7 transition-colors duration-200">
       {/* ============================================================
           SECTION A: ANALYSIS SUMMARY
       ============================================================ */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-slate-200/80">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-slate-200/80 dark:border-slate-800">
         <div className="flex items-center gap-5 text-center md:text-left">
           {/* Circular Score Meter */}
           <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
@@ -107,7 +107,7 @@ export default function AnalysisResult({
                 cx="48"
                 cy="48"
                 r={radius}
-                className="text-slate-100"
+                className="text-slate-100 dark:text-slate-800"
                 strokeWidth="7"
                 stroke="currentColor"
                 fill="transparent"
@@ -133,7 +133,7 @@ export default function AnalysisResult({
               >
                 {score}%
               </span>
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-0.5">
+              <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider mt-0.5">
                 Match
               </span>
             </div>
@@ -149,24 +149,24 @@ export default function AnalysisResult({
                 {match?.matchLevel || "Analysis Complete"}
               </span>
               {jd?.role && (
-                <span className="text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200/60 px-2.5 py-0.5 rounded-full">
+                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 px-2.5 py-0.5 rounded-full">
                   Target Role: {jd.role}
                 </span>
               )}
             </div>
-            <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900">
+            <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
               MatchEngine Compatibility Report
             </h2>
-            <p className="text-xs text-slate-500 font-medium mt-1 flex flex-wrap items-center justify-center md:justify-start gap-1.5">
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1 flex flex-wrap items-center justify-center md:justify-start gap-1.5">
               <span>
                 Resume:{" "}
-                <strong className="text-slate-700">
+                <strong className="text-slate-700 dark:text-slate-200">
                   {resume.fileInfo.name}
                 </strong>
               </span>
-              <span className="text-slate-300">&bull;</span>
+              <span className="text-slate-300 dark:text-slate-600">&bull;</span>
               <span>{resume.pageCount} page(s) analyzed</span>
-              <span className="text-slate-300">&bull;</span>
+              <span className="text-slate-300 dark:text-slate-600">&bull;</span>
               <span>75% required / 25% preferred weighting</span>
             </p>
           </div>
@@ -176,7 +176,7 @@ export default function AnalysisResult({
         <button
           type="button"
           onClick={onCompareAgain}
-          className="w-full md:w-auto px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold tracking-wide shadow-sm hover:shadow active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full md:w-auto px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border dark:border-slate-700 text-white text-xs font-semibold tracking-wide shadow-sm hover:shadow active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
           <svg
             className="w-3.5 h-3.5"
@@ -199,24 +199,24 @@ export default function AnalysisResult({
           SECTION B: MATCH BREAKDOWN
       ============================================================ */}
       <div>
-        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
+        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
           <span>Match Breakdown</span>
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <div className="bg-slate-50/80 border border-slate-200/80 rounded-xl p-4 shadow-2xs">
+          <div className="bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 rounded-xl p-4 shadow-2xs">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Technical Match
               </span>
-              <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded">
                 75% Weight
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xl font-black text-slate-900">
+              <span className="text-xl font-black text-slate-900 dark:text-white">
                 {match?.technicalMatchScore ?? 0}%
               </span>
-              <div className="w-20 bg-slate-200/90 rounded-full h-2.5 overflow-hidden">
+              <div className="w-20 bg-slate-200/90 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
                 <div
                   className="bg-blue-600 h-2.5 rounded-full transition-all duration-700 ease-out"
                   style={{ width: `${match?.technicalMatchScore ?? 0}%` }}
@@ -225,20 +225,20 @@ export default function AnalysisResult({
             </div>
           </div>
 
-          <div className="bg-slate-50/80 border border-slate-200/80 rounded-xl p-4 shadow-2xs">
+          <div className="bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 rounded-xl p-4 shadow-2xs">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Preferred Skills
               </span>
-              <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded">
                 25% Weight
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xl font-black text-slate-900">
+              <span className="text-xl font-black text-slate-900 dark:text-white">
                 {match?.preferredMatchScore ?? 0}%
               </span>
-              <div className="w-20 bg-slate-200/90 rounded-full h-2.5 overflow-hidden">
+              <div className="w-20 bg-slate-200/90 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
                 <div
                   className="bg-emerald-500 h-2.5 rounded-full transition-all duration-700 ease-out"
                   style={{ width: `${match?.preferredMatchScore ?? 0}%` }}
@@ -247,18 +247,18 @@ export default function AnalysisResult({
             </div>
           </div>
 
-          <div className="bg-slate-50/80 border border-slate-200/80 rounded-xl p-4 shadow-2xs sm:col-span-2 md:col-span-1">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
+          <div className="bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 rounded-xl p-4 shadow-2xs sm:col-span-2 md:col-span-1">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
               Candidate Contact
             </span>
             <p
-              className="text-xs font-bold text-slate-800 truncate"
+              className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate"
               title={resume.structuredData.email}
             >
               {resume.structuredData.email || "No email detected"}
             </p>
             <p
-              className="text-[11px] text-slate-500 font-medium truncate mt-0.5"
+              className="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5"
               title={resume.structuredData.phone}
             >
               {resume.structuredData.phone || "No phone detected"}
@@ -270,10 +270,10 @@ export default function AnalysisResult({
       {/* ============================================================
           SECTION C: SKILLS COMPARISON
       ============================================================ */}
-      <div className="pt-2 pb-2 space-y-5 border-t border-slate-200/80">
+      <div className="pt-2 pb-2 space-y-5 border-t border-slate-200/80 dark:border-slate-800">
         {/* Matched Skills */}
         <div>
-          <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
+          <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-xs" />
             Matching Skills ({match?.matchingSkills.length || 0})
           </h3>
@@ -282,10 +282,10 @@ export default function AnalysisResult({
               {match.matchingSkills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="px-3 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold inline-flex items-center gap-1.5 shadow-2xs hover:scale-[1.02] transition-transform"
+                  className="px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-900 dark:text-emerald-300 text-xs font-semibold inline-flex items-center gap-1.5 shadow-2xs hover:scale-[1.02] transition-transform"
                 >
                   <svg
-                    className="w-3.5 h-3.5 text-emerald-600 shrink-0"
+                    className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -302,7 +302,7 @@ export default function AnalysisResult({
               ))}
             </div>
           ) : (
-            <p className="text-xs text-slate-400 italic">
+            <p className="text-xs text-slate-400 dark:text-slate-500 italic">
               No matching skills identified between resume and job description.
             </p>
           )}
@@ -310,7 +310,7 @@ export default function AnalysisResult({
 
         {/* Missing Required Skills */}
         <div>
-          <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
+          <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-xs" />
             Missing Required Skills ({match?.missingRequiredSkills.length || 0})
           </h3>
@@ -320,7 +320,7 @@ export default function AnalysisResult({
               {match.missingRequiredSkills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="px-3 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold inline-flex items-center gap-1.5 shadow-2xs"
+                  className="px-3 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 text-xs font-semibold inline-flex items-center gap-1.5 shadow-2xs"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
                   {skill}
@@ -328,9 +328,9 @@ export default function AnalysisResult({
               ))}
             </div>
           ) : (
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-lg text-xs font-semibold text-emerald-800">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-lg text-xs font-semibold text-emerald-800 dark:text-emerald-300">
               <svg
-                className="w-4 h-4 text-emerald-600 shrink-0"
+                className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -351,15 +351,15 @@ export default function AnalysisResult({
         {match?.missingPreferredSkills &&
           match.missingPreferredSkills.length > 0 && (
             <div>
-              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-400 shadow-xs" />
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-400 dark:text-slate-500 shadow-xs" />
                 Missing Preferred Skills ({match.missingPreferredSkills.length})
               </h3>
               <div className="flex flex-wrap gap-2">
                 {match.missingPreferredSkills.map((skill, idx) => (
                   <span
                     key={idx}
-                    className="px-3 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium"
+                    className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium"
                   >
                     {skill}
                   </span>
@@ -372,10 +372,10 @@ export default function AnalysisResult({
       {/* ============================================================
           SECTION D: EXPERIENCE AND EDUCATION COMPARISON
       ============================================================ */}
-      <div className="pt-4 pb-2 border-t border-slate-200/80">
-        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-3.5 flex items-center gap-2">
+      <div className="pt-4 pb-2 border-t border-slate-200/80 dark:border-slate-800">
+        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3.5 flex items-center gap-2">
           <svg
-            className="w-4 h-4 text-indigo-600"
+            className="w-4 h-4 text-indigo-600 dark:text-indigo-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -392,29 +392,29 @@ export default function AnalysisResult({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Extracted JD Requirements */}
-          <div className="p-4 bg-slate-50/60 border border-slate-200/80 rounded-xl space-y-3">
+          <div className="p-4 bg-slate-50/60 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 rounded-xl space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800">
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
                 Job Description Requirements
               </span>
-              <span className="text-[10px] font-semibold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded">
+              <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-700/70 border border-slate-200 dark:border-slate-600 px-2 py-0.5 rounded">
                 Extracted
               </span>
             </div>
 
             {/* Education */}
             <div>
-              <span className="text-[11px] font-bold text-slate-500 block mb-1">
+              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">
                 Academic / Education Prerequisites:
               </span>
               {jd?.education && jd.education.length > 0 ? (
-                <ul className="text-xs text-slate-700 space-y-1 list-disc list-inside">
+                <ul className="text-xs text-slate-700 dark:text-slate-300 space-y-1 list-disc list-inside">
                   {jd.education.map((edu, i) => (
                     <li key={i}>{edu}</li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-xs text-slate-400 italic">
+                <p className="text-xs text-slate-400 dark:text-slate-500 italic">
                   No specific degree requirements explicitly found in JD.
                 </p>
               )}
@@ -423,10 +423,10 @@ export default function AnalysisResult({
             {/* Key Responsibilities */}
             {jd?.responsibilities && jd.responsibilities.length > 0 && (
               <div>
-                <span className="text-[11px] font-bold text-slate-500 block mb-1">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">
                   Key Role Responsibilities:
                 </span>
-                <ul className="text-xs text-slate-700 space-y-1 list-disc list-inside max-h-32 overflow-y-auto pr-1">
+                <ul className="text-xs text-slate-700 dark:text-slate-300 space-y-1 list-disc list-inside max-h-32 overflow-y-auto pr-1">
                   {jd.responsibilities.slice(0, 5).map((resp, i) => (
                     <li key={i} className="line-clamp-2">
                       {resp}
@@ -438,30 +438,30 @@ export default function AnalysisResult({
           </div>
 
           {/* Resume Profile Metadata */}
-          <div className="p-4 bg-slate-50/60 border border-slate-200/80 rounded-xl space-y-3">
+          <div className="p-4 bg-slate-50/60 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 rounded-xl space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800">
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
                 Extracted Resume Metadata
               </span>
-              <span className="text-[10px] font-semibold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded">
+              <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-700/70 border border-slate-200 dark:border-slate-600 px-2 py-0.5 rounded">
                 Parsed
               </span>
             </div>
 
             <div>
-              <span className="text-[11px] font-bold text-slate-500 block mb-1">
+              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">
                 Candidate Contact Details:
               </span>
-              <div className="text-xs text-slate-700 space-y-1">
+              <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1">
                 <p>
                   Email:{" "}
-                  <strong className="text-slate-900">
+                  <strong className="text-slate-900 dark:text-white">
                     {resume.structuredData.email || "Not detected"}
                   </strong>
                 </p>
                 <p>
                   Phone:{" "}
-                  <strong className="text-slate-900">
+                  <strong className="text-slate-900 dark:text-white">
                     {resume.structuredData.phone || "Not detected"}
                   </strong>
                 </p>
@@ -469,15 +469,15 @@ export default function AnalysisResult({
             </div>
 
             <div>
-              <span className="text-[11px] font-bold text-slate-500 block mb-1">
+              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">
                 Document Scope:
               </span>
-              <div className="text-xs text-slate-700 space-y-1">
+              <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1">
                 <p>
                   Length: {resume.textLength.toLocaleString()} characters across{" "}
                   {resume.pageCount} page(s).
                 </p>
-                <p className="text-[11px] text-slate-500 italic mt-1 leading-relaxed">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 italic mt-1 leading-relaxed">
                   Automated scoring evaluates skill keyword alignment.
                   Experience and education entries are shown for manual
                   comparison.
@@ -491,10 +491,10 @@ export default function AnalysisResult({
       {/* ============================================================
           SECTION E: IMPROVEMENT RECOMMENDATIONS
       ============================================================ */}
-      <div className="pt-4 pb-2 border-t border-slate-200/80">
-        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-3.5 flex items-center gap-2">
+      <div className="pt-4 pb-2 border-t border-slate-200/80 dark:border-slate-800">
+        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3.5 flex items-center gap-2">
           <svg
-            className="w-4 h-4 text-blue-600"
+            className="w-4 h-4 text-blue-600 dark:text-blue-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -513,16 +513,16 @@ export default function AnalysisResult({
             match.recommendations.map((rec, idx) => (
               <div
                 key={idx}
-                className="p-3.5 bg-blue-50/50 border border-blue-100 rounded-xl flex items-start gap-3 text-xs text-slate-800"
+                className="p-3.5 bg-blue-50/50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 rounded-xl flex items-start gap-3 text-xs text-slate-800 dark:text-slate-200"
               >
-                <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 font-bold text-[10px] mt-0.5">
+                <div className="w-5 h-5 rounded-full bg-blue-600 dark:bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-[10px] mt-0.5">
                   {idx + 1}
                 </div>
                 <span className="leading-relaxed font-medium">{rec}</span>
               </div>
             ))
           ) : (
-            <p className="text-xs text-slate-400 italic">
+            <p className="text-xs text-slate-400 dark:text-slate-500 italic">
               No specific recommendations generated.
             </p>
           )}
@@ -532,16 +532,16 @@ export default function AnalysisResult({
       {/* ============================================================
           SECTION F: RESULT ACTIONS
       ============================================================ */}
-      <div className="pt-5 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <div className="pt-5 border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-center gap-3">
         <button
           type="button"
           onClick={handleCopyReport}
-          className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs tracking-wide border border-slate-200/80 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+          className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 font-semibold text-xs tracking-wide border border-slate-200/80 dark:border-slate-700 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
         >
           {copied ? (
             <>
               <svg
-                className="w-4 h-4 text-emerald-600"
+                className="w-4 h-4 text-emerald-600 dark:text-emerald-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -553,12 +553,14 @@ export default function AnalysisResult({
                   d="M4.5 12.75l6 6 9-13.5"
                 />
               </svg>
-              <span className="text-emerald-700">Copied to Clipboard!</span>
+              <span className="text-emerald-700 dark:text-emerald-400">
+                Copied to Clipboard!
+              </span>
             </>
           ) : (
             <>
               <svg
-                className="w-4 h-4 text-slate-600"
+                className="w-4 h-4 text-slate-600 dark:text-slate-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

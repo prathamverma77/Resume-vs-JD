@@ -18,7 +18,7 @@ export default function ResultsPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between text-[var(--text-main)] font-sans antialiased selection:bg-blue-100">
+    <div className="min-h-screen flex flex-col justify-between text-[var(--text-main)] font-sans antialiased selection:bg-blue-100 dark:selection:bg-blue-900/60 transition-colors duration-200">
       <Navbar showBack={true} onBack={handleCompareAgain} />
 
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 md:px-6 py-8 md:py-10 flex flex-col justify-between">
@@ -26,10 +26,10 @@ export default function ResultsPage() {
           <div>
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200/60">
+                <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-full border border-blue-200/60 dark:border-blue-900/60">
                   Active Analysis
                 </span>
-                <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mt-2 tracking-tight">
+                <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white mt-2 tracking-tight">
                   Resume Compatibility Results
                 </h1>
               </div>
@@ -43,7 +43,7 @@ export default function ResultsPage() {
         ) : (
           /* Empty State for Direct Navigation / Refresh */
           <div className="flex-1 flex flex-col items-center justify-center py-16 px-4 text-center max-w-md mx-auto">
-            <div className="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 mb-5 shadow-2xs">
+            <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 mb-5 shadow-2xs">
               <svg
                 className="w-8 h-8"
                 fill="none"
@@ -58,15 +58,15 @@ export default function ResultsPage() {
                 />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-slate-900 mb-2">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
               No Active Analysis Found
             </h2>
-            <p className="text-xs md:text-sm text-slate-500 leading-relaxed mb-6">
+            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
               MatchEngine processes candidate resumes strictly in-memory without persistent database storage. If you refreshed the page or arrived here directly, please upload your resume and job description to generate a report.
             </p>
             <Link
               href="/"
-              className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold tracking-wide shadow-sm hover:shadow transition-all flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-xs font-semibold tracking-wide shadow-sm hover:shadow transition-all flex items-center gap-2 cursor-pointer"
             >
               <svg
                 className="w-4 h-4"

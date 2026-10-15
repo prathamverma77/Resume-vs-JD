@@ -103,7 +103,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between text-[var(--text-main)] font-sans antialiased selection:bg-blue-100">
+    <div className="min-h-screen flex flex-col justify-between text-[var(--text-main)] font-sans antialiased selection:bg-blue-100 dark:selection:bg-blue-900/60 transition-colors duration-200">
       {/* Section 1: Navbar */}
       <Navbar />
 

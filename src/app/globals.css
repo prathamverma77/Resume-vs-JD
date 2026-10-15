@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Configure manual class-based dark mode selector in Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --bg-primary: #f8fafc;
   --bg-surface: #ffffff;
@@ -10,6 +13,20 @@
   --primary-hover: #1d4ed8;
   --secondary: #0f172a; /* Deep Navy */
   --accent-glow: rgba(37, 99, 235, 0.08);
+  color-scheme: light;
+}
+
+.dark {
+  --bg-primary: #090d16;
+  --bg-surface: #0f172a;
+  --border-color: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --secondary: #f8fafc;
+  --accent-glow: rgba(59, 130, 246, 0.15);
+  color-scheme: dark;
 }
 
 body {
@@ -25,6 +42,14 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.dark body {
+  background-color: #070a11;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.28) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.6) 0px, transparent 50%);
 }
 
 /* Custom scrollbar styling */
@@ -40,6 +65,13 @@ textarea::-webkit-scrollbar-thumb {
 }
 textarea::-webkit-scrollbar-thumb:hover {
   background-color: #94a3b8;
+}
+
+.dark textarea::-webkit-scrollbar-thumb {
+  background-color: #334155;
+}
+.dark textarea::-webkit-scrollbar-thumb:hover {
+  background-color: #475569;
 }
 
 /* Smooth keyframe animations */
@@ -72,4 +104,3 @@ textarea::-webkit-scrollbar-thumb:hover {
 .animate-pulse-glow {
   animation: pulseGlow 2s infinite ease-in-out;
 }
-

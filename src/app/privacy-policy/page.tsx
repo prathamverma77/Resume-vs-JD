@@ -1,6 +1,7 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "@/components/Footer";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — MatchEngine",
@@ -92,9 +93,12 @@ export default function PrivacyPolicyPage() {
               MatchEngine
             </span>
           </Link>
-          <span className="text-xs text-slate-500 font-medium uppercase tracking-widest">
-            Privacy Policy
-          </span>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <span className="text-xs text-slate-500 font-medium uppercase tracking-widest hidden sm:inline">
+              Privacy Policy
+            </span>
+          </div>
         </div>
       </header>
 

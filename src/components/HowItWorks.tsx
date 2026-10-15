@@ -11,7 +11,7 @@ export default function HowItWorks() {
         "Upload your resume in PDF format (up to 5MB). MatchEngine parses your skills and text content completely in-memory.",
       icon: (
         <svg
-          className="w-5 h-5 text-blue-600"
+          className="w-5 h-5 text-blue-600 dark:text-blue-400"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -32,7 +32,7 @@ export default function HowItWorks() {
         "Paste the job description or role requirements. The parser extracts required technical skills and preferred qualifications.",
       icon: (
         <svg
-          className="w-5 h-5 text-indigo-600"
+          className="w-5 h-5 text-indigo-600 dark:text-indigo-400"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -53,7 +53,7 @@ export default function HowItWorks() {
         "View overall match scores, identify missing required and preferred skills, and read actionable recommendations to optimize your application.",
       icon: (
         <svg
-          className="w-5 h-5 text-emerald-600"
+          className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -70,15 +70,18 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="w-full mt-14 pt-10 border-t border-slate-200/80 scroll-mt-20">
+    <section
+      id="how-it-works"
+      className="w-full mt-14 pt-10 border-t border-slate-200/80 dark:border-slate-800 scroll-mt-20"
+    >
       <div className="mb-8">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 text-xs font-semibold mb-2">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-transparent dark:border-blue-900/60 text-xs font-semibold mb-2">
           <span>Simple 3-Step Process</span>
         </div>
-        <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
+        <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
           How It Works
         </h2>
-        <p className="text-sm md:text-base text-slate-600 mt-1.5 leading-relaxed">
+        <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
           From upload to comprehensive skill breakdown in seconds.
         </p>
       </div>
@@ -87,21 +90,21 @@ export default function HowItWorks() {
         {steps.map((item, idx) => (
           <div
             key={idx}
-            className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between relative"
+            className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all duration-200 flex flex-col justify-between relative"
           >
             <div>
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 flex items-center justify-center">
                   {item.icon}
                 </div>
-                <span className="text-xs font-extrabold text-slate-400 font-mono">
+                <span className="text-xs font-extrabold text-slate-400 dark:text-slate-500 font-mono">
                   {item.step}
                 </span>
               </div>
-              <h3 className="text-base font-bold text-slate-900 mb-2 leading-snug">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 leading-snug">
                 {item.title}
               </h3>
-              <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
+              <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                 {item.description}
               </p>
             </div>

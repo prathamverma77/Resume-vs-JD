@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import ThemeToggle from "./ThemeToggle";
 
 interface NavbarProps {
   showBack?: boolean;
@@ -10,7 +11,7 @@ interface NavbarProps {
 
 export default function Navbar({ showBack, onBack }: NavbarProps) {
   return (
-    <header className="w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-30 px-4 md:px-6 py-3.5 transition-all">
+    <header className="w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-30 px-4 md:px-6 py-3.5 transition-colors duration-200">
       <div className="max-w-5xl mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-500 flex items-center justify-center text-white font-black text-base shadow-sm shadow-blue-500/20 tracking-tight group-hover:scale-105 transition-transform">
@@ -29,53 +30,61 @@ export default function Navbar({ showBack, onBack }: NavbarProps) {
             </svg>
           </div>
           <div>
-            <span className="font-bold text-lg tracking-tight text-slate-900 block leading-tight">
+            <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white block leading-tight">
               MatchEngine
             </span>
-            <span className="text-[10px] font-medium text-slate-400 tracking-wide uppercase">
+            <span className="text-[10px] font-medium text-slate-400 dark:text-slate-400 tracking-wide uppercase">
               Resume vs. JD AI
             </span>
           </div>
         </Link>
 
         {/* Navigation Anchor Links */}
-        <nav aria-label="Main Navigation" className="hidden sm:flex items-center gap-6 text-xs font-semibold text-slate-600">
+        <nav
+          aria-label="Main Navigation"
+          className="hidden sm:flex items-center gap-6 text-xs font-semibold text-slate-600 dark:text-slate-300"
+        >
           <Link
             href="/#how-it-works"
-            className="hover:text-blue-600 transition-colors"
+            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             How It Works
           </Link>
           <Link
             href="/#features"
-            className="hover:text-blue-600 transition-colors"
+            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             Features
           </Link>
           <Link
             href="/#faq"
-            className="hover:text-blue-600 transition-colors"
+            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             FAQ
           </Link>
         </nav>
 
-        {showBack && onBack ? (
-          <button
-            type="button"
-            onClick={onBack}
-            className="text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100/80 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
-          >
-            &larr; New Analysis
-          </button>
-        ) : (
-          <a
-            href="#analyzer"
-            className="text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 px-3.5 py-1.5 rounded-lg transition-all shadow-xs cursor-pointer"
-          >
-            Start Matching
-          </a>
-        )}
+        {/* Right Controls: ThemeToggle + Primary Action */}
+        <div className="flex items-center gap-2.5">
+          <ThemeToggle />
+
+          {showBack && onBack ? (
+            <button
+              type="button"
+              onClick={onBack}
+              className="text-xs font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100/80 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 border border-transparent dark:border-blue-900/60 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              &larr; New Analysis
+            </button>
+          ) : (
+            <a
+              href="#analyzer"
+              className="text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 px-3.5 py-1.5 rounded-lg transition-all shadow-xs cursor-pointer"
+            >
+              Start Matching
+            </a>
+          )}
+        </div>
       </div>
     </header>
   );

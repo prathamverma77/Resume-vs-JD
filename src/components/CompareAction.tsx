@@ -15,8 +15,8 @@ export default function CompareAction({
 }: CompareActionProps) {
   return (
     <div className="w-full flex flex-col items-center justify-center mt-2 mb-4">
-      <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 mb-2.5">
-        <span className="w-5 h-5 rounded-md bg-blue-100 text-blue-700 font-bold text-[11px] flex items-center justify-center">
+      <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2.5">
+        <span className="w-5 h-5 rounded-md bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-bold text-[11px] flex items-center justify-center">
           3
         </span>
         <span>Step 3: Analyze Compatibility</span>
@@ -71,9 +71,9 @@ export default function CompareAction({
       </button>
 
       {errorMsg && (
-        <div className="mt-3 px-4 py-2.5 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-700 flex items-center gap-2 animate-fade-in">
+        <div className="mt-3 px-4 py-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-xl text-xs font-semibold text-rose-700 dark:text-rose-300 flex items-center gap-2 animate-fade-in">
           <svg
-            className="w-4 h-4 text-rose-500 shrink-0"
+            className="w-4 h-4 text-rose-500 dark:text-rose-400 shrink-0"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

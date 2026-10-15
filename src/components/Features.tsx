@@ -9,7 +9,8 @@ export default function Features() {
       description:
         "Calculates an overall compatibility percentage using a deterministic weighted formula (75% core required skills, 25% preferred skills) directly from your extracted text.",
       badge: "Real Scoring Engine",
-      iconBg: "bg-blue-50 text-blue-600 border border-blue-100/80",
+      iconBg:
+        "bg-blue-50 text-blue-600 border border-blue-100/80 dark:bg-blue-950/50 dark:text-blue-400 dark:border-blue-900/50",
       icon: (
         <svg
           className="w-6 h-6"
@@ -31,7 +32,8 @@ export default function Features() {
       description:
         "Clearly separates skills into verified matching skills, missing required technical skills, and missing preferred bonus qualifications so you know exactly what is absent.",
       badge: "Keyword Matching",
-      iconBg: "bg-amber-50 text-amber-600 border border-amber-100/80",
+      iconBg:
+        "bg-amber-50 text-amber-600 border border-amber-100/80 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-900/50",
       icon: (
         <svg
           className="w-6 h-6"
@@ -53,7 +55,8 @@ export default function Features() {
       description:
         "Extracts targeted role names, day-to-day responsibilities, and academic prerequisites from the job description for manual side-by-side review against your resume background.",
       badge: "Requirement Extraction",
-      iconBg: "bg-indigo-50 text-indigo-600 border border-indigo-100/80",
+      iconBg:
+        "bg-indigo-50 text-indigo-600 border border-indigo-100/80 dark:bg-indigo-950/50 dark:text-indigo-400 dark:border-indigo-900/50",
       icon: (
         <svg
           className="w-6 h-6"
@@ -75,7 +78,8 @@ export default function Features() {
       description:
         "Delivers prioritized, actionable feedback identifying which top missing skills or sections you should incorporate into your resume to immediately boost relevance.",
       badge: "Actionable Tips",
-      iconBg: "bg-emerald-50 text-emerald-600 border border-emerald-100/80",
+      iconBg:
+        "bg-emerald-50 text-emerald-600 border border-emerald-100/80 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-900/50",
       icon: (
         <svg
           className="w-6 h-6"
@@ -95,15 +99,18 @@ export default function Features() {
   ];
 
   return (
-    <section id="features" className="w-full mt-14 pt-10 border-t border-slate-200/80 scroll-mt-20">
+    <section
+      id="features"
+      className="w-full mt-14 pt-10 border-t border-slate-200/80 dark:border-slate-800 scroll-mt-20"
+    >
       <div className="mb-8">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 text-xs font-semibold mb-2">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-transparent dark:border-indigo-900/60 text-xs font-semibold mb-2">
           <span>Core Capabilities</span>
         </div>
-        <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
+        <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
           What You&apos;ll Get
         </h2>
-        <p className="text-sm md:text-base text-slate-600 mt-1.5 leading-relaxed">
+        <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
           Accurate, verifiable insights produced directly from the application&apos;s matching engine.
         </p>
       </div>
@@ -112,7 +119,7 @@ export default function Features() {
         {featureList.map((item, index) => (
           <div
             key={index}
-            className="bg-white border border-slate-200/80 rounded-2xl p-6 md:p-7 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
+            className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 md:p-7 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between mb-4">
@@ -121,14 +128,14 @@ export default function Features() {
                 >
                   {item.icon}
                 </div>
-                <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
                   {item.badge}
                 </span>
               </div>
-              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-2 leading-snug">
+              <h3 className="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-2 leading-snug">
                 {item.title}
               </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                 {item.description}
               </p>
             </div>

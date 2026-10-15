@@ -32,15 +32,18 @@ export default function FAQ() {
   ];
 
   return (
-    <section id="faq" className="w-full mt-14 pt-10 border-t border-slate-200/80 scroll-mt-20">
+    <section
+      id="faq"
+      className="w-full mt-14 pt-10 border-t border-slate-200/80 dark:border-slate-800 scroll-mt-20"
+    >
       <div className="mb-8">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-xs font-semibold mb-2">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-transparent dark:border-emerald-900/60 text-xs font-semibold mb-2">
           <span>Transparency & Privacy</span>
         </div>
-        <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
+        <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
           Frequently Asked Questions
         </h2>
-        <p className="text-sm md:text-base text-slate-600 mt-1.5 leading-relaxed">
+        <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
           Clear answers about how MatchEngine works and how your data is handled.
         </p>
       </div>
@@ -49,11 +52,11 @@ export default function FAQ() {
         {faqs.map((faq, index) => (
           <details
             key={index}
-            className="group bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 shadow-2xs hover:border-slate-300 transition-colors [&_summary::-webkit-details-marker]:hidden"
+            className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 md:p-6 shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-colors [&_summary::-webkit-details-marker]:hidden"
           >
-            <summary className="flex items-center justify-between cursor-pointer list-none select-none font-bold text-sm md:text-base text-slate-900 gap-4">
+            <summary className="flex items-center justify-between cursor-pointer list-none select-none font-bold text-sm md:text-base text-slate-900 dark:text-white gap-4">
               <span>{faq.question}</span>
-              <span className="w-7 h-7 rounded-lg bg-slate-100 group-open:bg-blue-50 text-slate-500 group-open:text-blue-600 flex items-center justify-center shrink-0 transition-transform duration-200 group-open:rotate-180">
+              <span className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 group-open:bg-blue-50 dark:group-open:bg-blue-950/60 text-slate-500 dark:text-slate-400 group-open:text-blue-600 dark:group-open:text-blue-400 flex items-center justify-center shrink-0 transition-transform duration-200 group-open:rotate-180">
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -69,7 +72,7 @@ export default function FAQ() {
                 </svg>
               </span>
             </summary>
-            <p className="text-xs md:text-sm text-slate-600 mt-3.5 leading-relaxed pt-3 border-t border-slate-100">
+            <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 mt-3.5 leading-relaxed pt-3 border-t border-slate-100 dark:border-slate-800">
               {faq.answer}
             </p>
           </details>
