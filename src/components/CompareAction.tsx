@@ -14,18 +14,12 @@ export default function CompareAction({
   errorMsg,
 }: CompareActionProps) {
   return (
-    <div className="w-full flex flex-col items-center justify-center mt-2 mb-4">
-      <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2.5">
-        <span className="w-5 h-5 rounded-md bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-bold text-[11px] flex items-center justify-center">
-          3
-        </span>
-        <span>Step 3: Analyze Compatibility</span>
-      </div>
+    <div className="w-full flex flex-col items-center justify-center mt-4">
       <button
         type="button"
         onClick={onCompare}
         disabled={isAnalyzing}
-        className="w-full md:w-80 h-12 rounded-xl text-white font-semibold text-sm tracking-wide bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2.5 cursor-pointer"
+        className="w-full sm:w-80 h-12 rounded-xl text-white font-bold text-sm md:text-base tracking-wide bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-md shadow-blue-500/25 active:scale-[0.99] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2.5 cursor-pointer"
       >
         {isAnalyzing ? (
           <>
@@ -48,13 +42,13 @@ export default function CompareAction({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            <span>Analyzing Compatibility...</span>
+            <span>Analyzing compatibility...</span>
           </>
         ) : (
           <>
-            <span>Compare & Match</span>
+            <span>Analyze Match</span>
             <svg
-              className="w-4 h-4"
+              className="w-4 h-4 text-blue-100"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -71,9 +65,9 @@ export default function CompareAction({
       </button>
 
       {errorMsg && (
-        <div className="mt-3 px-4 py-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-xl text-xs font-semibold text-rose-700 dark:text-rose-300 flex items-center gap-2 animate-fade-in">
+        <div className="mt-3.5 px-4 py-2.5 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 rounded-lg text-xs md:text-sm font-semibold text-red-800 dark:text-red-300 flex items-center gap-2.5 animate-fade-in max-w-xl">
           <svg
-            className="w-4 h-4 text-rose-500 dark:text-rose-400 shrink-0"
+            className="w-4 h-4 text-red-600 shrink-0"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -85,7 +79,7 @@ export default function CompareAction({
               d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
             />
           </svg>
-          {errorMsg}
+          <span>{errorMsg}</span>
         </div>
       )}
     </div>

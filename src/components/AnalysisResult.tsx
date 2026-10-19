@@ -20,22 +20,15 @@ export default function AnalysisResult({
 
   const score = match?.overallScore ?? 0;
 
-  // Determine badge colors based on score
+  // Clean, high-contrast score indicators
   const getScoreBadgeColor = (val: number) => {
     if (val >= 80)
-      return "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-300/80 dark:border-emerald-800/80 shadow-emerald-500/10";
+      return "bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/30";
     if (val >= 60)
-      return "bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-300/80 dark:border-blue-800/80 shadow-blue-500/10";
+      return "bg-blue-500/15 text-blue-800 dark:text-blue-300 border-blue-500/30";
     if (val >= 40)
-      return "bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300/80 dark:border-amber-800/80 shadow-amber-500/10";
-    return "bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-300/80 dark:border-rose-900/80 shadow-rose-500/10";
-  };
-
-  const getScoreColorHex = (val: number) => {
-    if (val >= 80) return "#10b981"; // emerald-500
-    if (val >= 60) return "#2563eb"; // blue-600
-    if (val >= 40) return "#f59e0b"; // amber-500
-    return "#ef4444"; // rose-500
+      return "bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30";
+    return "bg-rose-500/15 text-rose-800 dark:text-rose-300 border-rose-500/30";
   };
 
   const getScoreTextColor = (val: number) => {
@@ -45,12 +38,19 @@ export default function AnalysisResult({
     return "text-rose-600 dark:text-rose-400";
   };
 
-  // Radial progress meter calculations
+  const getScoreColorHex = (val: number) => {
+    if (val >= 80) return "#10b981";
+    if (val >= 60) return "#2563eb";
+    if (val >= 40) return "#f59e0b";
+    return "#f43f5e";
+  };
+
+  // Radial progress calculations
   const radius = 38;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (score / 100) * circumference;
 
-  // Copy plain-text summary report
+  // Plain-text copy report
   const handleCopyReport = async () => {
     if (!match) return;
 
@@ -86,18 +86,18 @@ export default function AnalysisResult({
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch {
-      // Clipboard fallback
+      // Fallback
     }
   };
 
   return (
-    <div className="w-full bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-md animate-fade-in space-y-7 transition-colors duration-200">
+    <div className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 md:p-8 shadow-xs space-y-7 transition-colors">
       {/* ============================================================
-          SECTION A: ANALYSIS SUMMARY
+          SECTION A: ANALYSIS SUMMARY HEADER
       ============================================================ */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-slate-200/80 dark:border-slate-800">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center gap-5 text-center md:text-left">
-          {/* Circular Score Meter */}
+          {/* Circular Score Gauge */}
           <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
             <svg
               className="w-full h-full -rotate-90 transform"
@@ -107,7 +107,7 @@ export default function AnalysisResult({
                 cx="48"
                 cy="48"
                 r={radius}
-                className="text-slate-100 dark:text-slate-800"
+                className="text-zinc-100 dark:text-zinc-800"
                 strokeWidth="7"
                 stroke="currentColor"
                 fill="transparent"
@@ -122,7 +122,7 @@ export default function AnalysisResult({
                 strokeDashoffset={strokeDashoffset}
                 strokeLinecap="round"
                 fill="transparent"
-                className="transition-all duration-1000 ease-out"
+                className="transition-all duration-700 ease-out"
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -133,8 +133,8 @@ export default function AnalysisResult({
               >
                 {score}%
               </span>
-              <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider mt-0.5">
-                Match
+              <span className="text-[10px] uppercase font-mono font-bold text-zinc-500 dark:text-zinc-400 tracking-wider mt-0.5">
+                Score
               </span>
             </div>
           </div>
@@ -142,48 +142,43 @@ export default function AnalysisResult({
           <div>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
               <span
-                className={`px-3 py-0.5 rounded-full border text-xs font-bold tracking-tight shadow-xs ${getScoreBadgeColor(
+                className={`px-2.5 py-0.5 rounded border text-xs font-bold tracking-tight ${getScoreBadgeColor(
                   score
                 )}`}
               >
                 {match?.matchLevel || "Analysis Complete"}
               </span>
               {jd?.role && (
-                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 px-2.5 py-0.5 rounded-full">
-                  Target Role: {jd.role}
+                <span className="text-xs font-bold text-blue-800 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-900 px-2.5 py-0.5 rounded">
+                  {jd.role}
                 </span>
               )}
             </div>
-            <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              MatchEngine Compatibility Report
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
+              Compatibility Report
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1 flex flex-wrap items-center justify-center md:justify-start gap-1.5">
-              <span>
-                Resume:{" "}
-                <strong className="text-slate-700 dark:text-slate-200">
-                  {resume.fileInfo.name}
-                </strong>
-              </span>
-              <span className="text-slate-300 dark:text-slate-600">&bull;</span>
-              <span>{resume.pageCount} page(s) analyzed</span>
-              <span className="text-slate-300 dark:text-slate-600">&bull;</span>
-              <span>75% required / 25% preferred weighting</span>
+            <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 mt-1 flex flex-wrap items-center justify-center md:justify-start gap-1.5 font-mono">
+              <span className="font-semibold">{resume.fileInfo.name}</span>
+              <span className="text-zinc-400 dark:text-zinc-600">&bull;</span>
+              <span>{resume.pageCount} page(s)</span>
+              <span className="text-zinc-400 dark:text-zinc-600">&bull;</span>
+              <span>75% req / 25% pref</span>
             </p>
           </div>
         </div>
 
-        {/* Quick Back Action */}
+        {/* Header Action */}
         <button
           type="button"
           onClick={onCompareAgain}
-          className="w-full md:w-auto px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border dark:border-slate-700 text-white text-xs font-semibold tracking-wide shadow-sm hover:shadow active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full md:w-auto px-4 py-2.5 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/70 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs md:text-sm font-bold tracking-wide transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
         >
           <svg
-            className="w-3.5 h-3.5"
+            className="w-4 h-4"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            strokeWidth="2.5"
+            strokeWidth="2"
           >
             <path
               strokeLinecap="round"
@@ -191,118 +186,95 @@ export default function AnalysisResult({
               d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
             />
           </svg>
-          Analyze Another Resume
+          <span>New Comparison</span>
         </button>
       </div>
 
       {/* ============================================================
-          SECTION B: MATCH BREAKDOWN
+          SECTION B: METRIC CARDS
       ============================================================ */}
-      <div>
-        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
-          <span>Match Breakdown</span>
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <div className="bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 rounded-xl p-4 shadow-2xs">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Technical Match
-              </span>
-              <span className="text-[10px] font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded">
-                75% Weight
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xl font-black text-slate-900 dark:text-white">
-                {match?.technicalMatchScore ?? 0}%
-              </span>
-              <div className="w-20 bg-slate-200/90 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
-                <div
-                  className="bg-blue-600 h-2.5 rounded-full transition-all duration-700 ease-out"
-                  style={{ width: `${match?.technicalMatchScore ?? 0}%` }}
-                />
-              </div>
-            </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+        <div className="bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
+          <div className="flex items-center justify-between text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+            <span>CORE TECHNICAL</span>
+            <span className="text-blue-600 dark:text-blue-400 font-extrabold">75% WT</span>
           </div>
-
-          <div className="bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 rounded-xl p-4 shadow-2xs">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Preferred Skills
-              </span>
-              <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded">
-                25% Weight
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xl font-black text-slate-900 dark:text-white">
-                {match?.preferredMatchScore ?? 0}%
-              </span>
-              <div className="w-20 bg-slate-200/90 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
-                <div
-                  className="bg-emerald-500 h-2.5 rounded-full transition-all duration-700 ease-out"
-                  style={{ width: `${match?.preferredMatchScore ?? 0}%` }}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 rounded-xl p-4 shadow-2xs sm:col-span-2 md:col-span-1">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
-              Candidate Contact
+          <div className="flex items-center justify-between">
+            <span className="text-2xl font-black text-zinc-950 dark:text-white">
+              {match?.technicalMatchScore ?? 0}%
             </span>
-            <p
-              className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate"
-              title={resume.structuredData.email}
-            >
-              {resume.structuredData.email || "No email detected"}
-            </p>
-            <p
-              className="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5"
-              title={resume.structuredData.phone}
-            >
-              {resume.structuredData.phone || "No phone detected"}
-            </p>
+            <div className="w-20 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-blue-600 dark:bg-blue-500 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${match?.technicalMatchScore ?? 0}%` }}
+              />
+            </div>
           </div>
+        </div>
+
+        <div className="bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
+          <div className="flex items-center justify-between text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+            <span>PREFERRED SKILLS</span>
+            <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">25% WT</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-2xl font-black text-zinc-950 dark:text-white">
+              {match?.preferredMatchScore ?? 0}%
+            </span>
+            <div className="w-20 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-indigo-600 dark:bg-indigo-500 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${match?.preferredMatchScore ?? 0}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
+          <div className="text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+            CANDIDATE CONTACT
+          </div>
+          <p
+            className="text-sm font-bold text-zinc-950 dark:text-white truncate"
+            title={resume.structuredData.email}
+          >
+            {resume.structuredData.email || "No email detected"}
+          </p>
+          <p
+            className="text-xs text-zinc-600 dark:text-zinc-300 truncate mt-0.5 font-medium"
+            title={resume.structuredData.phone}
+          >
+            {resume.structuredData.phone || "No phone detected"}
+          </p>
         </div>
       </div>
 
       {/* ============================================================
-          SECTION C: SKILLS COMPARISON
+          SECTION C: SKILLS MATRIX
       ============================================================ */}
-      <div className="pt-2 pb-2 space-y-5 border-t border-slate-200/80 dark:border-slate-800">
-        {/* Matched Skills */}
+      <div className="space-y-5 pt-1">
+        {/* Matching Skills */}
         <div>
-          <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-xs" />
-            Matching Skills ({match?.matchingSkills.length || 0})
-          </h3>
+          <div className="flex items-center justify-between mb-2.5">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              Matching Skills ({match?.matchingSkills.length || 0})
+            </h3>
+          </div>
           {match?.matchingSkills && match.matchingSkills.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {match.matchingSkills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-900 dark:text-emerald-300 text-xs font-semibold inline-flex items-center gap-1.5 shadow-2xs hover:scale-[1.02] transition-transform"
+                  className="px-3 py-1.5 rounded-md bg-emerald-500/15 text-emerald-900 dark:text-emerald-200 border border-emerald-500/30 text-xs md:text-sm font-bold inline-flex items-center gap-1.5"
                 >
-                  <svg
-                    className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.5 12.75l6 6 9-13.5"
-                    />
-                  </svg>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
                   {skill}
                 </span>
               ))}
             </div>
           ) : (
-            <p className="text-xs text-slate-400 dark:text-slate-500 italic">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 italic">
               No matching skills identified between resume and job description.
             </p>
           )}
@@ -310,39 +282,31 @@ export default function AnalysisResult({
 
         {/* Missing Required Skills */}
         <div>
-          <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-xs" />
-            Missing Required Skills ({match?.missingRequiredSkills.length || 0})
-          </h3>
+          <div className="flex items-center justify-between mb-2.5">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-amber-500" />
+              Missing Required Skills ({match?.missingRequiredSkills.length || 0})
+            </h3>
+          </div>
           {match?.missingRequiredSkills &&
           match.missingRequiredSkills.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {match.missingRequiredSkills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="px-3 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 text-xs font-semibold inline-flex items-center gap-1.5 shadow-2xs"
+                  className="px-3 py-1.5 rounded-md bg-amber-500/15 text-amber-900 dark:text-amber-200 border border-amber-500/30 text-xs md:text-sm font-bold inline-flex items-center gap-1.5"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-600 dark:bg-amber-400" />
                   {skill}
                 </span>
               ))}
             </div>
           ) : (
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-lg text-xs font-semibold text-emerald-800 dark:text-emerald-300">
-              <svg
-                className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
+            <div className="text-sm font-bold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
               </svg>
-              All required skills are present in the candidate resume!
+              All required technical skills detected in candidate resume!
             </div>
           )}
         </div>
@@ -351,16 +315,19 @@ export default function AnalysisResult({
         {match?.missingPreferredSkills &&
           match.missingPreferredSkills.length > 0 && (
             <div>
-              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-400 dark:text-slate-500 shadow-xs" />
-                Missing Preferred Skills ({match.missingPreferredSkills.length})
-              </h3>
+              <div className="flex items-center justify-between mb-2.5">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                  Missing Preferred Skills ({match.missingPreferredSkills.length})
+                </h3>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {match.missingPreferredSkills.map((skill, idx) => (
                   <span
                     key={idx}
-                    className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium"
+                    className="px-3 py-1.5 rounded-md bg-indigo-500/15 text-indigo-900 dark:text-indigo-200 border border-indigo-500/30 text-xs md:text-sm font-bold inline-flex items-center gap-1.5"
                   >
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 dark:bg-indigo-400" />
                     {skill}
                   </span>
                 ))}
@@ -370,142 +337,10 @@ export default function AnalysisResult({
       </div>
 
       {/* ============================================================
-          SECTION D: EXPERIENCE AND EDUCATION COMPARISON
+          SECTION D: ACTIONABLE RECOMMENDATIONS
       ============================================================ */}
-      <div className="pt-4 pb-2 border-t border-slate-200/80 dark:border-slate-800">
-        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3.5 flex items-center gap-2">
-          <svg
-            className="w-4 h-4 text-indigo-600 dark:text-indigo-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342"
-            />
-          </svg>
-          Experience & Education Details
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Extracted JD Requirements */}
-          <div className="p-4 bg-slate-50/60 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 rounded-xl space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                Job Description Requirements
-              </span>
-              <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-700/70 border border-slate-200 dark:border-slate-600 px-2 py-0.5 rounded">
-                Extracted
-              </span>
-            </div>
-
-            {/* Education */}
-            <div>
-              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">
-                Academic / Education Prerequisites:
-              </span>
-              {jd?.education && jd.education.length > 0 ? (
-                <ul className="text-xs text-slate-700 dark:text-slate-300 space-y-1 list-disc list-inside">
-                  {jd.education.map((edu, i) => (
-                    <li key={i}>{edu}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-xs text-slate-400 dark:text-slate-500 italic">
-                  No specific degree requirements explicitly found in JD.
-                </p>
-              )}
-            </div>
-
-            {/* Key Responsibilities */}
-            {jd?.responsibilities && jd.responsibilities.length > 0 && (
-              <div>
-                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">
-                  Key Role Responsibilities:
-                </span>
-                <ul className="text-xs text-slate-700 dark:text-slate-300 space-y-1 list-disc list-inside max-h-32 overflow-y-auto pr-1">
-                  {jd.responsibilities.slice(0, 5).map((resp, i) => (
-                    <li key={i} className="line-clamp-2">
-                      {resp}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Resume Profile Metadata */}
-          <div className="p-4 bg-slate-50/60 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 rounded-xl space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                Extracted Resume Metadata
-              </span>
-              <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-700/70 border border-slate-200 dark:border-slate-600 px-2 py-0.5 rounded">
-                Parsed
-              </span>
-            </div>
-
-            <div>
-              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">
-                Candidate Contact Details:
-              </span>
-              <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1">
-                <p>
-                  Email:{" "}
-                  <strong className="text-slate-900 dark:text-white">
-                    {resume.structuredData.email || "Not detected"}
-                  </strong>
-                </p>
-                <p>
-                  Phone:{" "}
-                  <strong className="text-slate-900 dark:text-white">
-                    {resume.structuredData.phone || "Not detected"}
-                  </strong>
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">
-                Document Scope:
-              </span>
-              <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1">
-                <p>
-                  Length: {resume.textLength.toLocaleString()} characters across{" "}
-                  {resume.pageCount} page(s).
-                </p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 italic mt-1 leading-relaxed">
-                  Automated scoring evaluates skill keyword alignment.
-                  Experience and education entries are shown for manual
-                  comparison.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ============================================================
-          SECTION E: IMPROVEMENT RECOMMENDATIONS
-      ============================================================ */}
-      <div className="pt-4 pb-2 border-t border-slate-200/80 dark:border-slate-800">
-        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3.5 flex items-center gap-2">
-          <svg
-            className="w-4 h-4 text-blue-600 dark:text-blue-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 2.625a3.75 3.75 0 10-7.5 0 3.75 3.75 0 007.5 0z"
-            />
-          </svg>
+      <div className="pt-5 border-t border-zinc-200 dark:border-zinc-800">
+        <h3 className="text-sm md:text-base font-bold uppercase tracking-wider text-zinc-950 dark:text-white mb-3">
           Actionable Recommendations
         </h3>
         <div className="space-y-2.5">
@@ -513,66 +348,92 @@ export default function AnalysisResult({
             match.recommendations.map((rec, idx) => (
               <div
                 key={idx}
-                className="p-3.5 bg-blue-50/50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 rounded-xl flex items-start gap-3 text-xs text-slate-800 dark:text-slate-200"
+                className="p-3.5 bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/50 rounded-lg flex items-start gap-3 text-sm text-zinc-800 dark:text-zinc-200 font-medium"
               >
-                <div className="w-5 h-5 rounded-full bg-blue-600 dark:bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-[10px] mt-0.5">
-                  {idx + 1}
-                </div>
-                <span className="leading-relaxed font-medium">{rec}</span>
+                <span className="text-xs font-mono font-extrabold text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+                  0{idx + 1}
+                </span>
+                <span className="leading-relaxed">{rec}</span>
               </div>
             ))
           ) : (
-            <p className="text-xs text-slate-400 dark:text-slate-500 italic">
-              No specific recommendations generated.
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 italic">
+              Profile matches job criteria well.
             </p>
           )}
         </div>
       </div>
 
       {/* ============================================================
+          SECTION E: EXTRACTED DETAILS COMPARISON
+      ============================================================ */}
+      <div className="pt-5 border-t border-zinc-200 dark:border-zinc-800">
+        <h3 className="text-sm md:text-base font-bold uppercase tracking-wider text-zinc-950 dark:text-white mb-3">
+          Job Requirements Context
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          {/* Education Prerequisites */}
+          <div className="p-4 bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg space-y-2.5">
+            <span className="text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 block">
+              ACADEMIC PREREQUISITES
+            </span>
+            {jd?.education && jd.education.length > 0 ? (
+              <ul className="text-zinc-800 dark:text-zinc-200 space-y-1 list-disc list-inside font-medium">
+                {jd.education.map((edu, i) => (
+                  <li key={i}>{edu}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-zinc-500 italic text-xs">
+                No specific degree requirements explicitly found.
+              </p>
+            )}
+          </div>
+
+          {/* Key Responsibilities */}
+          <div className="p-4 bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg space-y-2.5">
+            <span className="text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 block">
+              TARGET RESPONSIBILITIES
+            </span>
+            {jd?.responsibilities && jd.responsibilities.length > 0 ? (
+              <ul className="text-zinc-800 dark:text-zinc-200 space-y-1 list-disc list-inside max-h-32 overflow-y-auto pr-1 font-medium">
+                {jd.responsibilities.slice(0, 5).map((resp, i) => (
+                  <li key={i} className="line-clamp-2">
+                    {resp}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-zinc-500 italic text-xs">
+                No explicit responsibilities section parsed.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================================
           SECTION F: RESULT ACTIONS
       ============================================================ */}
-      <div className="pt-5 border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <div className="pt-5 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-end gap-3">
         <button
           type="button"
           onClick={handleCopyReport}
-          className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 font-semibold text-xs tracking-wide border border-slate-200/80 dark:border-slate-700 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold text-sm tracking-wide border border-zinc-300 dark:border-zinc-700 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
         >
           {copied ? (
             <>
-              <svg
-                className="w-4 h-4 text-emerald-600 dark:text-emerald-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4.5 12.75l6 6 9-13.5"
-                />
+              <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
               </svg>
-              <span className="text-emerald-700 dark:text-emerald-400">
-                Copied to Clipboard!
-              </span>
+              <span>Copied!</span>
             </>
           ) : (
             <>
-              <svg
-                className="w-4 h-4 text-slate-600 dark:text-slate-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                />
+              <svg className="w-4 h-4 text-zinc-600 dark:text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
               </svg>
-              <span>Copy Report Summary</span>
+              <span>Copy Report</span>
             </>
           )}
         </button>
@@ -580,10 +441,10 @@ export default function AnalysisResult({
         <button
           type="button"
           onClick={onCompareAgain}
-          className="w-full sm:w-auto px-6 py-3 rounded-xl text-white font-semibold text-xs tracking-wide bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-white font-bold text-sm tracking-wide bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-md shadow-blue-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
           <svg
-            className="w-4 h-4"
+            className="w-4 h-4 text-blue-100"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -595,7 +456,7 @@ export default function AnalysisResult({
               d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
             />
           </svg>
-          <span>Analyze Another Resume</span>
+          <span>Analyze Another</span>
         </button>
       </div>
     </div>

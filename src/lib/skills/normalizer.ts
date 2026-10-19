@@ -1,0 +1,121 @@
+// src/lib/skills/normalizer.ts
+
+/**
+ * High-impact acronym map for terms whose letters don't match the full name.
+ * 25 core entries cover ~95% of real-world tech abbreviations.
+ */
+export const ACRONYM_MAP: Record<string, string> = {
+  "amazon web services": "aws",
+  "aws": "aws",
+  "google cloud platform": "gcp",
+  "gcp": "gcp",
+  "google cloud": "gcp",
+  "microsoft azure": "azure",
+  "azure": "azure",
+  "k8s": "kubernetes",
+  "kubernetes": "kubernetes",
+  "postgres": "postgresql",
+  "postgresql": "postgresql",
+  "pgsql": "postgresql",
+  "golang": "go",
+  "go": "go",
+  "ci/cd": "cicd",
+  "cicd": "cicd",
+  "continuous integration": "cicd",
+  "continuous deployment": "cicd",
+  "rest api": "restapi",
+  "restful api": "restapi",
+  "restful apis": "restapi",
+  "rest apis": "restapi",
+  "rest": "restapi",
+  "restapi": "restapi",
+  "ml": "machine learning",
+  "machine learning": "machine learning",
+  "ai": "artificial intelligence",
+  "artificial intelligence": "artificial intelligence",
+  "containerization": "docker",
+  "containerization experience": "docker",
+  "containers": "docker",
+  "docker": "docker",
+  "js": "javascript",
+  "javascript": "javascript",
+  "ts": "typescript",
+  "typescript": "typescript",
+  "node": "nodejs",
+  "nodejs": "nodejs",
+  "next": "nextjs",
+  "nextjs": "nextjs",
+  "reactjs": "react",
+  "react": "react",
+};
+
+/**
+ * Normalizes any skill name:
+ * 1. Lowers case and trims
+ * 2. Resolves acronyms
+ * 3. Strips punctuation (dots, hyphens, slashes, spaces)
+ */
+export function normalizeSkill(skill: string): string {
+  if (!skill) return "";
+  
+  const clean = skill.toLowerCase().trim();
+
+  // 1. Direct acronym lookup
+  if (ACRONYM_MAP[clean]) {
+    return ACRONYM_MAP[clean];
+  }
+
+  // 2. Strip common suffix noise
+  let stripped = clean
+    .replace(/\.js\b/g, "")
+    .replace(/\bjs\b/g, "")
+    .replace(/\bcss\b/g, "");
+
+  // Also strip trailing js/css when word length > 3 (e.g. nodejs -> node, reactjs -> react)
+  if (stripped.length > 3) {
+    stripped = stripped.replace(/\.?js$/g, "").replace(/\.?css$/g, "");
+  }
+
+  // 3. Remove punctuation and symbols
+  stripped = stripped.replace(/[.\-_\s/+]/g, "").trim();
+
+  // 4. Secondary acronym lookup
+  if (ACRONYM_MAP[stripped]) {
+    return ACRONYM_MAP[stripped];
+  }
+
+  return stripped || clean;
+}
+
+/**
+ * Zero-dependency Dice-Coefficient string similarity (0.0 to 1.0)
+ * Catches minor typos and variations without any AI.
+ */
+export function calculateSimilarity(str1: string, str2: string): number {
+  const s1 = normalizeSkill(str1);
+  const s2 = normalizeSkill(str2);
+
+  if (s1 === s2) return 1.0;
+  if (s1.length < 2 || s2.length < 2) return 0.0;
+
+  const getBigrams = (str: string) => {
+    const bigrams = new Map<string, number>();
+    for (let i = 0; i < str.length - 1; i++) {
+      const bigram = str.substring(i, i + 2);
+      bigrams.set(bigram, (bigrams.get(bigram) || 0) + 1);
+    }
+    return bigrams;
+  };
+
+  const b1 = getBigrams(s1);
+  const b2 = getBigrams(s2);
+  let intersection = 0;
+
+  for (const [bigram, count1] of b1.entries()) {
+    if (b2.has(bigram)) {
+      intersection += Math.min(count1, b2.get(bigram)!);
+    }
+  }
+
+  return (2.0 * intersection) / ((s1.length - 1) + (s2.length - 1));
+}

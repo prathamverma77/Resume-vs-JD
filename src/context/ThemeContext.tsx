@@ -44,6 +44,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const savedTheme = localStorage.getItem(STORAGE_KEY) as Theme | null;
 
       if (savedTheme === "light" || savedTheme === "dark") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setThemeState(savedTheme);
         applyThemeToDOM(savedTheme);
       } else {

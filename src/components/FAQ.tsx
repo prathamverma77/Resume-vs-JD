@@ -5,74 +5,54 @@ import React from "react";
 export default function FAQ() {
   const faqs = [
     {
-      question: "Do I need to create an account?",
+      question: "Do I need an account or API key?",
       answer:
-        "No. MatchEngine is completely free and requires no account creation, sign-up, or login. You can run matches right away.",
+        "No. MatchEngine runs 100% locally in-memory. There are no logins, subscriptions, or external LLM API costs.",
     },
     {
       question: "What resume formats are supported?",
       answer:
-        "MatchEngine supports PDF (.pdf) documents up to 5MB in size. The PDF must contain extractable text (standard text-based resumes; scanned image-only PDFs without OCR cannot be parsed).",
+        "PDF (.pdf) files containing selectable text up to 5MB. Scanned image-only PDFs without OCR text layers cannot be extracted.",
     },
     {
-      question: "How does MatchEngine calculate the match score?",
+      question: "How is the match score computed?",
       answer:
-        "The scoring engine parses technical skills from your resume and compares them with requirements extracted from the job description. It applies a weighted formula: 75% for core required skills and 25% for preferred skills.",
+        "A deterministic formula allocates 75% weight to core required technical skills and 25% to preferred bonus qualifications. Skills are normalized for acronyms, punctuation, and typos.",
     },
     {
-      question: "Does a missing skill mean I do not know that skill?",
+      question: "Is my resume or job description stored?",
       answer:
-        "Not necessarily. It simply means that specific keyword was not detected in the uploaded resume text. If you have that skill, explicitly mentioning it or common industry synonyms helps ATS filters identify your qualification.",
-    },
-    {
-      question: "What happens to my uploaded resume and job description?",
-      answer:
-        "All processing happens strictly in-memory during your request. MatchEngine does not use a database, does not write your files to disk, and does not store or retain your resume or job description after the analysis response is sent.",
+        "No. Data is processed exclusively in-memory for the duration of the HTTP request and discarded immediately after returning results.",
     },
   ];
 
   return (
-    <section
-      id="faq"
-      className="w-full mt-14 pt-10 border-t border-slate-200/80 dark:border-slate-800 scroll-mt-20"
-    >
-      <div className="mb-8">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-transparent dark:border-emerald-900/60 text-xs font-semibold mb-2">
-          <span>Transparency & Privacy</span>
-        </div>
-        <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-          Frequently Asked Questions
+    <section id="faq" className="w-full mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
+      <div className="mb-6">
+        <span className="text-xs md:text-sm font-mono font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+          Transparency & Privacy
+        </span>
+        <h2 className="text-lg md:text-xl font-bold text-zinc-950 dark:text-white tracking-tight mt-1">
+          Frequently asked questions
         </h2>
-        <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
-          Clear answers about how MatchEngine works and how your data is handled.
+        <p className="text-sm md:text-base font-normal text-zinc-700 dark:text-zinc-200 mt-1">
+          Common questions about the engine and data privacy.
         </p>
       </div>
 
-      <div className="space-y-3.5">
+      <div className="divide-y divide-zinc-200 dark:divide-zinc-800 border-y border-zinc-200 dark:border-zinc-800">
         {faqs.map((faq, index) => (
           <details
             key={index}
-            className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 md:p-6 shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-colors [&_summary::-webkit-details-marker]:hidden"
+            className="group py-4 transition-colors [&_summary::-webkit-details-marker]:hidden"
           >
-            <summary className="flex items-center justify-between cursor-pointer list-none select-none font-bold text-sm md:text-base text-slate-900 dark:text-white gap-4">
+            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-sm md:text-base font-bold text-zinc-950 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 gap-4">
               <span>{faq.question}</span>
-              <span className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 group-open:bg-blue-50 dark:group-open:bg-blue-950/60 text-slate-500 dark:text-slate-400 group-open:text-blue-600 dark:group-open:text-blue-400 flex items-center justify-center shrink-0 transition-transform duration-200 group-open:rotate-180">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                  />
-                </svg>
+              <span className="text-zinc-500 dark:text-zinc-400 group-open:rotate-45 transition-transform duration-200 text-lg font-mono font-bold shrink-0">
+                +
               </span>
             </summary>
-            <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300 mt-3.5 leading-relaxed pt-3 border-t border-slate-100 dark:border-slate-800">
+            <p className="text-sm font-normal text-zinc-700 dark:text-zinc-200 mt-2.5 leading-relaxed pr-8">
               {faq.answer}
             </p>
           </details>

@@ -1,4 +1,7 @@
 // lib/jd-parser.ts
+import { extractFromVocabulary } from "../skills/skills-dictionary";
+import { extractSkillsFromStructuredSections } from "./structural-extractor";
+import { normalizeSkill } from "../skills/normalizer";
 
 export interface JDExtractedData {
     role: string;
@@ -101,7 +104,10 @@ function extractResponsibilities(text: string): string[] {
 // 3. EXTRACT TECHNICAL REQUIREMENTS
 // ============================================
 function extractTechnicalRequirements(text: string): string[] {
-    // Find requirements section
+    // 1. Dynamic structural section extraction (catches unlisted & custom skills under requirements/skills blocks)
+    const structuralSkills = extractSkillsFromStructuredSections(text);
+
+    // 2. Find requirements section if present
     const section = findSection(text, [
         'requirements',
         'must have',
@@ -114,22 +120,28 @@ function extractTechnicalRequirements(text: string): string[] {
         'skills required'
     ]);
     
-    if (!section) {
-        // Fallback: extract all tech skills from entire text
-        return extractTechSkills(text);
+    let sectionSkills: string[] = [];
+    if (section) {
+        const vocabFromSection = extractSkillsFromText(section);
+        const dynamicFromSection = extractSkillsFromStructuredSections(`Skills:\n${section}`);
+        sectionSkills = [...vocabFromSection, ...dynamicFromSection];
+
+        if (sectionSkills.length === 0) {
+            const bullets = extractBulletPoints(section, 20);
+            sectionSkills = bullets.flatMap(b => [
+                ...extractSkillsFromText(b),
+                ...extractSkillsFromStructuredSections(`Skills:\n${b}`)
+            ]);
+        }
+    }
+
+    // 3. Combine structural and section skills, deduplicate canonically
+    let allSkills = deduplicateSkills([...structuralSkills, ...sectionSkills]);
+    if (allSkills.length === 0) {
+        allSkills = deduplicateSkills(extractTechSkills(text));
     }
     
-    // Extract skills from section
-    let skills = extractSkillsFromText(section);
-    
-    // If no skills found, try bullet points
-    if (skills.length === 0) {
-        const bullets = extractBulletPoints(section, 20);
-        skills = bullets.flatMap(b => extractSkillsFromText(b));
-    }
-    
-    // Remove duplicates
-    return [...new Set(skills)].slice(0, 20);
+    return allSkills.slice(0, 20);
 }
 
 // ============================================
@@ -150,14 +162,19 @@ function extractPreferredSkills(text: string): string[] {
         return [];
     }
     
-    let skills = extractSkillsFromText(section);
+    const vocab = extractSkillsFromText(section);
+    const dynamic = extractSkillsFromStructuredSections(`Skills:\n${section}`);
+    let skills = [...vocab, ...dynamic];
     
     if (skills.length === 0) {
         const bullets = extractBulletPoints(section, 10);
-        skills = bullets.flatMap(b => extractSkillsFromText(b));
+        skills = bullets.flatMap(b => [
+            ...extractSkillsFromText(b),
+            ...extractSkillsFromStructuredSections(`Skills:\n${b}`)
+        ]);
     }
     
-    return [...new Set(skills)].slice(0, 10);
+    return deduplicateSkills(skills).slice(0, 10);
 }
 
 // ============================================
@@ -207,6 +224,22 @@ function extractEducation(text: string): string[] {
 // ============================================
 
 /**
+ * Deduplicate skills canonically using normalizeSkill
+ */
+function deduplicateSkills(skills: string[]): string[] {
+    const seen = new Set<string>();
+    const result: string[] = [];
+    for (const skill of skills) {
+        const norm = normalizeSkill(skill);
+        if (norm && !seen.has(norm)) {
+            seen.add(norm);
+            result.push(skill);
+        }
+    }
+    return result;
+}
+
+/**
  * Find a section in the text by keywords
  */
 function findSection(text: string, keywords: string[]): string | null {
@@ -226,6 +259,15 @@ function findSection(text: string, keywords: string[]): string | null {
     
     // Get everything after the header until the next section
     const sectionLines: string[] = [];
+
+    // If the header line itself contains content after a colon, include it
+    const headerLine = lines[foundIndex];
+    if (headerLine.includes(':')) {
+        const afterColon = headerLine.split(/:(.+)/)[1]?.trim();
+        if (afterColon) {
+            sectionLines.push(afterColon);
+        }
+    }
     
     // Common section headers to stop at
     const stopHeaders = [
@@ -279,55 +321,19 @@ function extractBulletPoints(text: string, maxItems: number = 15): string[] {
 }
 
 /**
- * Extract skills from text (looks for tech keywords)
+ * Extract skills from text (uses shared tech vocabulary)
  */
 function extractSkillsFromText(text: string): string[] {
-    const techKeywords = [
-        // Languages
-        'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Rust',
-        'Swift', 'Kotlin', 'Scala', 'Perl', 'Haskell', 'Elixir', 'Clojure', 'Dart',
-        
-        // Frontend
-        'React', 'Angular', 'Vue', 'Next.js', 'Nuxt', 'Svelte', 'SolidJS', 'Alpine',
-        'HTML', 'CSS', 'SASS', 'SCSS', 'LESS', 'Tailwind', 'Bootstrap', 'Material UI',
-        'jQuery', 'Ember', 'Backbone',
-        
-        // Backend
-        'Node.js', 'Express', 'Django', 'Flask', 'FastAPI', 'Spring Boot', 'ASP.NET',
-        'Laravel', 'Rails', 'NestJS', 'Koa', 'Hapi', 'Play', 'Actix',
-        
-        // Database
-        'MongoDB', 'PostgreSQL', 'MySQL', 'Redis', 'Elasticsearch', 'Cassandra', 'DynamoDB',
-        'SQLite', 'MariaDB', 'CouchDB', 'Neo4j', 'GraphQL', 'Prisma', 'TypeORM', 'Sequelize',
-        
-        // Cloud & DevOps
-        'AWS', 'Azure', 'GCP', 'Docker', 'Kubernetes', 'Jenkins', 'GitHub Actions', 'GitLab CI',
-        'Terraform', 'Ansible', 'Chef', 'Puppet', 'Prometheus', 'Grafana', 'ELK',
-        
-        // Other
-        'Git', 'Linux', 'Nginx', 'Apache', 'JWT', 'OAuth', 'GraphQL', 'REST', 'WebSocket',
-        'Redis', 'RabbitMQ', 'Kafka', 'ZeroMQ', 'Firebase', 'AWS Lambda', 'Serverless',
-        'Microservices', 'Monorepo', 'TDD', 'Agile', 'Scrum', 'Kanban'
-    ];
-    
-    const foundSkills: string[] = [];
-    
-    for (const skill of techKeywords) {
-        // Create regex to match whole word
-        const regex = new RegExp(`\\b${skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
-        if (regex.test(text)) {
-            foundSkills.push(skill);
-        }
-    }
-    
-    return foundSkills;
+    return extractFromVocabulary(text);
 }
 
 /**
  * Extract tech skills from entire text (fallback)
  */
 function extractTechSkills(text: string): string[] {
-    const skills = extractSkillsFromText(text);
+    const vocabSkills = extractSkillsFromText(text);
+    const structuralSkills = extractSkillsFromStructuredSections(text);
+    const skills = deduplicateSkills([...vocabSkills, ...structuralSkills]);
     
     // If no skills found, try splitting by commas in the text
     if (skills.length === 0) {
@@ -343,7 +349,7 @@ function extractTechSkills(text: string): string[] {
         }
     }
     
-    return [...new Set(skills)].slice(0, 20);
+    return deduplicateSkills(skills).slice(0, 20);
 }
 
 /**
@@ -391,5 +397,3 @@ function cleanEducation(line: string): string {
         .trim()
         .slice(0, 100);
 }
-
-//parsed and structured the whole jd

@@ -11,50 +11,50 @@ interface NavbarProps {
 
 export default function Navbar({ showBack, onBack }: NavbarProps) {
   return (
-    <header className="w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-30 px-4 md:px-6 py-3.5 transition-colors duration-200">
+    <header className="w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md sticky top-0 z-30 px-4 md:px-6 py-3.5 transition-colors">
       <div className="max-w-5xl mx-auto flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-500 flex items-center justify-center text-white font-black text-base shadow-sm shadow-blue-500/20 tracking-tight group-hover:scale-105 transition-transform">
+        {/* Brand */}
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm tracking-wider shadow-sm shadow-blue-500/25 transition-transform group-hover:scale-105">
             <svg
-              className="w-5 h-5 text-white"
-              fill="none"
+              className="w-4.5 h-4.5"
               viewBox="0 0 24 24"
+              fill="none"
               stroke="currentColor"
               strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
+              <circle cx="12" cy="12" r="9" />
+              <path d="m9 12 2 2 4-4" />
             </svg>
           </div>
-          <div>
-            <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white block leading-tight">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-base md:text-lg tracking-tight text-zinc-950 dark:text-white">
               MatchEngine
             </span>
-            <span className="text-[10px] font-medium text-slate-400 dark:text-slate-400 tracking-wide uppercase">
-              Resume vs. JD AI
+            <span className="text-[11px] font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-900 px-2 py-0.5 rounded uppercase tracking-wider">
+              Local
             </span>
           </div>
         </Link>
 
-        {/* Navigation Anchor Links */}
+        {/* Navigation */}
         <nav
           aria-label="Main Navigation"
-          className="hidden sm:flex items-center gap-6 text-xs font-semibold text-slate-600 dark:text-slate-300"
+          className="hidden sm:flex items-center gap-7 text-sm font-semibold text-zinc-800 dark:text-zinc-200"
         >
           <Link
             href="/#how-it-works"
             className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
-            How It Works
+            How it works
           </Link>
           <Link
             href="/#features"
             className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
-            Features
+            Capabilities
           </Link>
           <Link
             href="/#faq"
@@ -64,7 +64,7 @@ export default function Navbar({ showBack, onBack }: NavbarProps) {
           </Link>
         </nav>
 
-        {/* Right Controls: ThemeToggle + Primary Action */}
+        {/* Right Controls */}
         <div className="flex items-center gap-2.5">
           <ThemeToggle />
 
@@ -72,16 +72,19 @@ export default function Navbar({ showBack, onBack }: NavbarProps) {
             <button
               type="button"
               onClick={onBack}
-              className="text-xs font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100/80 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 border border-transparent dark:border-blue-900/60 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
+              className="text-sm font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/70 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-800 px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              &larr; New Analysis
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+              <span>New Analysis</span>
             </button>
           ) : (
             <a
               href="#analyzer"
-              className="text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 px-3.5 py-1.5 rounded-lg transition-all shadow-xs cursor-pointer"
+              className="text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 px-4 py-2 rounded-lg transition-colors shadow-xs shadow-blue-500/25 cursor-pointer"
             >
-              Start Matching
+              Match Resume
             </a>
           )}
         </div>

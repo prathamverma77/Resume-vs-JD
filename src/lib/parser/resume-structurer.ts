@@ -1,93 +1,52 @@
-// lib/resume-structurer.ts
+// src/lib/parser/resume-structurer.ts
+
+import { extractSkillsFromStructuredSections } from "./structural-extractor";
+import { extractFromVocabulary } from "../skills/skills-dictionary";
+import { normalizeSkill } from "../skills/normalizer";
 
 export interface StructuredResume {
-    skills: string[];
-    email?: string;
-    phone?: string;
+  skills: string[];
+  email?: string;
+  phone?: string;
 }
 
-/**
- * Extract structured information (skills, contact info) from resume text
- */
 export function structureResume(text: string): StructuredResume {
-    const skills = extractSkills(text);
-    const email = extractEmail(text);
-    const phone = extractPhone(text);
+  // 1. Dynamic extraction from Skills section (catches unlisted & custom skills)
+  const sectionSkills = extractSkillsFromStructuredSections(text);
 
-    return { 
-        skills,
-        ...(email && { email }),
-        ...(phone && { phone }),
-    };
-}
+  // 2. Vocabulary extraction from full text (catches skills in experience/projects)
+  const vocabSkills = extractFromVocabulary(text);
 
-/**
- * Extract tech skills from text using comprehensive keywords & symbol-safe boundaries
- */
-function extractSkills(text: string): string[] {
-    const skillKeywords = [
-        'JavaScript', 'TypeScript', 'Python', 'Java', 'Core Java', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Rust',
-        'React', 'React.js', 'Reactjs', 'Angular', 'Vue', 'Next.js', 'Nextjs', 'Node.js', 'Nodejs', 
-        'Express', 'Express.js', 'Expressjs', 'Django', 'Flask', 'FastAPI',
-        'MongoDB', 'PostgreSQL', 'MySQL', 'Redis', 'DynamoDB', 'Firebase',
-        'Docker', 'Kubernetes', 'AWS', 'Azure', 'GCP', 'Linux',
-        'HTML', 'HTML-5', 'HTML5', 'CSS', 'SASS', 'Tailwind', 'Tailwind CSS', 'Bootstrap',
-        'GraphQL', 'REST API', 'RESTful API', 'RESTful APIs', 'Redux', 'Zustand', 'JWT', 'OAuth',
-        'Git', 'GitHub', 'CI/CD', 'Jenkins', 'Webpack', 'Vite', 'Vercel',
-        'MERN', 'MERN Stack', 'Machine Learning', 'AI', 'TensorFlow', 'PyTorch', 'Data Science'
-    ];
+  // 3. Merge and deduplicate by canonical normalized form
+  const seen = new Set<string>();
+  const merged: string[] = [];
 
-    const foundSkills: string[] = [];
-
-    for (const skill of skillKeywords) {
-        if (hasSkillMatch(skill, text)) {
-            foundSkills.push(normalizeSkillName(skill));
-        }
+  for (const skill of [...sectionSkills, ...vocabSkills]) {
+    const norm = normalizeSkill(skill);
+    if (norm && !seen.has(norm)) {
+      seen.add(norm);
+      merged.push(skill);
     }
+  }
 
-    // Return unique skills sorted alphabetically
-    return Array.from(new Set(foundSkills)).sort();
+  merged.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+
+  const email = extractEmail(text);
+  const phone = extractPhone(text);
+
+  return {
+    skills: merged,
+    ...(email && { email }),
+    ...(phone && { phone }),
+  };
 }
 
-/**
- * Safely check if a skill exists in text, accounting for special characters like +, #, .
- */
-function hasSkillMatch(skill: string, text: string): boolean {
-    const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const pattern = `(?:^|[^a-zA-Z0-9#+.-])${escaped}(?:$|[^a-zA-Z0-9#+.-])`;
-    const regex = new RegExp(pattern, 'i');
-    return regex.test(text);
-}
-
-/**
- * Normalize skill variations into standard display names
- */
-function normalizeSkillName(skill: string): string {
-    const lower = skill.toLowerCase();
-    if (lower === 'reactjs' || lower === 'react.js') return 'React';
-    if (lower === 'nextjs' || lower === 'next.js') return 'Next.js';
-    if (lower === 'nodejs' || lower === 'node.js') return 'Node.js';
-    if (lower === 'expressjs' || lower === 'express.js') return 'Express.js';
-    if (lower === 'tailwind css') return 'Tailwind CSS';
-    if (lower === 'html-5' || lower === 'html5') return 'HTML5';
-    if (lower === 'core java') return 'Java';
-    if (lower === 'restful api' || lower === 'restful apis') return 'REST API';
-    if (lower === 'mern stack') return 'MERN Stack';
-    return skill;
-}
-
-/**
- * Extract email address from text
- */
 function extractEmail(text: string): string | undefined {
-    const match = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-    return match ? match[0] : undefined;
-} 
+  const match = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+  return match ? match[0] : undefined;
+}
 
-/**
- * Extract phone number from text using regex 
- */
 function extractPhone(text: string): string | undefined {
-    const match = text.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
-    return match ? match[0] : undefined;
+  const match = text.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+  return match ? match[0] : undefined;
 }

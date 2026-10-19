@@ -103,17 +103,17 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between text-[var(--text-main)] font-sans antialiased selection:bg-blue-100 dark:selection:bg-blue-900/60 transition-colors duration-200">
+    <div className="min-h-screen flex flex-col justify-between text-[var(--text-main)] font-sans antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800 transition-colors">
       {/* Section 1: Navbar */}
       <Navbar />
 
       {/* Main Content Container */}
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 md:px-6 py-8 md:py-10 flex flex-col justify-between">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 md:px-6 py-6 md:py-8 flex flex-col justify-between">
         <div>
           {/* Section 2: Hero */}
           <HeroSection />
 
-          {/* Section 3: Resume Analysis Form (3 Logical Steps) */}
+          {/* Section 3: Resume Analysis Form */}
           <ComparisonSection
             file={file}
             onFileChange={setFile}
@@ -128,7 +128,7 @@ export default function Home() {
           {/* Section 4: How It Works */}
           <HowItWorks />
 
-          {/* Section 5: Features / What You'll Get */}
+          {/* Section 5: Features / Capabilities */}
           <Features />
 
           {/* Section 6: Privacy and FAQ */}
