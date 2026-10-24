@@ -108,8 +108,8 @@ export default function Home() {
       <Navbar />
 
       {/* Main Content Container */}
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 md:px-6 py-6 md:py-8 flex flex-col justify-between">
-        <div>
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 md:px-6 py-6 md:py-10 flex flex-col">
+        <div className="w-full">
           {/* Section 2: Hero */}
           <HeroSection />
 

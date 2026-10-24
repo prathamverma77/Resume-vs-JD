@@ -415,7 +415,7 @@ export default function AnalysisResult({
       {/* ============================================================
           SECTION F: RESULT ACTIONS
       ============================================================ */}
-      <div className="pt-5 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-end gap-3">
+      <div className="pt-5 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-center gap-3">
         <button
           type="button"
           onClick={handleCopyReport}

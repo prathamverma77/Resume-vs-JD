@@ -21,18 +21,19 @@ export default function ResultsPage() {
     <div className="min-h-screen flex flex-col justify-between text-[var(--text-main)] font-sans antialiased transition-colors">
       <Navbar showBack={true} onBack={handleCompareAgain} />
 
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 md:px-6 py-7 md:py-9 flex flex-col justify-between">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 md:px-6 py-7 md:py-9 flex flex-col">
         {analysisResult ? (
-          <div>
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <span className="text-xs md:text-sm font-mono font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-                  Audit Report
-                </span>
-                <h1 className="text-2xl md:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight mt-0.5">
-                  Compatibility Analysis
-                </h1>
-              </div>
+          <div className="w-full">
+            <div className="mb-8 text-center max-w-xl mx-auto">
+              <span className="inline-block text-xs md:text-sm font-mono font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">
+                Audit Report
+              </span>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+                Compatibility Analysis
+              </h1>
+              <p className="text-sm md:text-base font-normal text-zinc-600 dark:text-zinc-300 mt-1.5">
+                Detailed comparison breakdown, keyword alignment, and gap analysis.
+              </p>
             </div>
 
             <AnalysisResult

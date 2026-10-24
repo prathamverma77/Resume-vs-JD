@@ -28,19 +28,19 @@ export default function FAQ() {
 
   return (
     <section id="faq" className="w-full mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
-      <div className="mb-6">
-        <span className="text-xs md:text-sm font-mono font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+      <div className="text-center max-w-xl mx-auto mb-8">
+        <span className="inline-block text-xs md:text-sm font-mono font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">
           Transparency & Privacy
         </span>
-        <h2 className="text-lg md:text-xl font-bold text-zinc-950 dark:text-white tracking-tight mt-1">
+        <h2 className="text-xl md:text-2xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
           Frequently asked questions
         </h2>
-        <p className="text-sm md:text-base font-normal text-zinc-700 dark:text-zinc-200 mt-1">
+        <p className="text-sm md:text-base font-normal text-zinc-600 dark:text-zinc-300 mt-1.5">
           Common questions about the engine and data privacy.
         </p>
       </div>
 
-      <div className="divide-y divide-zinc-200 dark:divide-zinc-800 border-y border-zinc-200 dark:border-zinc-800">
+      <div className="max-w-3xl mx-auto divide-y divide-zinc-200 dark:divide-zinc-800 border-y border-zinc-200 dark:border-zinc-800">
         {faqs.map((faq, index) => (
           <details
             key={index}
@@ -52,7 +52,7 @@ export default function FAQ() {
                 +
               </span>
             </summary>
-            <p className="text-sm font-normal text-zinc-700 dark:text-zinc-200 mt-2.5 leading-relaxed pr-8">
+            <p className="text-sm font-normal text-zinc-600 dark:text-zinc-300 mt-2.5 leading-relaxed pr-8">
               {faq.answer}
             </p>
           </details>
