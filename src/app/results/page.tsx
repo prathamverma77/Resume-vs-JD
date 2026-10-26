@@ -25,13 +25,10 @@ export default function ResultsPage() {
         {analysisResult ? (
           <div className="w-full">
             <div className="mb-8 text-center max-w-xl mx-auto">
-              <span className="inline-block text-xs md:text-sm font-mono font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">
-                Audit Report
-              </span>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight">
+              <h1 className="text-xl md:text-2xl font-semibold text-zinc-950 dark:text-white tracking-tight">
                 Compatibility Analysis
               </h1>
-              <p className="text-sm md:text-base font-normal text-zinc-600 dark:text-zinc-300 mt-1.5">
+              <p className="text-base font-normal text-zinc-600 dark:text-zinc-300 mt-1.5">
                 Detailed comparison breakdown, keyword alignment, and gap analysis.
               </p>
             </div>

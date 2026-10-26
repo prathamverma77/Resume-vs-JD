@@ -30,11 +30,8 @@ export default function Navbar({ showBack, onBack }: NavbarProps) {
             </svg>
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-bold text-base md:text-lg tracking-tight text-zinc-950 dark:text-white">
+            <span className="font-semibold text-base md:text-lg tracking-tight text-zinc-950 dark:text-white">
               MatchEngine
-            </span>
-            <span className="text-[11px] font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-900 px-2 py-0.5 rounded uppercase tracking-wider">
-              Local
             </span>
           </div>
         </Link>
@@ -42,7 +39,7 @@ export default function Navbar({ showBack, onBack }: NavbarProps) {
         {/* Navigation */}
         <nav
           aria-label="Main Navigation"
-          className="hidden sm:flex items-center gap-7 text-sm font-semibold text-zinc-800 dark:text-zinc-200"
+          className="hidden sm:flex items-center gap-7 text-sm md:text-base font-medium text-zinc-700 dark:text-zinc-300"
         >
           <Link
             href="/#how-it-works"

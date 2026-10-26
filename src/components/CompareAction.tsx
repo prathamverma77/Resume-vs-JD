@@ -19,7 +19,7 @@ export default function CompareAction({
         type="button"
         onClick={onCompare}
         disabled={isAnalyzing}
-        className="w-full sm:w-80 h-12 rounded-xl text-white font-bold text-sm md:text-base tracking-wide bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-md shadow-blue-500/25 active:scale-[0.99] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2.5 cursor-pointer"
+        className="w-full sm:w-80 h-12 rounded-xl text-white font-semibold text-base tracking-wide bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-md shadow-blue-500/25 active:scale-[0.99] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2.5 cursor-pointer"
       >
         {isAnalyzing ? (
           <>
@@ -65,7 +65,7 @@ export default function CompareAction({
       </button>
 
       {errorMsg && (
-        <div className="mt-3.5 px-4 py-2.5 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 rounded-lg text-xs md:text-sm font-semibold text-red-800 dark:text-red-300 flex items-center gap-2.5 animate-fade-in max-w-xl">
+        <div className="mt-3.5 px-4 py-2.5 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 rounded-lg text-sm font-medium text-red-800 dark:text-red-300 flex items-center gap-2.5 animate-fade-in max-w-xl">
           <svg
             className="w-4 h-4 text-red-600 shrink-0"
             fill="none"

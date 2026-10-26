@@ -3,10 +3,10 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 py-8 px-4 md:px-6 mt-16 transition-colors">
-      <div className="max-w-5xl mx-auto flex flex-col items-center justify-center text-center gap-4 text-xs md:text-sm font-medium">
+    <footer className="w-full border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400 py-8 px-4 md:px-6 mt-16 transition-colors">
+      <div className="max-w-5xl mx-auto flex flex-col items-center justify-center text-center gap-4 text-sm font-normal">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-zinc-950 dark:text-white">
+          <span className="font-semibold text-zinc-950 dark:text-white">
             MatchEngine
           </span>
           <span className="text-zinc-400 dark:text-zinc-600">&bull;</span>
@@ -15,7 +15,7 @@ export default function Footer() {
 
         <nav
           aria-label="Footer Navigation"
-          className="flex flex-wrap items-center justify-center gap-6 text-zinc-700 dark:text-zinc-300"
+          className="flex flex-wrap items-center justify-center gap-6 text-zinc-600 dark:text-zinc-300 font-medium"
         >
           <Link
             href="/#how-it-works"
@@ -49,7 +49,7 @@ export default function Footer() {
             href="https://pratham-portfolio-sooty.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-zinc-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 underline underline-offset-2 transition-colors font-bold"
+            className="text-zinc-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 underline underline-offset-2 transition-colors font-semibold"
           >
             Pratham Verma
           </a>

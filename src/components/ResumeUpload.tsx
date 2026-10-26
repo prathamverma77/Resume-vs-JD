@@ -85,15 +85,10 @@ export default function ResumeUpload({
   return (
     <div className="flex flex-col h-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 md:p-6 transition-colors shadow-2xs">
       <div className="flex items-center justify-between mb-3.5">
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-bold text-zinc-950 dark:text-white uppercase tracking-wider">
-            Resume Document
-          </label>
-          <span className="text-xs font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-900 px-2 py-0.5 rounded font-mono">
-            PDF
-          </span>
-        </div>
-        <span className="text-xs font-mono font-medium text-zinc-600 dark:text-zinc-300">
+        <label className="text-sm font-semibold text-zinc-950 dark:text-white">
+          Resume Document
+        </label>
+        <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
           Max 5MB
         </span>
       </div>
@@ -115,7 +110,7 @@ export default function ResumeUpload({
           className={`group flex-1 min-h-[250px] md:min-h-[270px] border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
             isDragging
               ? "border-blue-600 dark:border-blue-400 bg-blue-50/50 dark:bg-blue-950/40"
-              : "border-zinc-300 dark:border-zinc-700 hover:border-blue-500 dark:hover:border-blue-400 bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-blue-50/30 dark:hover:bg-blue-950/30"
+              : "border-zinc-300 dark:border-zinc-700 hover:border-blue-500 dark:hover:border-blue-400 bg-white dark:bg-zinc-900 hover:bg-blue-50/20 dark:hover:bg-blue-950/20"
           }`}
         >
           <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-3.5 transition-colors group-hover:scale-105">
@@ -134,18 +129,18 @@ export default function ResumeUpload({
             </svg>
           </div>
           <p className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-            <span className="text-blue-600 dark:text-blue-400 underline underline-offset-2 font-bold">
+            <span className="text-blue-600 dark:text-blue-400 underline underline-offset-2 font-semibold">
               Click to upload
             </span>{" "}
             or drag and drop
           </p>
-          <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-300 font-medium">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 font-normal">
             Selectable text PDF files only
           </p>
         </div>
       ) : (
         /* Selected File Card */
-        <div className="flex-1 min-h-[250px] md:min-h-[270px] bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-700 rounded-lg p-5 flex flex-col justify-between">
+        <div className="flex-1 min-h-[250px] md:min-h-[270px] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 flex flex-col justify-between">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3.5 overflow-hidden">
               <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/20">
@@ -165,12 +160,12 @@ export default function ResumeUpload({
               </div>
               <div className="overflow-hidden">
                 <p
-                  className="text-sm md:text-base font-bold text-zinc-950 dark:text-white truncate"
+                  className="text-sm md:text-base font-semibold text-zinc-950 dark:text-white truncate"
                   title={file.name}
                 >
                   {file.name}
                 </p>
-                <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-300 mt-0.5 font-mono font-medium">
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-0.5 font-medium">
                   {formatFileSize(file.size)}
                 </p>
               </div>
@@ -197,15 +192,15 @@ export default function ResumeUpload({
             </button>
           </div>
 
-          <div className="pt-3.5 border-t border-zinc-200 dark:border-zinc-700 flex items-center justify-between text-xs md:text-sm">
-            <span className="inline-flex items-center gap-1.5 text-blue-800 dark:text-blue-300 text-xs md:text-sm font-semibold bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-800 px-2.5 py-1 rounded">
+          <div className="pt-3.5 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-sm">
+            <span className="inline-flex items-center gap-1.5 text-blue-800 dark:text-blue-300 text-sm font-medium bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-800 px-2.5 py-1 rounded">
               <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400" />
               Ready to match
             </span>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="text-xs md:text-sm font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors cursor-pointer"
+              className="text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors cursor-pointer"
             >
               Replace
             </button>

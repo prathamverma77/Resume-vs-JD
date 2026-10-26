@@ -127,13 +127,13 @@ export default function AnalysisResult({
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span
-                className={`text-2xl font-black tracking-tight leading-none ${getScoreTextColor(
+                className={`text-2xl font-bold tracking-tight leading-none ${getScoreTextColor(
                   score
                 )}`}
               >
                 {score}%
               </span>
-              <span className="text-[10px] uppercase font-mono font-bold text-zinc-500 dark:text-zinc-400 tracking-wider mt-0.5">
+              <span className="text-xs uppercase font-mono font-medium text-zinc-500 dark:text-zinc-400 tracking-wider mt-0.5">
                 Score
               </span>
             </div>
@@ -142,22 +142,22 @@ export default function AnalysisResult({
           <div>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
               <span
-                className={`px-2.5 py-0.5 rounded border text-xs font-bold tracking-tight ${getScoreBadgeColor(
+                className={`px-2.5 py-0.5 rounded border text-sm font-semibold tracking-tight ${getScoreBadgeColor(
                   score
                 )}`}
               >
                 {match?.matchLevel || "Analysis Complete"}
               </span>
               {jd?.role && (
-                <span className="text-xs font-bold text-blue-800 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-900 px-2.5 py-0.5 rounded">
+                <span className="text-sm font-semibold text-blue-800 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-900 px-2.5 py-0.5 rounded">
                   {jd.role}
                 </span>
               )}
             </div>
-            <h2 className="text-xl md:text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
+            <h2 className="text-xl md:text-2xl font-semibold tracking-tight text-zinc-950 dark:text-white">
               Compatibility Report
             </h2>
-            <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 mt-1 flex flex-wrap items-center justify-center md:justify-start gap-1.5 font-mono">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1 flex flex-wrap items-center justify-center md:justify-start gap-1.5 font-mono">
               <span className="font-semibold">{resume.fileInfo.name}</span>
               <span className="text-zinc-400 dark:text-zinc-600">&bull;</span>
               <span>{resume.pageCount} page(s)</span>
@@ -171,7 +171,7 @@ export default function AnalysisResult({
         <button
           type="button"
           onClick={onCompareAgain}
-          className="w-full md:w-auto px-4 py-2.5 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/70 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs md:text-sm font-bold tracking-wide transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+          className="w-full md:w-auto px-4 py-2.5 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/70 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-sm font-semibold tracking-wide transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
         >
           <svg
             className="w-4 h-4"
@@ -195,12 +195,12 @@ export default function AnalysisResult({
       ============================================================ */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
         <div className="bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-          <div className="flex items-center justify-between text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+          <div className="flex items-center justify-between text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
             <span>CORE TECHNICAL</span>
-            <span className="text-blue-600 dark:text-blue-400 font-extrabold">75% WT</span>
+            <span className="text-blue-600 dark:text-blue-400 font-semibold">75% WT</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-black text-zinc-950 dark:text-white">
+            <span className="text-2xl font-bold text-zinc-950 dark:text-white">
               {match?.technicalMatchScore ?? 0}%
             </span>
             <div className="w-20 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 overflow-hidden">
@@ -213,12 +213,12 @@ export default function AnalysisResult({
         </div>
 
         <div className="bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-          <div className="flex items-center justify-between text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+          <div className="flex items-center justify-between text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
             <span>PREFERRED SKILLS</span>
-            <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">25% WT</span>
+            <span className="text-indigo-600 dark:text-indigo-400 font-semibold">25% WT</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-black text-zinc-950 dark:text-white">
+            <span className="text-2xl font-bold text-zinc-950 dark:text-white">
               {match?.preferredMatchScore ?? 0}%
             </span>
             <div className="w-20 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 overflow-hidden">
@@ -231,17 +231,17 @@ export default function AnalysisResult({
         </div>
 
         <div className="bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-          <div className="text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+          <div className="text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
             CANDIDATE CONTACT
           </div>
           <p
-            className="text-sm font-bold text-zinc-950 dark:text-white truncate"
+            className="text-sm font-semibold text-zinc-950 dark:text-white truncate"
             title={resume.structuredData.email}
           >
             {resume.structuredData.email || "No email detected"}
           </p>
           <p
-            className="text-xs text-zinc-600 dark:text-zinc-300 truncate mt-0.5 font-medium"
+            className="text-sm text-zinc-600 dark:text-zinc-400 truncate mt-0.5 font-normal"
             title={resume.structuredData.phone}
           >
             {resume.structuredData.phone || "No phone detected"}
@@ -256,7 +256,7 @@ export default function AnalysisResult({
         {/* Matching Skills */}
         <div>
           <div className="flex items-center justify-between mb-2.5">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
               Matching Skills ({match?.matchingSkills.length || 0})
             </h3>
@@ -266,7 +266,7 @@ export default function AnalysisResult({
               {match.matchingSkills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="px-3 py-1.5 rounded-md bg-emerald-500/15 text-emerald-900 dark:text-emerald-200 border border-emerald-500/30 text-xs md:text-sm font-bold inline-flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-md bg-emerald-500/15 text-emerald-900 dark:text-emerald-200 border border-emerald-500/30 text-sm font-medium inline-flex items-center gap-1.5"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
                   {skill}
@@ -283,7 +283,7 @@ export default function AnalysisResult({
         {/* Missing Required Skills */}
         <div>
           <div className="flex items-center justify-between mb-2.5">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-amber-500" />
               Missing Required Skills ({match?.missingRequiredSkills.length || 0})
             </h3>
@@ -294,7 +294,7 @@ export default function AnalysisResult({
               {match.missingRequiredSkills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="px-3 py-1.5 rounded-md bg-amber-500/15 text-amber-900 dark:text-amber-200 border border-amber-500/30 text-xs md:text-sm font-bold inline-flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-md bg-amber-500/15 text-amber-900 dark:text-amber-200 border border-amber-500/30 text-sm font-medium inline-flex items-center gap-1.5"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-600 dark:bg-amber-400" />
                   {skill}
@@ -302,7 +302,7 @@ export default function AnalysisResult({
               ))}
             </div>
           ) : (
-            <div className="text-sm font-bold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+            <div className="text-sm font-medium text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
               <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
               </svg>
@@ -316,7 +316,7 @@ export default function AnalysisResult({
           match.missingPreferredSkills.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-2.5">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-indigo-500" />
                   Missing Preferred Skills ({match.missingPreferredSkills.length})
                 </h3>
@@ -325,7 +325,7 @@ export default function AnalysisResult({
                 {match.missingPreferredSkills.map((skill, idx) => (
                   <span
                     key={idx}
-                    className="px-3 py-1.5 rounded-md bg-indigo-500/15 text-indigo-900 dark:text-indigo-200 border border-indigo-500/30 text-xs md:text-sm font-bold inline-flex items-center gap-1.5"
+                    className="px-3 py-1.5 rounded-md bg-indigo-500/15 text-indigo-900 dark:text-indigo-200 border border-indigo-500/30 text-sm font-medium inline-flex items-center gap-1.5"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 dark:bg-indigo-400" />
                     {skill}
@@ -340,7 +340,7 @@ export default function AnalysisResult({
           SECTION D: ACTIONABLE RECOMMENDATIONS
       ============================================================ */}
       <div className="pt-5 border-t border-zinc-200 dark:border-zinc-800">
-        <h3 className="text-sm md:text-base font-bold uppercase tracking-wider text-zinc-950 dark:text-white mb-3">
+        <h3 className="text-base font-semibold text-zinc-950 dark:text-white mb-3">
           Actionable Recommendations
         </h3>
         <div className="space-y-2.5">
@@ -348,9 +348,9 @@ export default function AnalysisResult({
             match.recommendations.map((rec, idx) => (
               <div
                 key={idx}
-                className="p-3.5 bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/50 rounded-lg flex items-start gap-3 text-sm text-zinc-800 dark:text-zinc-200 font-medium"
+                className="p-3.5 bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/50 rounded-lg flex items-start gap-3 text-sm md:text-base text-zinc-800 dark:text-zinc-200 font-normal"
               >
-                <span className="text-xs font-mono font-extrabold text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+                <span className="text-sm font-mono font-semibold text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
                   0{idx + 1}
                 </span>
                 <span className="leading-relaxed">{rec}</span>
@@ -368,17 +368,17 @@ export default function AnalysisResult({
           SECTION E: EXTRACTED DETAILS COMPARISON
       ============================================================ */}
       <div className="pt-5 border-t border-zinc-200 dark:border-zinc-800">
-        <h3 className="text-sm md:text-base font-bold uppercase tracking-wider text-zinc-950 dark:text-white mb-3">
+        <h3 className="text-base font-semibold text-zinc-950 dark:text-white mb-3">
           Job Requirements Context
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           {/* Education Prerequisites */}
           <div className="p-4 bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg space-y-2.5">
-            <span className="text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 block">
+            <span className="text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300 block">
               ACADEMIC PREREQUISITES
             </span>
             {jd?.education && jd.education.length > 0 ? (
-              <ul className="text-zinc-800 dark:text-zinc-200 space-y-1 list-disc list-inside font-medium">
+              <ul className="text-zinc-800 dark:text-zinc-200 space-y-1 list-disc list-inside font-normal">
                 {jd.education.map((edu, i) => (
                   <li key={i}>{edu}</li>
                 ))}
@@ -392,11 +392,11 @@ export default function AnalysisResult({
 
           {/* Key Responsibilities */}
           <div className="p-4 bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg space-y-2.5">
-            <span className="text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 block">
+            <span className="text-xs font-mono font-semibold text-zinc-700 dark:text-zinc-300 block">
               TARGET RESPONSIBILITIES
             </span>
             {jd?.responsibilities && jd.responsibilities.length > 0 ? (
-              <ul className="text-zinc-800 dark:text-zinc-200 space-y-1 list-disc list-inside max-h-32 overflow-y-auto pr-1 font-medium">
+              <ul className="text-zinc-800 dark:text-zinc-200 space-y-1 list-disc list-inside max-h-32 overflow-y-auto pr-1 font-normal">
                 {jd.responsibilities.slice(0, 5).map((resp, i) => (
                   <li key={i} className="line-clamp-2">
                     {resp}
@@ -419,7 +419,7 @@ export default function AnalysisResult({
         <button
           type="button"
           onClick={handleCopyReport}
-          className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold text-sm tracking-wide border border-zinc-300 dark:border-zinc-700 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-semibold text-sm md:text-base tracking-wide border border-zinc-300 dark:border-zinc-700 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
         >
           {copied ? (
             <>
@@ -441,7 +441,7 @@ export default function AnalysisResult({
         <button
           type="button"
           onClick={onCompareAgain}
-          className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-white font-bold text-sm tracking-wide bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-md shadow-blue-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-white font-semibold text-sm md:text-base tracking-wide bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-md shadow-blue-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
           <svg
             className="w-4 h-4 text-blue-100"
