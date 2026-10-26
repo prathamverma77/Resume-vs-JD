@@ -8,6 +8,7 @@ interface TestCase {
   resumeText: string;
   jdText: string;
   expectedMinScore: number;
+  expectedMaxScore?: number;
   expectedMatchingSkills: string[];
 }
 
@@ -90,6 +91,14 @@ Preferred Skills:
       "Go"
     ],
   },
+  {
+    name: "7. Random / Invalid JD Text (No requirements detected -> 0% score)",
+    resumeText: "Skills: React, Node.js\nExperience:\nFullstack developer.",
+    jdText: "this is not a job desc am just testing it",
+    expectedMinScore: 0,
+    expectedMaxScore: 0,
+    expectedMatchingSkills: [],
+  },
 ];
 
 console.log("=================================================");
@@ -137,7 +146,7 @@ if (sim1 >= 0.85) {
 }
 
 console.log("\n--- Integration Tests: End-to-End Pipeline ---");
-for (const tc of testCases) {
+for (const tc of testCases as (typeof testCases[number] & { expectedMaxScore?: number })[]) {
   console.log(`\nRunning: ${tc.name}`);
   const structuredResume = structureResume(tc.resumeText);
   const parsedJD = parseJD(tc.jdText);
@@ -152,7 +161,11 @@ for (const tc of testCases) {
   let testPassed = true;
 
   if (scoreResult.overallScore < tc.expectedMinScore) {
-    console.error(`  ❌ Score ${scoreResult.overallScore}% < expected ${tc.expectedMinScore}%`);
+    console.error(`  ❌ Score ${scoreResult.overallScore}% < expected min ${tc.expectedMinScore}%`);
+    testPassed = false;
+  }
+  if (tc.expectedMaxScore !== undefined && scoreResult.overallScore > tc.expectedMaxScore) {
+    console.error(`  ❌ Score ${scoreResult.overallScore}% > expected max ${tc.expectedMaxScore}%`);
     testPassed = false;
   }
 

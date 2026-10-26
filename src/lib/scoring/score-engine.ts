@@ -63,23 +63,24 @@ export function calculateScore(
     );
 
     // 4. Calculate Scores
-    const technicalMatchScore =
-        requiredSkills.length > 0
-            ? Math.round((matchingRequired.length / requiredSkills.length) * 100)
-            : 100;
+    const hasRequired = requiredSkills.length > 0;
+    const hasPreferred = preferredSkills.length > 0;
 
-    const preferredMatchScore =
-        preferredSkills.length > 0
-            ? Math.round((matchingPreferred.length / preferredSkills.length) * 100)
-            : 100;
+    const technicalMatchScore = hasRequired
+        ? Math.round((matchingRequired.length / requiredSkills.length) * 100)
+        : 0;
+
+    const preferredMatchScore = hasPreferred
+        ? Math.round((matchingPreferred.length / preferredSkills.length) * 100)
+        : 0;
 
     // Weighted Overall Score: 75% Required Skills + 25% Preferred Skills
     let overallScore: number;
-    if (requiredSkills.length === 0 && preferredSkills.length === 0) {
-        overallScore = 100;
-    } else if (preferredSkills.length === 0) {
+    if (!hasRequired && !hasPreferred) {
+        overallScore = 0;
+    } else if (!hasPreferred) {
         overallScore = technicalMatchScore;
-    } else if (requiredSkills.length === 0) {
+    } else if (!hasRequired) {
         overallScore = preferredMatchScore;
     } else {
         overallScore = Math.round(technicalMatchScore * 0.75 + preferredMatchScore * 0.25);
@@ -95,26 +96,32 @@ export function calculateScore(
     // 6. Generate Actionable Recommendations
     const recommendations: string[] = [];
 
-    if (missingRequiredSkills.length > 0) {
+    if (!hasRequired && !hasPreferred) {
         recommendations.push(
-            `Add core required skills to your resume: ${missingRequiredSkills.slice(0, 3).join(", ")}.`
-        );
-    }
-
-    if (missingPreferredSkills.length > 0) {
-        recommendations.push(
-            `Highlight preferred skills if you have experience with them: ${missingPreferredSkills.slice(0, 3).join(", ")}.`
-        );
-    }
-
-    if (overallScore < 60) {
-        recommendations.push(
-            "Tailor your project descriptions and skill sections to align more closely with the job requirements."
+            "No technical skills or job requirements were identified in the provided job description. Please provide a detailed job description with technical qualifications to get an accurate match score."
         );
     } else {
-        recommendations.push(
-            "Your profile matches the core requirements well! Ensure your experience bullets quantify achievements."
-        );
+        if (missingRequiredSkills.length > 0) {
+            recommendations.push(
+                `Add core required skills to your resume: ${missingRequiredSkills.slice(0, 3).join(", ")}.`
+            );
+        }
+
+        if (missingPreferredSkills.length > 0) {
+            recommendations.push(
+                `Highlight preferred skills if you have experience with them: ${missingPreferredSkills.slice(0, 3).join(", ")}.`
+            );
+        }
+
+        if (overallScore < 60) {
+            recommendations.push(
+                "Tailor your project descriptions and skill sections to align more closely with the job requirements."
+            );
+        } else {
+            recommendations.push(
+                "Your profile matches the core requirements well! Ensure your experience bullets quantify achievements."
+            );
+        }
     }
 
     return {

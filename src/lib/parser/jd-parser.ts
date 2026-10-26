@@ -53,8 +53,18 @@ function extractRole(text: string): string {
         }
     }
     
-    // If no role indicator found, return first non-empty line
-    return cleanRole(lines[0] || 'Not specified');
+    // If no role indicator found, check if first line looks like a plausible role title
+    if (lines.length > 0) {
+        const firstLine = lines[0];
+        const isSentence = /\b(this is|i am|we are|just testing|am just|hello|please|test|random)\b/i.test(firstLine);
+        const hasTitleWord = /\b(engineer|developer|designer|architect|lead|manager|analyst|specialist|consultant|administrator|scientist|director|vp|head|officer|intern|associate|programmer|qa|tester|devops|sre)\b/i.test(firstLine);
+        
+        if (!isSentence && (hasTitleWord || (firstLine.length < 50 && !firstLine.includes('.')))) {
+            return cleanRole(firstLine);
+        }
+    }
+
+    return 'Role not specified';
 }
 
 function cleanRole(role: string): string {

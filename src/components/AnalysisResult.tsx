@@ -148,7 +148,7 @@ export default function AnalysisResult({
               >
                 {match?.matchLevel || "Analysis Complete"}
               </span>
-              {jd?.role && (
+              {jd?.role && jd.role !== "Role not specified" && jd.role !== "Not specified" && (
                 <span className="text-sm font-semibold text-blue-800 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-900 px-2.5 py-0.5 rounded">
                   {jd.role}
                 </span>
@@ -210,6 +210,9 @@ export default function AnalysisResult({
               />
             </div>
           </div>
+          {(!jd?.technical_req || jd.technical_req.length === 0) && (
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 font-mono">0 requirements in JD</p>
+          )}
         </div>
 
         <div className="bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
@@ -219,15 +222,18 @@ export default function AnalysisResult({
           </div>
           <div className="flex items-center justify-between">
             <span className="text-2xl font-bold text-zinc-950 dark:text-white">
-              {match?.preferredMatchScore ?? 0}%
+              {jd?.preferred_skills && jd.preferred_skills.length === 0 ? "N/A" : `${match?.preferredMatchScore ?? 0}%`}
             </span>
             <div className="w-20 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-indigo-600 dark:bg-indigo-500 h-2 rounded-full transition-all duration-500"
-                style={{ width: `${match?.preferredMatchScore ?? 0}%` }}
+                style={{ width: `${jd?.preferred_skills && jd.preferred_skills.length === 0 ? 0 : match?.preferredMatchScore ?? 0}%` }}
               />
             </div>
           </div>
+          {jd?.preferred_skills && jd.preferred_skills.length === 0 && (
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 font-mono">None listed in JD</p>
+          )}
         </div>
 
         <div className="bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
@@ -288,7 +294,11 @@ export default function AnalysisResult({
               Missing Required Skills ({match?.missingRequiredSkills.length || 0})
             </h3>
           </div>
-          {match?.missingRequiredSkills &&
+          {(!jd?.technical_req || jd.technical_req.length === 0) ? (
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 italic">
+              No technical requirements were identified in the job description.
+            </p>
+          ) : match?.missingRequiredSkills &&
           match.missingRequiredSkills.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {match.missingRequiredSkills.map((skill, idx) => (
