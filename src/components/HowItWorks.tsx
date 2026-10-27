@@ -3,54 +3,98 @@ import React from "react";
 export default function HowItWorks() {
   const steps = [
     {
-      num: "01",
-      title: "Upload Resume",
-      desc: "Upload candidate PDF. Extracted in-memory without persistent cloud storage.",
+      num: "1",
+      title: "Upload a resume",
+      desc: "Provide a selectable-text PDF. Text is extracted in-memory without persistent server storage.",
     },
     {
-      num: "02",
-      title: "Provide Requirements",
-      desc: "Paste job description. Identifies required tech, acronyms, and preferred skills.",
+      num: "2",
+      title: "Provide job requirements",
+      desc: "Paste role responsibilities and qualifications. The parser identifies required and preferred skills.",
     },
     {
-      num: "03",
-      title: "Inspect Match",
-      desc: "Review compatibility score, missing qualifications, and prioritized recommendations.",
+      num: "3",
+      title: "Review the analysis",
+      desc: "Inspect transparent keyword alignment, missing requirements, and prioritized improvement steps.",
     },
   ];
 
   return (
-    <section id="how-it-works" className="w-full mt-16 pt-10 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
-      <div className="text-center max-w-xl mx-auto mb-8">
-        <h2 className="text-xl md:text-2xl font-semibold text-zinc-950 dark:text-white tracking-tight">
-          How it works
+    <section id="how-it-works" className="w-full scroll-mt-24 pb-10 md:pb-20">
+      {/* Centered Editorial Header */}
+      <div className="mb-14 md:mb-20 text-center max-w-2xl mx-auto">
+        <span className="font-serif italic text-base sm:text-lg text-[#82847E] dark:text-[#72736C] block mb-2 select-none">
+          Our Analysis Process
+        </span>
+        <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] text-[#141514] dark:text-[#F4F2EE] tracking-[-0.02em] font-normal leading-tight">
+          Here&apos;s how it works
         </h2>
-        <p className="text-base font-normal text-zinc-600 dark:text-zinc-300 mt-1.5">
-          Fast, deterministic keyword alignment in three simple steps.
+        <p className="text-base sm:text-lg text-[#5C5E58] dark:text-[#9E9F97] mt-3 leading-relaxed font-sans">
+          Deterministic alignment in three straightforward steps.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {steps.map((item) => (
-          <div
-            key={item.num}
-            className="p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-blue-500/40 dark:hover:border-blue-500/40 bg-white dark:bg-zinc-900 transition-all flex flex-col items-center text-center shadow-2xs group"
-          >
-            <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-900 flex items-center justify-center mb-3.5 transition-transform group-hover:scale-110">
-              <span className="text-sm font-mono font-semibold text-blue-600 dark:text-blue-400">
-                {item.num}
-              </span>
-            </div>
-            <div>
-              <h3 className="text-base font-semibold text-zinc-950 dark:text-white mb-2">
-                {item.title}
-              </h3>
-              <p className="text-[15px] font-normal text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                {item.desc}
-              </p>
-            </div>
+      {/* Rainbow Arch Cards: Compact Height & Tighter Proportions */}
+      <div className="relative flex flex-col md:flex-row items-center justify-center max-w-5xl mx-auto gap-8 md:gap-2.5 lg:gap-1 px-4 sm:px-6 pt-6 pb-6">
+        {/* Card 1: Left Wing of Rainbow (Tilted outward) */}
+        <div className="relative z-10 w-full max-w-[310px] sm:max-w-[320px] md:w-[290px] lg:w-[320px] h-[260px] sm:h-[280px] md:h-[295px] bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] rounded-[24px] p-6 sm:p-7 flex flex-col justify-between shadow-[0_15px_35px_rgba(0,0,0,0.05)] dark:shadow-[0_15px_35px_rgba(0,0,0,0.3)] transform md:origin-bottom-right md:-rotate-[8deg] md:translate-y-5 transition-all duration-300 ease-out hover:z-30 hover:rotate-0 hover:-translate-y-2 hover:shadow-2xl cursor-default">
+          {/* Top Left: Clean Step Digit */}
+          <div>
+            <span className="text-5xl sm:text-6xl font-sans font-normal text-[#141514] dark:text-[#F4F2EE] leading-none select-none tracking-tight">
+              {steps[0].num}
+            </span>
           </div>
-        ))}
+
+          {/* Bottom Left: Title & Description */}
+          <div className="text-left">
+            <h3 className="text-lg sm:text-xl font-medium text-[#141514] dark:text-[#F4F2EE] mb-1.5">
+              {steps[0].title}
+            </h3>
+            <p className="text-xs sm:text-[13px] text-[#5C5E58] dark:text-[#9E9F97] leading-relaxed max-w-[260px]">
+              {steps[0].desc}
+            </p>
+          </div>
+        </div>
+
+        {/* Card 2: Center Apex of Rainbow (Elevated Summit) */}
+        <div className="relative z-20 w-full max-w-[310px] sm:max-w-[320px] md:w-[290px] lg:w-[320px] h-[260px] sm:h-[280px] md:h-[295px] bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] rounded-[24px] p-6 sm:p-7 flex flex-col justify-between shadow-[0_20px_45px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_45px_rgba(0,0,0,0.4)] transform md:origin-bottom md:rotate-0 md:-translate-y-4 transition-all duration-300 ease-out hover:z-30 hover:-translate-y-7 hover:shadow-2xl cursor-default">
+          {/* Top Left: Clean Step Digit */}
+          <div>
+            <span className="text-5xl sm:text-6xl font-sans font-normal text-[#141514] dark:text-[#F4F2EE] leading-none select-none tracking-tight">
+              {steps[1].num}
+            </span>
+          </div>
+
+          {/* Bottom Left: Title & Description */}
+          <div className="text-left">
+            <h3 className="text-lg sm:text-xl font-medium text-[#141514] dark:text-[#F4F2EE] mb-1.5">
+              {steps[1].title}
+            </h3>
+            <p className="text-xs sm:text-[13px] text-[#5C5E58] dark:text-[#9E9F97] leading-relaxed max-w-[260px]">
+              {steps[1].desc}
+            </p>
+          </div>
+        </div>
+
+        {/* Card 3: Right Wing of Rainbow (Tilted outward) */}
+        <div className="relative z-10 w-full max-w-[310px] sm:max-w-[320px] md:w-[290px] lg:w-[320px] h-[260px] sm:h-[280px] md:h-[295px] bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] rounded-[24px] p-6 sm:p-7 flex flex-col justify-between shadow-[0_15px_35px_rgba(0,0,0,0.05)] dark:shadow-[0_15px_35px_rgba(0,0,0,0.3)] transform md:origin-bottom-left md:rotate-[8deg] md:translate-y-5 transition-all duration-300 ease-out hover:z-30 hover:rotate-0 hover:-translate-y-2 hover:shadow-2xl cursor-default">
+          {/* Top Left: Clean Step Digit */}
+          <div>
+            <span className="text-5xl sm:text-6xl font-sans font-normal text-[#141514] dark:text-[#F4F2EE] leading-none select-none tracking-tight">
+              {steps[2].num}
+            </span>
+          </div>
+
+          {/* Bottom Left: Title & Description */}
+          <div className="text-left">
+            <h3 className="text-lg sm:text-xl font-medium text-[#141514] dark:text-[#F4F2EE] mb-1.5">
+              {steps[2].title}
+            </h3>
+            <p className="text-xs sm:text-[13px] text-[#5C5E58] dark:text-[#9E9F97] leading-relaxed max-w-[260px]">
+              {steps[2].desc}
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );

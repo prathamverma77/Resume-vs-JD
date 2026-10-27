@@ -8,6 +8,7 @@ import {
   ComparisonSection,
   HowItWorks,
   Features,
+  PrivacySection,
   FAQ,
   Footer,
 } from "@/components";
@@ -103,13 +104,16 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between text-[var(--text-main)] font-sans antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800 transition-colors">
+    <div className="relative min-h-screen flex flex-col justify-between bg-[#FFFDF9] dark:bg-[#121312] text-[#141514] dark:text-[#F4F2EE] font-sans antialiased overflow-x-hidden transition-colors">
+      {/* Luminous Warm Pastel Aura (Peach & Blush Glow) */}
+      <div className="luminous-glow" aria-hidden="true" />
+
       {/* Section 1: Navbar */}
       <Navbar />
 
-      {/* Main Content Container */}
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 md:px-6 py-6 md:py-10 flex flex-col">
-        <div className="w-full">
+      {/* Main Content Container with Spacious Editorial Rhythm */}
+      <main className="relative z-10 flex-1 max-w-[1060px] w-full mx-auto px-6 sm:px-8 md:px-10 py-10 md:py-16 flex flex-col">
+        <div className="w-full space-y-20 md:space-y-28">
           {/* Section 2: Hero */}
           <HeroSection />
 
@@ -128,15 +132,18 @@ export default function Home() {
           {/* Section 4: How It Works */}
           <HowItWorks />
 
-          {/* Section 5: Features / Capabilities */}
+          {/* Section 5: Capabilities */}
           <Features />
 
-          {/* Section 6: Privacy and FAQ */}
+          {/* Section 6: In-Memory Privacy Assurance */}
+          <PrivacySection />
+
+          {/* Section 7: FAQ */}
           <FAQ />
         </div>
       </main>
 
-      {/* Section 7: Footer */}
+      {/* Section 8: Footer */}
       <Footer />
     </div>
   );

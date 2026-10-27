@@ -13,7 +13,7 @@ export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
   if (!mounted) {
     return (
       <div
-        className={`w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-800/50 ${className}`}
+        className={`w-7 h-7 rounded-full border border-[#EAE4DC] dark:border-[#2F302C] bg-white dark:bg-[#1B1C1A] ${className}`}
         aria-hidden="true"
       />
     );
@@ -27,11 +27,11 @@ export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
       onClick={toggleTheme}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className={`w-8 h-8 rounded-md inline-flex items-center justify-center transition-colors border border-zinc-200 dark:border-zinc-800 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-850 cursor-pointer ${className}`}
+      className={`w-7 h-7 rounded-full inline-flex items-center justify-center transition-colors border border-[#EAE4DC] dark:border-[#2F302C] text-[#5C5E58] hover:text-[#141514] dark:text-[#9E9F97] dark:hover:text-[#F4F2EE] bg-white dark:bg-[#1B1C1A] hover:bg-[#FAF7F2] dark:hover:bg-[#222320] cursor-pointer shadow-xs ${className}`}
     >
       {isDark ? (
         <svg
-          className="w-4 h-4"
+          className="w-3.5 h-3.5"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -45,7 +45,7 @@ export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
         </svg>
       ) : (
         <svg
-          className="w-4 h-4"
+          className="w-3.5 h-3.5"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

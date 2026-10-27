@@ -38,25 +38,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Initialize theme from localStorage or system preference on mount
+  // Initialize theme from localStorage on mount (default to light)
   useEffect(() => {
     try {
       const savedTheme = localStorage.getItem(STORAGE_KEY) as Theme | null;
 
-      if (savedTheme === "light" || savedTheme === "dark") {
+      if (savedTheme === "dark") {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setThemeState(savedTheme);
-        applyThemeToDOM(savedTheme);
+        setThemeState("dark");
+        applyThemeToDOM("dark");
       } else {
-        const prefersDark = window.matchMedia(
-          "(prefers-color-scheme: dark)"
-        ).matches;
-        const initialTheme: Theme = prefersDark ? "dark" : "light";
-        setThemeState(initialTheme);
-        applyThemeToDOM(initialTheme);
+        setThemeState("light");
+        applyThemeToDOM("light");
       }
     } catch {
-      // Fallback if localStorage or matchMedia is restricted
       applyThemeToDOM("light");
     } finally {
       setMounted(true);

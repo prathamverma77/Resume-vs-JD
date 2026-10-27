@@ -15,18 +15,18 @@ export default function JobDescriptionInput({
   const wordCount = value.trim() ? value.trim().split(/\s+/).length : 0;
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 md:p-6 transition-colors shadow-2xs">
-      <div className="flex items-center justify-between mb-3.5">
-        <label className="text-sm font-semibold text-zinc-950 dark:text-white">
+    <div className="flex flex-col h-full bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] rounded-2xl p-6 shadow-xs transition-colors">
+      <div className="flex items-center justify-between mb-3">
+        <label className="text-xs font-medium text-[#141514] dark:text-[#F4F2EE]">
           Job Description
         </label>
         {value ? (
           <div className="flex items-center gap-3">
             <span
-              className={`text-sm font-medium ${
+              className={`text-[11px] font-mono ${
                 charCount > 30000
-                  ? "text-red-600 font-semibold"
-                  : "text-zinc-600 dark:text-zinc-400"
+                  ? "text-[#B83232] dark:text-[#E55353] font-medium"
+                  : "text-[#5C5E58] dark:text-[#9E9F97]"
               }`}
             >
               {wordCount} words &bull; {charCount.toLocaleString()} chars
@@ -35,13 +35,13 @@ export default function JobDescriptionInput({
             <button
               type="button"
               onClick={() => onChange("")}
-              className="text-sm font-semibold text-zinc-600 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 transition-colors cursor-pointer"
+              className="text-[11px] font-medium text-[#82847E] hover:text-[#B83232] transition-colors cursor-pointer"
             >
               Clear
             </button>
           </div>
         ) : (
-          <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+          <span className="text-[11px] text-[#82847E] dark:text-[#72736C]">
             Min 30 chars
           </span>
         )}
@@ -50,8 +50,8 @@ export default function JobDescriptionInput({
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Paste role requirements, technical skills, and key responsibilities..."
-        className="flex-1 w-full min-h-[250px] md:min-h-[270px] p-4 text-sm md:text-base text-zinc-950 dark:text-zinc-50 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:border-blue-400 dark:focus:ring-blue-400/20 resize-none leading-relaxed transition-all placeholder:text-zinc-400 dark:placeholder:text-zinc-500 font-sans"
+        placeholder="Paste role requirements, key responsibilities, qualifications, and preferred technical skills..."
+        className="flex-1 w-full min-h-[340px] sm:min-h-[380px] p-5 text-xs md:text-sm text-[#141514] dark:text-[#F4F2EE] bg-[#FAF7F2]/60 dark:bg-[#161715] border border-[#EAE4DC] dark:border-[#2F302C] rounded-xl focus:outline-none focus:border-[#141514] dark:focus:border-[#F4F2EE] focus:bg-white dark:focus:bg-[#1B1C1A] resize-none leading-relaxed transition-colors placeholder:text-[#82847E] font-sans"
       />
     </div>
   );

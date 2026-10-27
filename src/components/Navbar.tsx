@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 
@@ -10,18 +10,20 @@ interface NavbarProps {
 }
 
 export default function Navbar({ showBack, onBack }: NavbarProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
-    <header className="w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md sticky top-0 z-30 px-4 md:px-6 py-3.5 transition-colors">
-      <div className="max-w-5xl mx-auto flex items-center justify-between">
+    <header className="w-full border-b border-[#EAE4DC]/60 dark:border-[#2F302C]/60 bg-[#FFFDF9]/80 dark:bg-[#121312]/80 backdrop-blur-md sticky top-0 z-30 transition-colors">
+      <div className="max-w-[1060px] mx-auto px-6 sm:px-8 md:px-10 h-14 flex items-center justify-between">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm tracking-wider shadow-sm shadow-blue-500/25 transition-transform group-hover:scale-105">
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="w-6 h-6 rounded-md bg-[#111210] text-white dark:bg-[#F4F2EE] dark:text-[#111210] flex items-center justify-center font-semibold text-xs tracking-tight shrink-0 shadow-xs">
             <svg
-              className="w-4.5 h-4.5"
+              className="w-3.5 h-3.5"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2.5"
+              strokeWidth="2.2"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
@@ -29,63 +31,108 @@ export default function Navbar({ showBack, onBack }: NavbarProps) {
               <path d="m9 12 2 2 4-4" />
             </svg>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-base md:text-lg tracking-tight text-zinc-950 dark:text-white">
-              MatchEngine
-            </span>
-          </div>
+          <span className="font-semibold text-sm tracking-tight text-[#141514] dark:text-[#F4F2EE]">
+            MatchEngine
+          </span>
         </Link>
 
-        {/* Navigation */}
-        <nav
-          aria-label="Main Navigation"
-          className="hidden sm:flex items-center gap-7 text-sm md:text-base font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          <Link
-            href="/#how-it-works"
-            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        {/* Desktop Navigation */}
+        {!showBack && (
+          <nav
+            aria-label="Main Navigation"
+            className="hidden md:flex items-center gap-7 text-xs sm:text-[13px] font-medium text-[#5C5E58] dark:text-[#9E9F97]"
           >
-            How it works
-          </Link>
-          <Link
-            href="/#features"
-            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-          >
-            Capabilities
-          </Link>
-          <Link
-            href="/#faq"
-            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-          >
-            FAQ
-          </Link>
-        </nav>
+            <Link
+              href="/#how-it-works"
+              className="hover:text-[#141514] dark:hover:text-[#F4F2EE] transition-colors"
+            >
+              How It Works
+            </Link>
+            <Link
+              href="/#capabilities"
+              className="hover:text-[#141514] dark:hover:text-[#F4F2EE] transition-colors"
+            >
+              Capabilities
+            </Link>
+            <Link
+              href="/#faq"
+              className="hover:text-[#141514] dark:hover:text-[#F4F2EE] transition-colors"
+            >
+              FAQ
+            </Link>
+          </nav>
+        )}
 
         {/* Right Controls */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <ThemeToggle />
 
           {showBack && onBack ? (
             <button
               type="button"
               onClick={onBack}
-              className="text-sm font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/70 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-800 px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="text-xs font-semibold text-[#141514] dark:text-[#F4F2EE] bg-white hover:bg-[#FAF7F2] dark:bg-[#1B1C1A] dark:hover:bg-[#222320] border border-[#EAE4DC] dark:border-[#2F302C] px-3.5 py-1.5 rounded-full transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <svg className="w-3.5 h-3.5 text-[#5C5E58] dark:text-[#9E9F97]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
-              <span>New Analysis</span>
+              <span>Back to Matcher</span>
             </button>
           ) : (
             <a
               href="#analyzer"
-              className="text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 px-4 py-2 rounded-lg transition-colors shadow-xs shadow-blue-500/25 cursor-pointer"
+              className="text-xs font-semibold text-white bg-[#111210] hover:bg-neutral-800 dark:bg-[#F4F2EE] dark:text-[#121312] dark:hover:bg-white px-4 py-2 rounded-full transition-all shadow-xs cursor-pointer"
             >
-              Match Resume
+              Analyze Resume
             </a>
+          )}
+
+          {/* Mobile Menu Toggle */}
+          {!showBack && (
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden text-[#5C5E58] dark:text-[#9E9F97] hover:text-[#141514] dark:hover:text-[#F4F2EE] p-1.5 rounded"
+              aria-label="Toggle navigation menu"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
           )}
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {!showBack && mobileMenuOpen && (
+        <div className="md:hidden border-t border-[#EAE4DC] dark:border-[#2F302C] bg-[#FFFDF9] dark:bg-[#121312] px-6 py-4 flex flex-col gap-3 text-xs font-medium text-[#5C5E58] dark:text-[#9E9F97]">
+          <Link
+            href="/#how-it-works"
+            onClick={() => setMobileMenuOpen(false)}
+            className="py-1 hover:text-[#141514] dark:hover:text-[#F4F2EE]"
+          >
+            How It Works
+          </Link>
+          <Link
+            href="/#capabilities"
+            onClick={() => setMobileMenuOpen(false)}
+            className="py-1 hover:text-[#141514] dark:hover:text-[#F4F2EE]"
+          >
+            Capabilities
+          </Link>
+          <Link
+            href="/#faq"
+            onClick={() => setMobileMenuOpen(false)}
+            className="py-1 hover:text-[#141514] dark:hover:text-[#F4F2EE]"
+          >
+            FAQ
+          </Link>
+        </div>
+      )}
     </header>
   );
 }

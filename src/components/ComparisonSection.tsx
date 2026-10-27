@@ -27,8 +27,19 @@ export default function ComparisonSection({
   onError,
 }: ComparisonSectionProps) {
   return (
-    <section id="analyzer" className="w-full scroll-mt-20">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch mb-4">
+    <section id="analyzer" className="w-full scroll-mt-24">
+      {/* Section Header: Centered Editorial Header */}
+      <div className="mb-10 md:mb-12 text-center max-w-2xl mx-auto">
+        <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] text-[#141514] dark:text-[#F4F2EE] tracking-[-0.02em] font-normal leading-tight">
+          Analyze a resume against a job
+        </h2>
+        <p className="text-base sm:text-lg text-[#5C5E58] dark:text-[#9E9F97] mt-3 leading-relaxed font-sans">
+          Upload a candidate resume PDF and provide the target job requirements to generate an alignment report.
+        </p>
+      </div>
+
+      {/* Two-Column Form */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch mb-6 md:mb-8">
         <ResumeUpload
           file={file}
           onFileChange={onFileChange}
@@ -40,6 +51,7 @@ export default function ComparisonSection({
         />
       </div>
 
+      {/* Analysis Action */}
       <CompareAction
         isAnalyzing={isAnalyzing}
         onCompare={onCompare}

@@ -49,7 +49,7 @@ export default function ResumeUpload({
         onFileChange(droppedFile);
         onError?.(null);
       } else {
-        onError?.("Only PDF files are supported. Please upload a valid .pdf file.");
+        onError?.("Only PDF files are supported. Please upload a valid .pdf resume.");
       }
     }
   };
@@ -65,7 +65,7 @@ export default function ResumeUpload({
         onFileChange(selectedFile);
         onError?.(null);
       } else {
-        onError?.("Only PDF files are supported. Please upload a valid .pdf file.");
+        onError?.("Only PDF files are supported. Please upload a valid .pdf resume.");
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
@@ -83,12 +83,12 @@ export default function ResumeUpload({
   };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 md:p-6 transition-colors shadow-2xs">
-      <div className="flex items-center justify-between mb-3.5">
-        <label className="text-sm font-semibold text-zinc-950 dark:text-white">
-          Resume Document
+    <div className="flex flex-col h-full bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] rounded-2xl p-6 shadow-xs transition-colors">
+      <div className="flex items-center justify-between mb-3">
+        <label className="text-xs font-medium text-[#141514] dark:text-[#F4F2EE]">
+          Resume (PDF)
         </label>
-        <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+        <span className="text-[11px] text-[#82847E] dark:text-[#72736C]">
           Max 5MB
         </span>
       </div>
@@ -107,19 +107,19 @@ export default function ResumeUpload({
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`group flex-1 min-h-[250px] md:min-h-[270px] border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
+          className={`flex-1 min-h-[340px] sm:min-h-[380px] border border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors ${
             isDragging
-              ? "border-blue-600 dark:border-blue-400 bg-blue-50/50 dark:bg-blue-950/40"
-              : "border-zinc-300 dark:border-zinc-700 hover:border-blue-500 dark:hover:border-blue-400 bg-white dark:bg-zinc-900 hover:bg-blue-50/20 dark:hover:bg-blue-950/20"
+              ? "border-[#141514] dark:border-[#F4F2EE] bg-[#FAF7F2] dark:bg-[#222320]"
+              : "border-[#EAE4DC] dark:border-[#2F302C] hover:border-[#141514] dark:hover:border-[#F4F2EE] bg-[#FAF7F2]/60 dark:bg-[#161715]"
           }`}
         >
-          <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-3.5 transition-colors group-hover:scale-105">
+          <div className="w-12 h-12 rounded-xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] flex items-center justify-center text-[#5C5E58] dark:text-[#9E9F97] mb-4 shadow-2xs">
             <svg
-              className="w-6 h-6"
+              className="w-5 h-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="1.75"
             >
               <path
                 strokeLinecap="round"
@@ -128,28 +128,28 @@ export default function ResumeUpload({
               />
             </svg>
           </div>
-          <p className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-            <span className="text-blue-600 dark:text-blue-400 underline underline-offset-2 font-semibold">
-              Click to upload
+          <p className="text-sm font-medium text-[#141514] dark:text-[#F4F2EE] mb-1.5">
+            <span className="underline underline-offset-2 hover:text-black dark:hover:text-white">
+              Select PDF file
             </span>{" "}
-            or drag and drop
+            or drag and drop here
           </p>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400 font-normal">
-            Selectable text PDF files only
+          <p className="text-xs text-[#82847E] dark:text-[#72736C]">
+            Selectable text PDF files up to 5MB
           </p>
         </div>
       ) : (
-        /* Selected File Card */
-        <div className="flex-1 min-h-[250px] md:min-h-[270px] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 flex flex-col justify-between">
+        /* Selected File Clean State */
+        <div className="flex-1 min-h-[340px] sm:min-h-[380px] bg-[#FAF7F2] dark:bg-[#161715] border border-[#EAE4DC] dark:border-[#2F302C] rounded-xl p-6 flex flex-col justify-between">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3.5 overflow-hidden">
-              <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/20">
+              <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] text-[#141514] dark:text-[#F4F2EE] flex items-center justify-center shrink-0 shadow-2xs">
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="1.75"
                 >
                   <path
                     strokeLinecap="round"
@@ -160,49 +160,46 @@ export default function ResumeUpload({
               </div>
               <div className="overflow-hidden">
                 <p
-                  className="text-sm md:text-base font-semibold text-zinc-950 dark:text-white truncate"
+                  className="text-xs font-medium text-[#141514] dark:text-[#F4F2EE] truncate"
                   title={file.name}
                 >
                   {file.name}
                 </p>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-0.5 font-medium">
+                <p className="text-[11px] text-[#5C5E58] dark:text-[#9E9F97] font-mono mt-0.5">
                   {formatFileSize(file.size)}
                 </p>
               </div>
             </div>
+
             <button
               type="button"
               onClick={handleRemoveFile}
-              className="text-zinc-500 hover:text-red-600 dark:hover:text-red-400 p-1.5 rounded transition-colors cursor-pointer"
+              className="text-[#82847E] hover:text-[#B83232] p-1.5 rounded transition-colors cursor-pointer"
               title="Remove file"
             >
               <svg
-                className="w-5 h-5"
+                className="w-4 h-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth="2"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
-          <div className="pt-3.5 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-sm">
-            <span className="inline-flex items-center gap-1.5 text-blue-800 dark:text-blue-300 text-sm font-medium bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-800 px-2.5 py-1 rounded">
-              <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400" />
-              Ready to match
+          <div className="pt-3 border-t border-[#EAE4DC] dark:border-[#2F302C] flex items-center justify-between text-xs">
+            <span className="inline-flex items-center gap-1.5 text-[#1B663E] dark:text-[#35A36A] font-medium text-[11px]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#1B663E] dark:bg-[#35A36A]" />
+              Ready for analysis
             </span>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors cursor-pointer"
+              className="text-xs font-medium text-[#141514] hover:text-black dark:text-[#F4F2EE] dark:hover:text-white transition-colors cursor-pointer"
             >
-              Replace
+              Replace file
             </button>
           </div>
         </div>

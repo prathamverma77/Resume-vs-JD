@@ -7,49 +7,60 @@ export default function FAQ() {
     {
       question: "Do I need an account or API key?",
       answer:
-        "No. MatchEngine runs 100% locally in-memory. There are no logins, subscriptions, or external LLM API costs.",
+        "No account, login, or API key is required. MatchEngine runs deterministic algorithms locally on the application server without third-party LLM costs or dependencies.",
     },
     {
-      question: "What resume formats are supported?",
+      question: "Which resume formats are supported?",
       answer:
-        "PDF (.pdf) files containing selectable text up to 5MB. Scanned image-only PDFs without OCR text layers cannot be extracted.",
+        "Selectable text PDF files up to 5MB. Scanned image-only PDFs without an embedded OCR text layer cannot be parsed, and Microsoft Word (.docx) documents are not supported.",
     },
     {
-      question: "How is the match score computed?",
+      question: "How is the match score calculated?",
       answer:
-        "A deterministic formula allocates 75% weight to core required technical skills and 25% to preferred bonus qualifications. Skills are normalized for acronyms, punctuation, and typos.",
+        "The scoring engine applies a transparent weighted formula: 75% for mandatory core technical skills and 25% for preferred bonus skills. Skills are normalized for common acronyms (e.g., AWS ↔ Amazon Web Services), punctuation variations, and minor typos.",
+    },
+    {
+      question: "Does a missing skill mean the candidate does not know it?",
+      answer:
+        "Not necessarily. A missing requirement simply indicates that the keyword or recognized synonym was not detected in the extracted text of the uploaded PDF. Candidates often possess competencies that were omitted or phrased differently.",
     },
     {
       question: "Is my resume or job description stored?",
       answer:
-        "No. Data is processed exclusively in-memory for the duration of the HTTP request and discarded immediately after returning results.",
+        "No. Files and text inputs are held exclusively in volatile server memory for the duration of the analysis request and are released immediately upon response completion. There is no database or permanent storage.",
+    },
+    {
+      question: "Can I save or share an analysis?",
+      answer:
+        "Because MatchEngine does not maintain a database or user accounts, results are ephemeral and not saved to a permanent URL. You can use the 'Copy Report' action on the results workspace to copy a complete plain-text summary to your clipboard.",
     },
   ];
 
   return (
-    <section id="faq" className="w-full mt-14 pt-10 border-t border-zinc-200 dark:border-zinc-800 scroll-mt-20">
-      <div className="text-center max-w-xl mx-auto mb-8">
-        <h2 className="text-xl md:text-2xl font-semibold text-zinc-950 dark:text-white tracking-tight">
+    <section id="faq" className="w-full scroll-mt-24">
+      {/* Centered Editorial Header */}
+      <div className="mb-10 md:mb-12 text-center max-w-2xl mx-auto">
+        <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] text-[#141514] dark:text-[#F4F2EE] tracking-[-0.02em] font-normal leading-tight">
           Frequently asked questions
         </h2>
-        <p className="text-base font-normal text-zinc-600 dark:text-zinc-300 mt-1.5">
-          Common questions about the engine and data privacy.
+        <p className="text-base sm:text-lg text-[#5C5E58] dark:text-[#9E9F97] mt-3 leading-relaxed font-sans">
+          Methodology details, supported document formats, and privacy guarantees.
         </p>
       </div>
 
-      <div className="max-w-3xl mx-auto divide-y divide-zinc-200 dark:divide-zinc-800 border-y border-zinc-200 dark:border-zinc-800">
+      <div className="divide-y divide-[#EAE4DC] dark:divide-[#2F302C] border-t border-[#EAE4DC] dark:border-[#2F302C]">
         {faqs.map((faq, index) => (
           <details
             key={index}
-            className="group py-4 transition-colors [&_summary::-webkit-details-marker]:hidden"
+            className="group py-4.5 md:py-5 transition-colors [&_summary::-webkit-details-marker]:hidden"
           >
-            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-base md:text-lg font-semibold text-zinc-950 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 gap-4">
+            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-sm md:text-[15px] font-medium text-[#141514] dark:text-[#F4F2EE] hover:text-[#5C5E58] dark:hover:text-[#9E9F97] gap-4">
               <span>{faq.question}</span>
-              <span className="text-zinc-500 dark:text-zinc-400 group-open:rotate-45 transition-transform duration-200 text-lg font-mono font-semibold shrink-0">
+              <span className="text-[#82847E] dark:text-[#72736C] group-open:rotate-45 transition-transform duration-200 text-base font-mono shrink-0">
                 +
               </span>
             </summary>
-            <p className="text-[15px] md:text-base font-normal text-zinc-600 dark:text-zinc-300 mt-2.5 leading-relaxed pr-8">
+            <p className="text-sm text-[#5C5E58] dark:text-[#9E9F97] mt-3 leading-relaxed pr-6 max-w-3xl">
               {faq.answer}
             </p>
           </details>
