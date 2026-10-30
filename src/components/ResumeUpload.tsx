@@ -34,6 +34,15 @@ export default function ResumeUpload({
     setIsDragging(false);
   };
 
+  const isSupportedFile = (f: File) => {
+    const name = f.name.toLowerCase();
+    const isPdf = f.type === "application/pdf" || name.endsWith(".pdf");
+    const isDocx =
+      f.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      name.endsWith(".docx");
+    return isPdf || isDocx;
+  };
+
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -41,15 +50,11 @@ export default function ResumeUpload({
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const droppedFile = e.dataTransfer.files[0];
-      const isPdf =
-        droppedFile.type === "application/pdf" ||
-        droppedFile.name.toLowerCase().endsWith(".pdf");
-
-      if (isPdf) {
+      if (isSupportedFile(droppedFile)) {
         onFileChange(droppedFile);
         onError?.(null);
       } else {
-        onError?.("Only PDF files are supported. Please upload a valid .pdf resume.");
+        onError?.("Only PDF and Word (.docx) files are supported. Please upload a valid .pdf or .docx resume.");
       }
     }
   };
@@ -57,15 +62,11 @@ export default function ResumeUpload({
   const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      const isPdf =
-        selectedFile.type === "application/pdf" ||
-        selectedFile.name.toLowerCase().endsWith(".pdf");
-
-      if (isPdf) {
+      if (isSupportedFile(selectedFile)) {
         onFileChange(selectedFile);
         onError?.(null);
       } else {
-        onError?.("Only PDF files are supported. Please upload a valid .pdf resume.");
+        onError?.("Only PDF and Word (.docx) files are supported. Please upload a valid .pdf or .docx resume.");
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
@@ -86,7 +87,7 @@ export default function ResumeUpload({
     <div className="flex flex-col h-full bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] rounded-2xl p-6 shadow-xs transition-colors">
       <div className="flex items-center justify-between mb-3">
         <label className="text-xs font-medium text-[#141514] dark:text-[#F4F2EE]">
-          Resume (PDF)
+          Resume (PDF or DOCX)
         </label>
         <span className="text-[11px] text-[#82847E] dark:text-[#72736C]">
           Max 5MB
@@ -96,7 +97,7 @@ export default function ResumeUpload({
       <input
         ref={fileInputRef}
         type="file"
-        accept=".pdf,application/pdf"
+        accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         onChange={handleFileInputChange}
         className="hidden"
       />
@@ -130,12 +131,12 @@ export default function ResumeUpload({
           </div>
           <p className="text-sm font-medium text-[#141514] dark:text-[#F4F2EE] mb-1.5">
             <span className="underline underline-offset-2 hover:text-black dark:hover:text-white">
-              Select PDF file
+              Select PDF or DOCX file
             </span>{" "}
             or drag and drop here
           </p>
           <p className="text-xs text-[#82847E] dark:text-[#72736C]">
-            Selectable text PDF files up to 5MB
+            PDF or Word documents up to 5MB
           </p>
         </div>
       ) : (

@@ -47,6 +47,21 @@ export const ACRONYM_MAP: Record<string, string> = {
   "nextjs": "nextjs",
   "reactjs": "react",
   "react": "react",
+  "c++": "cpp",
+  "cpp": "cpp",
+  "c/c++": "cpp",
+  "c#": "csharp",
+  "csharp": "csharp",
+  "c sharp": "csharp",
+  ".net": "dotnet",
+  "dotnet": "dotnet",
+  "asp.net": "aspnet",
+  "vue.js": "vue",
+  "vuejs": "vue",
+  "angular.js": "angular",
+  "angularjs": "angular",
+  "express.js": "express",
+  "expressjs": "express",
 };
 
 /**
@@ -65,7 +80,13 @@ export function normalizeSkill(skill: string): string {
     return ACRONYM_MAP[clean];
   }
 
-  // 2. Strip common suffix noise
+  // 2. Pre-clean symbol protection for C++, C#, and .NET
+  if (clean === "c++" || clean === "c/c++" || clean === "cpp") return "cpp";
+  if (clean === "c#" || clean === "csharp" || clean === "c sharp") return "csharp";
+  if (clean === ".net" || clean === "dotnet") return "dotnet";
+  if (clean === "c") return "c";
+
+  // 3. Strip common suffix noise
   let stripped = clean
     .replace(/\.js\b/g, "")
     .replace(/\bjs\b/g, "")
@@ -76,10 +97,10 @@ export function normalizeSkill(skill: string): string {
     stripped = stripped.replace(/\.?js$/g, "").replace(/\.?css$/g, "");
   }
 
-  // 3. Remove punctuation and symbols
+  // 4. Remove punctuation and symbols
   stripped = stripped.replace(/[.\-_\s/+]/g, "").trim();
 
-  // 4. Secondary acronym lookup
+  // 5. Secondary acronym lookup
   if (ACRONYM_MAP[stripped]) {
     return ACRONYM_MAP[stripped];
   }

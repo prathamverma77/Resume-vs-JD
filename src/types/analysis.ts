@@ -7,10 +7,16 @@ export interface ScoreAnalysisResult {
     missingRequiredSkills: string[];
     missingPreferredSkills: string[];
     recommendations: string[];
+    seniorityMatch?: {
+        candidateYears: number;
+        requiredYears: number;
+        isMet: boolean;
+    };
 }
 
 export interface StructuredResume {
     skills: string[];
+    yearsOfExperience?: number;
     email?: string;
     phone?: string;
 }
@@ -21,6 +27,7 @@ export interface JDExtractedData {
     technical_req: string[];
     preferred_skills: string[];
     education: string[];
+    minYearsExperience?: number;
 }
 
 export interface AnalyzeApiResponse {

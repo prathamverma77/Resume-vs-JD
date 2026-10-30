@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import mammoth from "mammoth";
 import { parsePDF, PDFParseError } from "@/lib/parser/pdf-parser";
 import { structureResume } from "@/lib/parser/resume-structurer";
 import { parseJD } from "@/lib/parser/jd-parser";
@@ -28,21 +29,23 @@ export async function POST(req: NextRequest) {
         // 2. Validate resume presence
         if (!resume) {
             return NextResponse.json(
-                { success: false, message: "No resume file was uploaded. Please provide a PDF resume." },
+                { success: false, message: "No resume file was uploaded. Please provide a PDF or Word (.docx) resume." },
                 { status: 400 }
             );
         }
 
-        // 3. Validate resume file extension and MIME type (PDF only)
+        // 3. Validate resume file extension and MIME type (PDF and DOCX)
         const resumeName = (resume.name || "").toLowerCase();
-        const isPdfMime = resume.type === "application/pdf";
-        const isPdfExtension = resumeName.endsWith(".pdf");
+        const isPdf = resume.type === "application/pdf" || resumeName.endsWith(".pdf");
+        const isDocx =
+            resume.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+            resumeName.endsWith(".docx");
 
-        if (!isPdfMime && !isPdfExtension) {
+        if (!isPdf && !isDocx) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: "Unsupported file format. Only PDF files are supported for resume upload.",
+                    message: "Unsupported file format. Please upload a PDF (.pdf) or Word document (.docx).",
                 },
                 { status: 415 }
             );
@@ -51,7 +54,7 @@ export async function POST(req: NextRequest) {
         // 4. Validate resume file size (Empty and Max size)
         if (resume.size === 0) {
             return NextResponse.json(
-                { success: false, message: "The uploaded resume file is empty (0 bytes). Please upload a valid PDF." },
+                { success: false, message: "The uploaded resume file is empty (0 bytes). Please upload a valid document." },
                 { status: 400 }
             );
         }
@@ -66,34 +69,54 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // 5. Parse Resume PDF text & catch PDF errors specifically
-        let resumePdfData;
-        try {
-            resumePdfData = await parsePDF(resume);
-        } catch (pdfErr) {
-            if (pdfErr instanceof PDFParseError) {
+        // 5. Parse Resume text (PDF or DOCX) in-memory
+        let cleanResumeText = "";
+        let pageCount = 1;
+
+        if (isPdf) {
+            try {
+                const resumePdfData = await parsePDF(resume);
+                cleanResumeText = resumePdfData.text.trim();
+                pageCount = resumePdfData.pageCount;
+            } catch (pdfErr) {
+                if (pdfErr instanceof PDFParseError) {
+                    return NextResponse.json(
+                        { success: false, message: pdfErr.message },
+                        { status: 422 }
+                    );
+                }
                 return NextResponse.json(
-                    { success: false, message: pdfErr.message },
+                    {
+                        success: false,
+                        message: "Failed to read the PDF file. It may be corrupted, encrypted, or password-protected.",
+                    },
                     { status: 422 }
                 );
             }
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: "Failed to read the PDF file. It may be corrupted, encrypted, or password-protected.",
-                },
-                { status: 422 }
-            );
+        } else if (isDocx) {
+            try {
+                const arrayBuffer = await resume.arrayBuffer();
+                const docxBuffer = Buffer.from(arrayBuffer);
+                const docxResult = await mammoth.extractRawText({ buffer: docxBuffer });
+                cleanResumeText = (docxResult.value || "").trim();
+            } catch {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message: "Failed to read the Word document (.docx). The file may be corrupted or password-protected.",
+                    },
+                    { status: 422 }
+                );
+            }
         }
 
         // 6. Validate extracted text readability
-        const cleanResumeText = resumePdfData.text.trim();
         if (cleanResumeText.length < MIN_RESUME_TEXT_LENGTH) {
             return NextResponse.json(
                 {
                     success: false,
                     message:
-                        "No readable text could be extracted from this PDF. It may be a scanned image or empty. Please upload a PDF containing selectable text.",
+                        "No readable text could be extracted from this document. It may be an image-only scan or empty. Please upload a file containing selectable text.",
                 },
                 { status: 422 }
             );
@@ -140,13 +163,28 @@ export async function POST(req: NextRequest) {
                         { status: 422 }
                     );
                 }
+            } else if (
+                jobDescriptionInput.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                jdFileName.endsWith(".docx")
+            ) {
+                try {
+                    const arrayBuffer = await jobDescriptionInput.arrayBuffer();
+                    const docxBuffer = Buffer.from(arrayBuffer);
+                    const docxResult = await mammoth.extractRawText({ buffer: docxBuffer });
+                    jdText = docxResult.value || "";
+                } catch {
+                    return NextResponse.json(
+                        { success: false, message: "Failed to parse the Job Description Word document (.docx). It may be corrupted." },
+                        { status: 422 }
+                    );
+                }
             } else if (jobDescriptionInput.type.startsWith("text/") || jdFileName.endsWith(".txt")) {
                 jdText = await jobDescriptionInput.text();
             } else {
                 return NextResponse.json(
                     {
                         success: false,
-                        message: "Unsupported Job Description file format. Please upload a PDF or plain text file.",
+                        message: "Unsupported Job Description file format. Please upload a PDF, Word document (.docx), or plain text file.",
                     },
                     { status: 415 }
                 );
@@ -204,8 +242,8 @@ export async function POST(req: NextRequest) {
                         size: resume.size,
                         type: resume.type,
                     },
-                    textLength: resumePdfData.textLength,
-                    pageCount: resumePdfData.pageCount,
+                    textLength: cleanResumeText.length,
+                    pageCount,
                     extractedText: cleanResumeText,
                     structuredData: structuredResume,
                 },

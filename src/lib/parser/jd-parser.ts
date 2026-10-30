@@ -9,6 +9,7 @@ export interface JDExtractedData {
     technical_req: string[];
     preferred_skills: string[];
     education: string[];
+    minYearsExperience?: number;
 }
 
 /**
@@ -18,12 +19,21 @@ export function parseJD(text: string): JDExtractedData {
     // Clean the text
     const cleanText = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     
+    // Extract preferred skills first to avoid duplicate assignment in technical requirements
+    const preferred = extractPreferredSkills(cleanText);
+    const preferredSet = new Set(preferred.map(s => normalizeSkill(s)));
+
+    const rawTechnical = extractTechnicalRequirements(cleanText);
+    const technical = rawTechnical.filter(s => !preferredSet.has(normalizeSkill(s)));
+    const minYearsExperience = extractMinYearsExperience(cleanText);
+
     return {
         role: extractRole(cleanText),
         responsibilities: extractResponsibilities(cleanText),
-        technical_req: extractTechnicalRequirements(cleanText),
-        preferred_skills: extractPreferredSkills(cleanText),
-        education: extractEducation(cleanText)
+        technical_req: technical.length > 0 ? technical : rawTechnical,
+        preferred_skills: preferred,
+        education: extractEducation(cleanText),
+        ...(minYearsExperience !== undefined && { minYearsExperience })
     };
 }
 
@@ -127,7 +137,10 @@ function extractTechnicalRequirements(text: string): string[] {
         'you should have',
         'what you\'ll need',
         'experience with',
-        'skills required'
+        'skills required',
+        'core requirements',
+        'what we look for',
+        'minimum qualifications'
     ]);
     
     let sectionSkills: string[] = [];
@@ -145,8 +158,17 @@ function extractTechnicalRequirements(text: string): string[] {
         }
     }
 
-    // 3. Combine structural and section skills, deduplicate canonically
-    let allSkills = deduplicateSkills([...structuralSkills, ...sectionSkills]);
+    // 3. Semantic Trigger Fallback: If no section header was found or both section and structural extraction were empty,
+    // scan the text for requirement clauses (e.g. "proficient in Go", "experience with Kubernetes")
+    let triggerSkills: string[] = [];
+    if (sectionSkills.length === 0 && structuralSkills.length === 0) {
+        triggerSkills = extractRequiredSkillsFromTriggers(text);
+    }
+
+    // 4. Combine structural, section, and trigger skills, deduplicate canonically
+    let allSkills = deduplicateSkills([...structuralSkills, ...sectionSkills, ...triggerSkills]);
+
+    // 5. Ultimate fallback if still no skills found: scan entire text for tech vocabulary
     if (allSkills.length === 0) {
         allSkills = deduplicateSkills(extractTechSkills(text));
     }
@@ -158,33 +180,82 @@ function extractTechnicalRequirements(text: string): string[] {
 // 4. EXTRACT PREFERRED SKILLS
 // ============================================
 function extractPreferredSkills(text: string): string[] {
-    // Find preferred/nice-to-have section
+    // 1. Find preferred/nice-to-have section if present
     const section = findSection(text, [
         'nice to have',
         'preferred',
         'bonus',
         'good to have',
         'plus',
-        'additional skills'
+        'additional skills',
+        'preferred qualifications',
+        'bonus points'
     ]);
     
-    if (!section) {
-        return [];
+    let skills: string[] = [];
+
+    if (section) {
+        const vocab = extractSkillsFromText(section);
+        const dynamic = extractSkillsFromStructuredSections(`Skills:\n${section}`);
+        skills = [...vocab, ...dynamic];
+        
+        if (skills.length === 0) {
+            const bullets = extractBulletPoints(section, 10);
+            skills = bullets.flatMap(b => [
+                ...extractSkillsFromText(b),
+                ...extractSkillsFromStructuredSections(`Skills:\n${b}`)
+            ]);
+        }
     }
-    
-    const vocab = extractSkillsFromText(section);
-    const dynamic = extractSkillsFromStructuredSections(`Skills:\n${section}`);
-    let skills = [...vocab, ...dynamic];
-    
+
+    // 2. Semantic Trigger Fallback: If no formal section, scan for bonus/preferred clauses
     if (skills.length === 0) {
-        const bullets = extractBulletPoints(section, 10);
-        skills = bullets.flatMap(b => [
-            ...extractSkillsFromText(b),
-            ...extractSkillsFromStructuredSections(`Skills:\n${b}`)
-        ]);
+        skills = extractPreferredSkillsFromTriggers(text);
     }
     
     return deduplicateSkills(skills).slice(0, 10);
+}
+
+/**
+ * Semantic Fallback: Extracts skills from clauses containing requirement triggers
+ * e.g., "looking for an engineer with Go and Kubernetes", "proficient in PostgreSQL"
+ */
+function extractRequiredSkillsFromTriggers(text: string): string[] {
+    const requirementTriggerRegex = /\b(?:must have|require[ds]?|proficient in|experience (?:with|in)|hands-on|looking for|knowledge of|familiar with|stack (?:is|includes)|work(?:ing)? with|proven track record in|skilled in|competenc(?:y|ies) in|strong background in)\b/i;
+
+    const clauses = text.split(/[.\n;•·▪◦‣➢➤►-]/).map(c => c.trim()).filter(c => c.length > 0);
+    const extractedSkills: string[] = [];
+
+    for (const clause of clauses) {
+        if (requirementTriggerRegex.test(clause)) {
+            const vocab = extractSkillsFromText(clause);
+            const dynamic = extractSkillsFromStructuredSections(`Skills:\n${clause}`);
+            extractedSkills.push(...vocab, ...dynamic);
+        }
+    }
+
+    return deduplicateSkills(extractedSkills);
+}
+
+/**
+ * Semantic Fallback: Extracts skills from clauses containing bonus/preferred triggers
+ * e.g., "bonus if you know GraphQL", "nice to have: Docker"
+ */
+function extractPreferredSkillsFromTriggers(text: string): string[] {
+    const preferredTriggerRegex = /\b(?:nice to have|good to have|preferred|bonus|plus|extra credit|ideally|not required but|advantageous|would be a plus)\b/i;
+
+    const clauses = text.split(/[.\n;•·▪◦‣➢➤►]/).map(c => c.trim()).filter(c => c.length > 0);
+    const extractedSkills: string[] = [];
+
+    for (const clause of clauses) {
+        if (preferredTriggerRegex.test(clause)) {
+            const vocab = extractSkillsFromText(clause);
+            const dynamic = extractSkillsFromStructuredSections(`Skills:\n${clause}`);
+            extractedSkills.push(...vocab, ...dynamic);
+        }
+    }
+
+    return deduplicateSkills(extractedSkills);
 }
 
 // ============================================
@@ -406,4 +477,24 @@ function cleanEducation(line: string): string {
         .replace(/^[0-9]+[.)]\s*/, '')
         .trim()
         .slice(0, 100);
+}
+
+/**
+ * Extracts minimum required years of experience from job description requirements
+ * e.g., "5+ years of experience", "minimum 3 years of software engineering", "3-5 years"
+ */
+export function extractMinYearsExperience(text: string): number | undefined {
+    if (!text) return undefined;
+
+    const expRegex = /(?:minimum|at least|\b)(\d{1,2})\+?\s*(?:-\s*\d+\s*)?(?:years?|yrs?)(?:\s*of)?\s*(?:relevant|professional|software|engineering|hands-on|industry|work)?\s*experience/i;
+    const match = text.match(expRegex);
+
+    if (match) {
+        const years = parseInt(match[1], 10);
+        if (years >= 1 && years <= 25) {
+            return years;
+        }
+    }
+
+    return undefined;
 }
