@@ -80,7 +80,8 @@ function extractRole(text: string): string {
 function cleanRole(role: string): string {
     return role
         .replace(/^at\s+/i, '') // Remove "at" from start
-        .replace(/\s*[|•·-]\s*.*$/, '') // Remove extra details after separators
+        .replace(/\s+[-]\s+.*$/, '') // Only remove if surrounded by spaces! (preserves Mid-Level, Cloud-Native)
+        .replace(/\s*[|•·]\s*.*$/, '') // Remove other separator characters like | • ·
         .trim()
         .slice(0, 100);
 }
@@ -108,13 +109,23 @@ function extractResponsibilities(text: string): string[] {
     // Extract bullet points from section
     let items = extractBulletPoints(section, 15);
     
-    // If no bullet points, try to split by sentences
+    // If no explicit bullet markers found, split by lines first
     if (items.length === 0) {
-        items = section
-            .split(/[.!?]\s+/)
+        const lines = section
+            .split('\n')
             .map(s => s.trim())
-            .filter(s => s.length > 10 && s.length < 200)
-            .slice(0, 10);
+            .filter(s => s.length > 15 && s.length < 300);
+
+        if (lines.length > 0) {
+            items = lines.slice(0, 15);
+        } else {
+            // Fallback to sentence splitting
+            items = section
+                .split(/[.!?]\s+/)
+                .map(s => s.trim())
+                .filter(s => s.length > 10 && s.length < 200)
+                .slice(0, 10);
+        }
     }
     
     return items;
@@ -124,19 +135,16 @@ function extractResponsibilities(text: string): string[] {
 // 3. EXTRACT TECHNICAL REQUIREMENTS
 // ============================================
 function extractTechnicalRequirements(text: string): string[] {
-    // 1. Dynamic structural section extraction (catches unlisted & custom skills under requirements/skills blocks)
-    const structuralSkills = extractSkillsFromStructuredSections(text);
-
-    // 2. Find requirements section if present
+    // 1. Find requirements section if present
     const section = findSection(text, [
         'requirements',
         'must have',
         'technical skills',
         'required skills',
         'qualifications',
+        'required qualifications',
         'you should have',
         'what you\'ll need',
-        'experience with',
         'skills required',
         'core requirements',
         'what we look for',
@@ -146,27 +154,40 @@ function extractTechnicalRequirements(text: string): string[] {
     let sectionSkills: string[] = [];
     if (section) {
         const vocabFromSection = extractSkillsFromText(section);
-        const dynamicFromSection = extractSkillsFromStructuredSections(`Skills:\n${section}`);
-        sectionSkills = [...vocabFromSection, ...dynamicFromSection];
+        const bullets = extractBulletPoints(section, 25);
+        const bulletSkills = bullets.flatMap(b => extractSkillsFromText(b));
+        const combinedVocab = deduplicateSkills([...vocabFromSection, ...bulletSkills]);
 
+        if (combinedVocab.length > 0) {
+            sectionSkills = combinedVocab;
+        } else {
+            // Only fallback to structural delimiter splitting if vocabulary found 0 skills
+            const dynamicFromSection = extractSkillsFromStructuredSections(`Skills:\n${section}`);
+            sectionSkills = dynamicFromSection;
+        }
+
+        // If still empty, try line by line vocab extraction
         if (sectionSkills.length === 0) {
-            const bullets = extractBulletPoints(section, 20);
-            sectionSkills = bullets.flatMap(b => [
-                ...extractSkillsFromText(b),
-                ...extractSkillsFromStructuredSections(`Skills:\n${b}`)
-            ]);
+            const lines = section.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            sectionSkills = deduplicateSkills(lines.flatMap(l => extractSkillsFromText(l)));
         }
     }
 
-    // 3. Semantic Trigger Fallback: If no section header was found or both section and structural extraction were empty,
-    // scan the text for requirement clauses (e.g. "proficient in Go", "experience with Kubernetes")
+    if (sectionSkills.length > 0) {
+        return sectionSkills.slice(0, 20);
+    }
+
+    // 2. Dynamic structural section extraction fallback
+    const structuralSkills = extractSkillsFromStructuredSections(text);
+
+    // 3. Semantic Trigger Fallback
     let triggerSkills: string[] = [];
-    if (sectionSkills.length === 0 && structuralSkills.length === 0) {
+    if (structuralSkills.length === 0) {
         triggerSkills = extractRequiredSkillsFromTriggers(text);
     }
 
-    // 4. Combine structural, section, and trigger skills, deduplicate canonically
-    let allSkills = deduplicateSkills([...structuralSkills, ...sectionSkills, ...triggerSkills]);
+    // 4. Combine structural and trigger skills, deduplicate canonically
+    let allSkills = deduplicateSkills([...structuralSkills, ...triggerSkills]);
 
     // 5. Ultimate fallback if still no skills found: scan entire text for tech vocabulary
     if (allSkills.length === 0) {
@@ -183,28 +204,35 @@ function extractPreferredSkills(text: string): string[] {
     // 1. Find preferred/nice-to-have section if present
     const section = findSection(text, [
         'nice to have',
+        'nice-to-have',
         'preferred',
         'bonus',
         'good to have',
         'plus',
         'additional skills',
         'preferred qualifications',
-        'bonus points'
+        'bonus points',
+        'desirable'
     ]);
     
     let skills: string[] = [];
 
     if (section) {
         const vocab = extractSkillsFromText(section);
-        const dynamic = extractSkillsFromStructuredSections(`Skills:\n${section}`);
-        skills = [...vocab, ...dynamic];
-        
+        const bullets = extractBulletPoints(section, 15);
+        const bulletSkills = bullets.flatMap(b => extractSkillsFromText(b));
+        const combinedVocab = deduplicateSkills([...vocab, ...bulletSkills]);
+
+        if (combinedVocab.length > 0) {
+            skills = combinedVocab;
+        } else {
+            const dynamic = extractSkillsFromStructuredSections(`Skills:\n${section}`);
+            skills = dynamic;
+        }
+
         if (skills.length === 0) {
-            const bullets = extractBulletPoints(section, 10);
-            skills = bullets.flatMap(b => [
-                ...extractSkillsFromText(b),
-                ...extractSkillsFromStructuredSections(`Skills:\n${b}`)
-            ]);
+            const lines = section.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            skills = deduplicateSkills(lines.flatMap(l => extractSkillsFromText(l)));
         }
     }
 
@@ -329,8 +357,34 @@ function findSection(text: string, keywords: string[]): string | null {
     
     // Find the section header
     for (let i = 0; i < lines.length; i++) {
-        const lowerLine = lines[i].toLowerCase();
-        if (keywords.some(keyword => lowerLine.includes(keyword))) {
+        const line = lines[i];
+        if (!line) continue;
+        const lowerLine = line.toLowerCase();
+
+        // A section header must NOT be a full sentence with action verbs
+        const hasSentenceVerbs = /\b(seeking|looking|collaborate|translate|design|build|manage|deliver|deploy|write|participate|work with)\b/i.test(line);
+        if (hasSentenceVerbs) continue;
+
+        // Check if this line looks like a header matching one of the keywords
+        const isHeaderMatch = keywords.some(keyword => {
+            const cleanKeyword = keyword.toLowerCase();
+            // Exact line match or ends with colon (e.g. "Requirements:", "Required Qualifications")
+            if (lowerLine === cleanKeyword || lowerLine === `${cleanKeyword}:`) return true;
+            
+            // Starts with keyword followed by colon, dash, or paren
+            if (new RegExp(`^([•*\\-]\\s*|[0-9]+[.)]\\s*)?${cleanKeyword}\\b`, 'i').test(line)) {
+                return line.length < 55;
+            }
+
+            // Line contains keyword and ends with colon or is uppercase
+            if (lowerLine.includes(cleanKeyword) && (line.endsWith(':') || line === line.toUpperCase()) && line.length < 50) {
+                return true;
+            }
+
+            return false;
+        });
+
+        if (isHeaderMatch) {
             foundIndex = i;
             break;
         }
@@ -351,21 +405,37 @@ function findSection(text: string, keywords: string[]): string | null {
     }
     
     // Common section headers to stop at
-    const stopHeaders = [
-        'experience', 'education', 'skills', 'responsibilities',
-        'requirements', 'qualifications', 'benefits', 'about',
-        'company', 'culture', 'perks'
+    const stopHeaderPatterns = [
+        /^([•*\\-]\\s*)?(work\s+)?experience\s*[:]?$/i,
+        /^([•*\\-]\\s*)?education\s*[:]?$/i,
+        /^([•*\\-]\\s*)?(technical\s+)?skills\s*[:]?$/i,
+        /^([•*\\-]\\s*)?(key\s+)?responsibilities\s*[:]?$/i,
+        /^([•*\\-]\\s*)?(core\s+|technical\s+|minimum\s+|required\s+)?requirements\s*[:]?$/i,
+        /^([•*\\-]\\s*)?(required\s+|minimum\s+|preferred\s+)?qualifications\s*[:]?$/i,
+        /^([•*\\-]\\s*)?(nice[\s-]to[\s-]have|preferred|bonus|perks|benefits)\b/i,
+        /^([•*\\-]\\s*)?about\s+(us|the\s+company|the\s+role)\b/i,
+        /^company:\s*.+/i,
+        /^location:\s*.+/i,
     ];
     
     for (let i = foundIndex + 1; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
         
-        // Check if this is a new section header
-        const lowerLine = line.toLowerCase();
-        if (stopHeaders.some(header => lowerLine.includes(header) && line.length < 50)) {
-            // Check if it looks like a header (short, uppercase, or ends with colon)
-            if (line.length < 40 || line === line.toUpperCase() || line.endsWith(':')) {
+        // If the line starts with an explicit bullet point, it is definitely content, NOT a stop header
+        const isBulletItem = /^[•·▪◦‣➢➤►\-*]\s*/.test(line) || /^[0-9]+[.)]\s*/.test(line);
+        
+        if (!isBulletItem) {
+            // Check if this line is an intentional stop header
+            const isStopHeader = stopHeaderPatterns.some(pattern => pattern.test(line));
+            
+            // Also check all-caps short header like "REQUIRED QUALIFICATIONS" or "ABOUT THE ROLE"
+            const isAllCapsHeader = (line === line.toUpperCase()) && 
+                                    line.length < 45 && 
+                                    !/\b(with|in|development|experience with|tools)\b/i.test(line) &&
+                                    (line.includes("REQUIRE") || line.includes("QUALIF") || line.includes("RESPONS") || line.includes("NICE") || line.includes("ABOUT") || line.includes("BENEFIT"));
+            
+            if (isStopHeader || isAllCapsHeader) {
                 break;
             }
         }
@@ -486,7 +556,15 @@ function cleanEducation(line: string): string {
 export function extractMinYearsExperience(text: string): number | undefined {
     if (!text) return undefined;
 
-    const expRegex = /(?:minimum|at least|\b)(\d{1,2})\+?\s*(?:-\s*\d+\s*)?(?:years?|yrs?)(?:\s*of)?\s*(?:relevant|professional|software|engineering|hands-on|industry|work)?\s*experience/i;
+    // 1. Direct header match: e.g. "Experience: 3-5 years", "Experience: 3–5 years", "Experience: 4+ yrs"
+    const headerMatch = text.match(/experience\s*:\s*(\d{1,2})\+?\s*(?:[-–—]\s*\d+\s*)?(?:years?|yrs?)/i);
+    if (headerMatch) {
+        const years = parseInt(headerMatch[1], 10);
+        if (years >= 1 && years <= 25) return years;
+    }
+
+    // 2. Inline requirements match: e.g. "3-5 years of software engineering experience", "minimum 4 years experience"
+    const expRegex = /(?:minimum|at least|\b)(\d{1,2})\+?\s*(?:[-–—]\s*\d+\s*)?(?:years?|yrs?)(?:\s*of)?\s*(?:relevant|professional|software|engineering|hands-on|industry|work)?\s*experience/i;
     const match = text.match(expRegex);
 
     if (match) {

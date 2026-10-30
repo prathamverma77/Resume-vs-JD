@@ -62,11 +62,31 @@ const STOP_HEADERS = [
   "eeo",
 ];
 
+const METADATA_PREFIXES = [
+  "company:",
+  "location:",
+  "experience:",
+  "job title:",
+  "position:",
+  "salary:",
+  "compensation:",
+  "about us:",
+  "about the company:",
+  "about the role:",
+  "about:",
+  "reports to:",
+  "employment type:",
+  "work location:",
+  "posted:",
+];
+
 const NOISE_WORDS = new Set([
   "proficient", "experienced", "experience", "knowledge", "strong", "understanding",
   "familiar", "skills", "tools", "languages", "frameworks", "libraries",
   "databases", "platforms", "etc", "years", "year", "and", "or", "with",
-  "using", "including", "across", "working", "good"
+  "using", "including", "across", "working", "good", "hybrid", "remote",
+  "onsite", "full-time", "part-time", "austin", "dallas", "tx", "texas",
+  "technologies", "solutions", "inc", "llc", "corp", "company"
 ]);
 
 /**
@@ -82,10 +102,28 @@ export function extractSkillsFromStructuredSections(text: string): string[] {
     if (!line) continue;
     const lower = line.toLowerCase();
 
+    // 0. Skip metadata lines (Company: XYZ, Location: ABC, Experience: 3-5 years)
+    const isMetadataLine = METADATA_PREFIXES.some(prefix => lower.startsWith(prefix));
+    if (isMetadataLine) {
+      if (inSkillsSection) {
+        break; // If we were in a skills section and hit metadata, stop
+      }
+      continue;
+    }
+
     // 1. Detect start of Skills section
-    const isStartHeader = SKILL_SECTION_HEADERS.some(h => 
-      lower === h || lower.startsWith(`${h}:`) || lower === `${h} :` || (lower.includes(h) && line.length < 35)
-    );
+    // Must look like an intentional header, not a sentence containing a keyword
+    const isStartHeader = SKILL_SECTION_HEADERS.some(h => {
+      if (lower === h || lower.startsWith(`${h}:`) || lower === `${h} :`) return true;
+      if (new RegExp(`^([•*\\-]\\s*)?${h}\\s*[:]?$`, "i").test(line)) return true;
+      
+      // If it contains the header phrase, ensure it is short and lacks full-sentence action verbs
+      if (lower.includes(h) && line.length < 35) {
+        const hasSentenceVerbs = /\b(seeking|looking|collaborate|translate|design|build|manage|deliver|deploy|work with)\b/i.test(line);
+        return !hasSentenceVerbs;
+      }
+      return false;
+    });
 
     if (isStartHeader) {
       inSkillsSection = true;
@@ -98,9 +136,11 @@ export function extractSkillsFromStructuredSections(text: string): string[] {
 
     // 2. Detect end of Skills section
     if (inSkillsSection) {
-      const isStopHeader = STOP_HEADERS.some(h => 
-        lower === h || lower.startsWith(`${h}:`) || lower === `${h} :` || (lower.includes(h) && line.length < 35)
-      );
+      const isStopHeader = STOP_HEADERS.some(h => {
+        if (lower === h || lower.startsWith(`${h}:`) || lower === `${h} :`) return true;
+        if (new RegExp(`^([•*\\-]\\s*)?${h}\\s*[:]?$`, "i").test(line)) return true;
+        return lower.includes(h) && line.length < 30 && !/\b(with|in|and|tools|development)\b/i.test(line);
+      });
 
       if (isStopHeader) {
         break;
@@ -120,6 +160,11 @@ export function extractSkillsFromStructuredSections(text: string): string[] {
 
     for (let token of tokens) {
       token = token.replace(/^[–\-*•·▪◦‣➢➤►()]\s*/, "").replace(/[()]/g, "").trim();
+
+      // Strip leading noise phrases like "Experience with", "hands-on with", "and", "or"
+      token = token.replace(/^(?:experience\s+(?:with|in)|hands-on\s+(?:with|in)|knowledge\s+of|proficient\s+in|familiarity\s+with|familiar\s+with|strong\s+knowledge\s+of|and|or)\s+/i, "").trim();
+      // Strip trailing noise words like "pipelines", "practices", "development"
+      token = token.replace(/\s+(?:pipelines|practices|development|technologies)$/i, "").trim();
 
       if (
         token.length >= 2 &&
