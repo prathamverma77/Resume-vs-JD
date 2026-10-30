@@ -33,13 +33,13 @@ export default function Features() {
   ];
 
   return (
-    <section id="capabilities" className="w-full scroll-mt-24 pb-8 md:pb-24">
+    <section id="capabilities" className="w-full scroll-mt-24 pb-8 md:pb-16">
       {/* Centered Editorial Header */}
-      <div className="mb-12 md:mb-16 text-center max-w-2xl mx-auto">
+      <div className="mb-10 md:mb-12 text-center max-w-2xl mx-auto">
         <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] text-[#141514] dark:text-[#F4F2EE] tracking-[-0.02em] font-normal leading-tight">
           Capabilities & methodology
         </h2>
-        <p className="text-base sm:text-lg text-[#5C5E58] dark:text-[#9E9F97] mt-3 leading-relaxed font-sans">
+        <p className="text-base sm:text-lg text-[#5C5E58] dark:text-[#9E9F97] mt-2.5 leading-relaxed font-sans">
           Deterministic parsing algorithms designed for accuracy, speed, and privacy.
         </p>
       </div>

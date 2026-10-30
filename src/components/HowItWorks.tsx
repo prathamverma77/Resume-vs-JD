@@ -20,22 +20,22 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="w-full scroll-mt-24 pb-10 md:pb-20">
+    <section id="how-it-works" className="w-full scroll-mt-24 pb-8 md:pb-14">
       {/* Centered Editorial Header */}
-      <div className="mb-14 md:mb-20 text-center max-w-2xl mx-auto">
+      <div className="mb-10 md:mb-14 text-center max-w-2xl mx-auto">
         <span className="font-serif italic text-base sm:text-lg text-[#82847E] dark:text-[#72736C] block mb-2 select-none">
           Our Analysis Process
         </span>
         <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] text-[#141514] dark:text-[#F4F2EE] tracking-[-0.02em] font-normal leading-tight">
           Here&apos;s how it works
         </h2>
-        <p className="text-base sm:text-lg text-[#5C5E58] dark:text-[#9E9F97] mt-3 leading-relaxed font-sans">
+        <p className="text-base sm:text-lg text-[#5C5E58] dark:text-[#9E9F97] mt-2.5 leading-relaxed font-sans">
           Deterministic alignment in three straightforward steps.
         </p>
       </div>
 
       {/* Rainbow Arch Cards: Compact Height & Tighter Proportions */}
-      <div className="relative flex flex-col md:flex-row items-center justify-center max-w-5xl mx-auto gap-8 md:gap-2.5 lg:gap-1 px-4 sm:px-6 pt-6 pb-6">
+      <div className="relative flex flex-col md:flex-row items-center justify-center max-w-5xl mx-auto gap-8 md:gap-2.5 lg:gap-1 px-4 sm:px-6 pt-4 pb-6">
         {/* Card 1: Left Wing of Rainbow (Tilted outward) */}
         <div className="relative z-10 w-full max-w-[310px] sm:max-w-[320px] md:w-[290px] lg:w-[320px] h-[260px] sm:h-[280px] md:h-[295px] bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] rounded-[24px] p-6 sm:p-7 flex flex-col justify-between shadow-[0_15px_35px_rgba(0,0,0,0.05)] dark:shadow-[0_15px_35px_rgba(0,0,0,0.3)] transform md:origin-bottom-right md:-rotate-[8deg] md:translate-y-5 transition-all duration-300 ease-out hover:z-30 hover:rotate-0 hover:-translate-y-2 hover:shadow-2xl cursor-default">
           {/* Top Left: Clean Step Digit */}

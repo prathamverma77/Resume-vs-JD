@@ -2,8 +2,8 @@ import React from "react";
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full pt-6 pb-12 md:pt-12 md:pb-20">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+    <section className="relative w-full pt-4 pb-6 md:pt-8 md:pb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
         {/* Left Column: Expressive Editorial Headline & Actions */}
         <div className="lg:col-span-7 flex flex-col justify-center">
           <h1 className="font-serif text-4xl sm:text-6xl lg:text-[68px] text-[#141514] dark:text-[#F4F2EE] leading-[1.08] tracking-[-0.025em] max-w-xl font-normal">
@@ -11,11 +11,11 @@ export default function HeroSection() {
             <span className="italic font-serif">zero guesswork</span>
           </h1>
 
-          <p className="mt-6 text-base sm:text-lg text-[#5C5E58] dark:text-[#9E9F97] leading-relaxed max-w-lg font-sans">
+          <p className="mt-4 text-base sm:text-lg text-[#5C5E58] dark:text-[#9E9F97] leading-relaxed max-w-lg font-sans">
             Compare your resume with any job description, identify critical requirements, and inspect transparent compatibility scoring without external AI hallucination.
           </p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-4">
+          <div className="mt-6 flex flex-wrap items-center gap-4">
             <a
               href="#analyzer"
               className="px-6 py-3 text-xs sm:text-sm font-medium rounded-full bg-[#111210] hover:bg-neutral-800 dark:bg-[#F4F2EE] dark:text-[#121312] dark:hover:bg-white text-white transition-all shadow-sm hover:shadow-md cursor-pointer inline-flex items-center"
@@ -31,14 +31,14 @@ export default function HeroSection() {
             </a>
           </div>
 
-          <p className="mt-7 text-xs text-[#82847E] dark:text-[#72736C] font-mono">
+          <p className="mt-5 text-xs text-[#82847E] dark:text-[#72736C] font-mono">
             Free to use &bull; No account required &bull; 100% in-memory evaluation
           </p>
         </div>
 
         {/* Right Column: Floating Lightweight Analytical Surface */}
         <div className="lg:col-span-5 w-full">
-          <div className="bg-white/95 dark:bg-[#1B1C1A]/95 backdrop-blur-md border border-[#EAE4DC] dark:border-[#2F302C] rounded-2xl p-6 sm:p-7 shadow-xl shadow-black/[0.03] transition-all hover:shadow-2xl hover:shadow-black/[0.05]">
+          <div className="bg-white/95 dark:bg-[#1B1C1A]/95 border border-[#EAE4DC] dark:border-[#2F302C] rounded-2xl p-6 sm:p-7 shadow-xl shadow-black/[0.03] transition-all hover:shadow-2xl hover:shadow-black/[0.05]">
             {/* Header: Role and Circular Radial Score Indicator */}
             <div className="flex items-center justify-between pb-5 border-b border-[#EAE4DC] dark:border-[#2F302C]">
               <div>

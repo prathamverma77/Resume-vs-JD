@@ -4,11 +4,11 @@ export default function PrivacySection() {
   return (
     <section className="w-full scroll-mt-24">
       {/* Centered Editorial Header */}
-      <div className="mb-10 md:mb-12 text-center max-w-2xl mx-auto">
+      <div className="mb-8 md:mb-10 text-center max-w-2xl mx-auto">
         <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] text-[#141514] dark:text-[#F4F2EE] tracking-[-0.02em] font-normal leading-tight">
           Privacy & in-memory evaluation
         </h2>
-        <p className="text-base sm:text-lg text-[#5C5E58] dark:text-[#9E9F97] mt-3 leading-relaxed font-sans">
+        <p className="text-base sm:text-lg text-[#5C5E58] dark:text-[#9E9F97] mt-2.5 leading-relaxed font-sans">
           MatchEngine processes resume and job text strictly in ephemeral server memory.
         </p>
       </div>

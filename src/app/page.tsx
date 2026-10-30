@@ -111,9 +111,9 @@ export default function Home() {
       {/* Section 1: Navbar */}
       <Navbar />
 
-      {/* Main Content Container with Spacious Editorial Rhythm */}
-      <main className="relative z-10 flex-1 max-w-[1060px] w-full mx-auto px-6 sm:px-8 md:px-10 py-10 md:py-16 flex flex-col">
-        <div className="w-full space-y-20 md:space-y-28">
+      {/* Main Content Container with Balanced Editorial Spacing */}
+      <main className="relative z-10 flex-1 max-w-[1060px] w-full mx-auto px-6 sm:px-8 md:px-10 py-8 md:py-12 flex flex-col">
+        <div className="w-full space-y-16 md:space-y-20">
           {/* Section 2: Hero */}
           <HeroSection />
 
