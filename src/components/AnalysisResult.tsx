@@ -846,7 +846,7 @@ export default function AnalysisResult({
             Target Role Deliverables & Prerequisites
           </h2>
           <p className="text-xs sm:text-sm text-[#5C5E58] dark:text-[#9E9F97] mt-1 font-sans">
-            Key responsibilities and qualifications parsed from the employer's job description.
+            Key responsibilities and qualifications parsed from the employer&apos;s job description.
           </p>
         </div>
 

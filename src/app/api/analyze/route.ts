@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import mammoth from "mammoth";
 import { parsePDF, PDFParseError } from "@/lib/parser/pdf-parser";
-import { structureResume } from "@/lib/parser/resume-structurer";
-import { parseJD } from "@/lib/parser/jd-parser";
 import { calculateScore } from "@/lib/scoring/score-engine";
+import {
+    extractResumeWithHarness,
+    extractJobDescriptionWithHarness,
+} from "@/lib/ai/extraction-harness";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MIN_JD_LENGTH = 30; // 30 characters
@@ -121,9 +123,6 @@ export async function POST(req: NextRequest) {
                 { status: 422 }
             );
         }
-
-        const structuredResume = structureResume(cleanResumeText);
-
         // 7. Extract & Validate Job Description
         let jdText = "";
         if (!jobDescriptionInput) {
@@ -224,11 +223,22 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // 9. Parse Job Description using parseJD
-        const parsedJD = parseJD(cleanJDText);
+        // 9. Extract Resume & Job Description via AI Harness (parallel execution with local fallback)
+        console.log("\n========================================================");
+        console.log(`[POST /api/analyze] Processing new candidate analysis request...`);
+        console.log(`[POST /api/analyze] Resume Size: ${resume.size}B | JD Length: ${cleanJDText.length} chars`);
 
-        // 10. Calculate Match Score
+        const [structuredResume, parsedJD] = await Promise.all([
+            extractResumeWithHarness(cleanResumeText),
+            extractJobDescriptionWithHarness(cleanJDText),
+        ]);
+
+        // 10. Calculate Match Score (Deterministic Engine)
         const matchAnalysis = calculateScore(structuredResume, parsedJD);
+        console.log(
+            `[POST /api/analyze] ✅ Analysis completed! Score: ${matchAnalysis.overallScore}% (${matchAnalysis.matchLevel})`
+        );
+        console.log("========================================================\n");
 
         // 11. Return unified response with Resume, JD, and Match Score Analysis
         return NextResponse.json(

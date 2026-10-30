@@ -86,7 +86,8 @@ const NOISE_WORDS = new Set([
   "databases", "platforms", "etc", "years", "year", "and", "or", "with",
   "using", "including", "across", "working", "good", "hybrid", "remote",
   "onsite", "full-time", "part-time", "austin", "dallas", "tx", "texas",
-  "technologies", "solutions", "inc", "llc", "corp", "company"
+  "technologies", "solutions", "inc", "llc", "corp", "company",
+  "required", "requirements", "responsibilities", "preferred", "qualifications", "duties", "work"
 ]);
 
 /**

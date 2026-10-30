@@ -137,6 +137,7 @@ function extractResponsibilities(text: string): string[] {
 function extractTechnicalRequirements(text: string): string[] {
     // 1. Find requirements section if present
     const section = findSection(text, [
+        'required',
         'requirements',
         'must have',
         'technical skills',
@@ -411,6 +412,7 @@ function findSection(text: string, keywords: string[]): string | null {
         /^([•*\\-]\\s*)?(technical\s+)?skills\s*[:]?$/i,
         /^([•*\\-]\\s*)?(key\s+)?responsibilities\s*[:]?$/i,
         /^([•*\\-]\\s*)?(core\s+|technical\s+|minimum\s+|required\s+)?requirements\s*[:]?$/i,
+        /^([•*\\-]\\s*)?required\s*[:]?$/i,
         /^([•*\\-]\\s*)?(required\s+|minimum\s+|preferred\s+)?qualifications\s*[:]?$/i,
         /^([•*\\-]\\s*)?(nice[\s-]to[\s-]have|preferred|bonus|perks|benefits)\b/i,
         /^([•*\\-]\\s*)?about\s+(us|the\s+company|the\s+role)\b/i,

@@ -30,13 +30,13 @@ export default function Home() {
 
     // 1. Client-side file validation
     if (!file) {
-      setErrorMsg("Please upload a candidate resume PDF file to compare.");
+      setErrorMsg("Please upload a candidate resume (.pdf or .docx) to compare.");
       return;
     }
 
     if (file.size === 0) {
       setErrorMsg(
-        "The selected resume file is empty (0 bytes). Please upload a valid PDF."
+        "The selected resume file is empty (0 bytes). Please upload a valid PDF or Word document."
       );
       return;
     }

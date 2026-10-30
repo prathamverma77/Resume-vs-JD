@@ -6,9 +6,11 @@
 
 ## 📁 Documentation Map
 
-### 1. Implementation Guides (`docs/implementation/`)
+### 1. Implementation Guides & Reports (`docs/implementation/`)
+* [**`AI_EXTRACTION_HARNESS_IMPLEMENTATION_REPORT.md`**](./implementation/AI_EXTRACTION_HARNESS_IMPLEMENTATION_REPORT.md)  
+  *Execution report of the AI Extraction Harness: architecture review, Gemini 1.5 Flash client, prompt engineering, zero-downtime fallback, test suite verification, and build validation.*
 * [**`AI_EXTRACTION_HARNESS_IMPLEMENTATION_GUIDE.md`**](./implementation/AI_EXTRACTION_HARNESS_IMPLEMENTATION_GUIDE.md)  
-  *The complete engineering guide for implementing the AI Extraction Harness (AI as the Sensor + Code as the Governor), including Gemini 1.5 Flash integration, JSON schemas, environment setup, and zero-downtime regex fallbacks.*
+  *The architectural guide for implementing the AI Extraction Harness (AI as the Sensor + Code as the Governor), including Gemini 1.5 Flash integration, JSON schemas, environment setup, and zero-downtime regex fallbacks.*
 * [**`BACKEND_IMPLEMENTATION_REPORT.md`**](./implementation/BACKEND_IMPLEMENTATION_REPORT.md)  
   *Detailed implementation log of Phase 1 (Anti-collision & 500+ tech taxonomy), Phase 2 (3-tier skill weighting), and Phase 3 (Seniority timeline merging & `.docx` Word parser).*
 * [**`SMART_PARSING_IMPLEMENTATION_GUIDE.md`**](./implementation/SMART_PARSING_IMPLEMENTATION_GUIDE.md)  

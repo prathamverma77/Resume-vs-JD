@@ -8,7 +8,6 @@ export { default as HowItWorks } from "./HowItWorks";
 export { default as Features } from "./Features";
 export { default as FAQ } from "./FAQ";
 export { default as AnalysisResult } from "./AnalysisResult";
-export { default as ProjectUses } from "./ProjectUses";
 export { default as PrivacySection } from "./PrivacySection";
 export { default as Footer } from "./Footer";
 export { default as ThemeToggle } from "./ThemeToggle";
