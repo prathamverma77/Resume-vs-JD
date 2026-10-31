@@ -315,6 +315,14 @@ export async function extractResumeWithHarness(resumeText: string): Promise<Stru
 
     const localFallback = structureResume(resumeText);
 
+    // Reconcile: If deterministic timeline calculation verified concrete tenure, use max to prevent AI under-counting
+    if (localFallback.yearsOfExperience !== undefined && localFallback.yearsOfExperience > 0) {
+      yearsOfExperience =
+        yearsOfExperience !== undefined
+          ? Math.max(yearsOfExperience, localFallback.yearsOfExperience)
+          : localFallback.yearsOfExperience;
+    }
+
     return {
       skills: skills.length > 0 ? skills : localFallback.skills,
       rawText: resumeText,
@@ -323,6 +331,13 @@ export async function extractResumeWithHarness(resumeText: string): Promise<Stru
         : localFallback.yearsOfExperience !== undefined
         ? { yearsOfExperience: localFallback.yearsOfExperience }
         : {}),
+      ...(localFallback.employmentTimeline && localFallback.employmentTimeline.length > 0 && {
+        employmentTimeline: localFallback.employmentTimeline,
+      }),
+      ...(localFallback.academicTimeline && localFallback.academicTimeline.length > 0 && {
+        academicTimeline: localFallback.academicTimeline,
+      }),
+      totalDurationFormatted: localFallback.totalDurationFormatted,
       email: typeof parsed.email === "string" && parsed.email.includes("@")
         ? parsed.email.trim()
         : localFallback.email,

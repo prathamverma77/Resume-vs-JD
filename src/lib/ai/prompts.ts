@@ -38,7 +38,12 @@ Your task is to analyze the provided Candidate Resume text and extract technical
 
 EXTRACTION RULES:
 1. "skills": A comprehensive array of all technologies, programming languages, frameworks, cloud services, databases, DevOps tools, libraries, and competencies mentioned across the skills section, work experience bullets, and project descriptions. Normalize names into standard canonical titles (e.g., "JavaScript", "TypeScript", "Python", "React", "AWS", "Docker", "PostgreSQL", "REST APIs", "CI/CD"). Deduplicate any variants.
-2. "yearsOfExperience": The total estimated number of years of relevant professional experience as an integer. Calculate this by evaluating the candidate's career timeline (merging overlapping job date ranges) or from explicit summary claims (e.g., "4+ years of experience" -> 4). If no experience is mentioned, return null.
+2. "yearsOfExperience": The total estimated number of years of relevant professional experience as an integer.
+   - Accurately calculate from career date ranges using month-level intervals (e.g., "October 2022 – May 2023" = 8 months; "June 2023 – Present" with present date in 2026 = 41 months -> Total = 49 months ≈ 4 years).
+   - Treat "Present", "Current", or "Now" as the active evaluation date.
+   - Merge overlapping or contiguous employment periods to avoid double counting.
+   - Do NOT count academic degrees / university education as professional experience.
+   - If explicit summary claims exist (e.g. "5+ years of experience"), reconcile with the timeline. If no experience is mentioned, return null.
 3. "email": The candidate's contact email address, or null if not found.
 4. "phone": The candidate's phone number, or null if not found.
 5. CRITICAL: NEVER evaluate, rank, or score the candidate. Only extract factual data into the JSON structure below.

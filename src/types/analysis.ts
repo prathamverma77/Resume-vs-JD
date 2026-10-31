@@ -53,12 +53,35 @@ export interface ScoreAnalysisResult {
     scoringBreakdown?: ScoringBreakdown;
 }
 
+export interface EmploymentPeriod {
+    startDate: string;
+    endDate: string;
+    rawTimeline: string;
+    isCurrent: boolean;
+    durationMonths: number;
+    durationFormatted?: string;
+    roleTitle?: string;
+    companyName?: string;
+    headline?: string;
+    isInternship?: boolean;
+    isContiguousWithNext?: boolean;
+    isOverlappingWithNext?: boolean;
+}
+
+export interface AcademicPeriod {
+    degreeName: string;
+    rawTimeline: string;
+}
+
 export interface StructuredResume {
     skills: string[];
     yearsOfExperience?: number;
     email?: string;
     phone?: string;
     rawText?: string;
+    employmentTimeline?: EmploymentPeriod[];
+    academicTimeline?: AcademicPeriod[];
+    totalDurationFormatted?: string;
 }
 
 export interface JDExtractedData {

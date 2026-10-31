@@ -1,4 +1,8 @@
-import { structureResume } from "../src/lib/parser/resume-structurer";
+import {
+  structureResume,
+  extractYearsOfExperience,
+  extractEmploymentTimeline,
+} from "../src/lib/parser/resume-structurer";
 import { parseJD } from "../src/lib/parser/jd-parser";
 import { calculateScore } from "../src/lib/scoring/score-engine";
 import { normalizeSkill, calculateSimilarity } from "../src/lib/skills/normalizer";
@@ -121,6 +125,31 @@ Preferred Skills:
     expectedMaxScore: 55, // Capped by dealbreaker gate!
     expectedMatchingSkills: ["Docker", "Kubernetes"],
   },
+  {
+    name: "11. Employment Timeline & Seniority Banding (4 years tenure satisfies 4+ yrs requirement)",
+    resumeText: `
+Skills: Python, TypeScript, Docker, PostgreSQL
+Experience:
+Software Engineer, Alpha Corp
+October 2022 – May 2023
+- Built APIs
+
+Senior Software Engineer, Beta Inc
+June 2023 – Present
+- Platform architecture
+    `,
+    jdText: `
+Job Title: Senior Software Engineer
+Requirements:
+• Python
+• TypeScript
+• Docker
+• PostgreSQL
+Minimum 4+ years of professional experience required.
+    `,
+    expectedMinScore: 90,
+    expectedMatchingSkills: ["Python", "TypeScript", "Docker", "PostgreSQL"],
+  },
 ];
 
 console.log("=================================================");
@@ -165,6 +194,73 @@ if (sim1 >= 0.85) {
 } else {
   failedCount++;
   console.error("  ❌ Typo / variant similarity test failed");
+}
+
+// Unit Tests for Timeline & Experience Extractor
+console.log("\n--- Unit Tests: timeline-extractor.ts ---");
+
+// Test 1: User's exact scenario
+const userTimelineText = `
+EXPERIENCE
+Software Engineer, Alpha Corp
+October 2022 – May 2023
+- Built backend APIs
+
+Senior Software Engineer, Beta Inc
+June 2023 – Present
+- Lead platform services
+`;
+const userTimeline = extractEmploymentTimeline(userTimelineText);
+console.log(`  User Scenario (Oct 2022 - May 2023 + Jun 2023 - Present): ${userTimeline.totalMonths} months = ${userTimeline.totalYears} years`);
+if (userTimeline.totalYears >= 4 && userTimeline.periods.length === 2) {
+  passedCount++;
+  console.log(`  ✅ Consecutive employment timeline calculated as ${userTimeline.totalYears} years (>= 4 yrs expected)`);
+} else {
+  failedCount++;
+  console.error(`  ❌ Failed: got ${userTimeline.totalYears} years, expected >= 4 years`);
+}
+
+// Test 2: Overlapping roles
+const overlapText = `
+Role 1: Jan 2022 - Dec 2023
+Role 2: Jun 2023 - Present
+`;
+const overlapTimeline = extractEmploymentTimeline(overlapText);
+console.log(`  Overlapping Scenario (Jan 2022 - Dec 2023 + Jun 2023 - Present): ${overlapTimeline.totalMonths} months = ${overlapTimeline.totalYears} years`);
+if (overlapTimeline.totalYears >= 4.5 && overlapTimeline.totalYears <= 5.2) {
+  passedCount++;
+  console.log(`  ✅ Overlapping employment correctly merged without double-counting (${overlapTimeline.totalYears} years)`);
+} else {
+  failedCount++;
+  console.error(`  ❌ Failed overlapping test: got ${overlapTimeline.totalYears} years`);
+}
+
+// Test 3: Education separation
+const eduText = `
+EDUCATION
+Stanford University | B.S. in Computer Science | 2017 - 2021
+
+WORK EXPERIENCE
+Software Engineer | Jan 2022 - Present
+`;
+const eduTimeline = extractEmploymentTimeline(eduText);
+console.log(`  Education Isolation: ${eduTimeline.totalYears} years professional (college degree dates excluded)`);
+if (eduTimeline.totalYears >= 4 && eduTimeline.totalYears <= 5.2) {
+  passedCount++;
+  console.log(`  ✅ College degree (2017 - 2021) excluded from professional work experience`);
+} else {
+  failedCount++;
+  console.error(`  ❌ Failed: college degree was erroneously added to work experience: got ${eduTimeline.totalYears} years`);
+}
+
+// Test 4: Explicit claim extraction helper
+const explicitClaimYears = extractYearsOfExperience("Over 6 years of professional engineering experience.");
+if (explicitClaimYears === 6) {
+  passedCount++;
+  console.log(`  ✅ Explicit experience claim recognized via extractYearsOfExperience (${explicitClaimYears} years)`);
+} else {
+  failedCount++;
+  console.error(`  ❌ Failed explicit claim test: got ${explicitClaimYears}`);
 }
 
 console.log("\n--- Integration Tests: End-to-End Pipeline ---");
