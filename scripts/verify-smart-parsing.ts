@@ -99,6 +99,28 @@ Preferred Skills:
     expectedMaxScore: 0,
     expectedMatchingSkills: [],
   },
+  {
+    name: "8. Adjacent Skill Matching (RabbitMQ fulfills Kafka requirement with 50% partial credit)",
+    resumeText: "Skills: RabbitMQ, Go, Docker\nExperience: Built messaging microservices for 4 years.",
+    jdText: "Requirements:\n- Go\n- Kafka\n- Docker",
+    expectedMinScore: 70,
+    expectedMatchingSkills: ["Go", "Docker"],
+  },
+  {
+    name: "9. Parenthetical Unpacking (AWS (EC2, S3) & Airflow (DAGs))",
+    resumeText: "Skills: AWS (EC2, S3, Lambda), Airflow (DAGs), Python\nExperience: 5 years designing ETL pipelines.",
+    jdText: "Requirements:\n- Python\n- Airflow\n- S3\n- Lambda",
+    expectedMinScore: 90,
+    expectedMatchingSkills: ["Python", "Airflow", "S3", "Lambda"],
+  },
+  {
+    name: "10. Dealbreaker Gate (Candidate without primary language capped at <= 55%)",
+    resumeText: "Skills: Docker, Kubernetes, Terraform, Jira, Git, Agile\nExperience: 6 years infrastructure engineer.",
+    jdText: "Requirements:\n- Python\n- Docker\n- Kubernetes",
+    expectedMinScore: 30,
+    expectedMaxScore: 55, // Capped by dealbreaker gate!
+    expectedMatchingSkills: ["Docker", "Kubernetes"],
+  },
 ];
 
 console.log("=================================================");

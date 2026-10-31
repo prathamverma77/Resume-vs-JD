@@ -16,9 +16,12 @@ interface RequirementItem {
   id: string;
   name: string;
   category: "Required" | "Preferred";
-  status: "Matched" | "Not found in resume";
+  status: "Matched" | "Adjacent Match" | "Not found in resume";
   isMatched: boolean;
+  isAdjacent?: boolean;
   evidence: string;
+  evidenceQuote?: string;
+  isProductionDepth?: boolean;
   weightTier: string;
 }
 
@@ -44,11 +47,29 @@ export default function AnalysisResult({
       (match?.matchingSkills || []).map((s) => normalizeSkill(s))
     );
 
+    const adjacentMap = new Map<string, { candidateSkill: string; family: string }>();
+    for (const adj of match?.adjacentMatches || []) {
+      adjacentMap.set(normalizeSkill(adj.requiredSkill), {
+        candidateSkill: adj.matchedCandidateSkill,
+        family: adj.family,
+      });
+    }
+
+    const evidenceMap = new Map<string, { quote?: string; isProduction: boolean }>();
+    for (const ev of match?.evidenceDetails || []) {
+      evidenceMap.set(normalizeSkill(ev.skill), {
+        quote: ev.evidenceQuote,
+        isProduction: ev.isProductionDepth,
+      });
+    }
+
     // 1. Required Technical Skills
     if (jd?.technical_req) {
       for (const req of jd.technical_req) {
         const norm = normalizeSkill(req);
         const isMatched = matchedNormalized.has(norm);
+        const adjacent = adjacentMap.get(norm);
+        const evidenceDetail = evidenceMap.get(norm);
         const weight = getSkillWeight(req);
         const weightTier =
           weight === 3.0
@@ -57,15 +78,29 @@ export default function AnalysisResult({
             ? "Tier 3: Auxiliary Tool"
             : "Tier 2: Framework/DB";
 
+        let status: "Matched" | "Adjacent Match" | "Not found in resume" = "Not found in resume";
+        let evidence = "Searched resume text; no direct or adjacent mention detected";
+
+        if (isMatched) {
+          status = "Matched";
+          evidence = evidenceDetail?.isProduction
+            ? "Demonstrated with production scale & quantifiable impact"
+            : "Identified in candidate skills and experience";
+        } else if (adjacent) {
+          status = "Adjacent Match";
+          evidence = `Transferable Sibling: Candidate possesses ${adjacent.candidateSkill} (${adjacent.family})`;
+        }
+
         items.push({
           id: `req-${req}`,
           name: req,
           category: "Required",
-          status: isMatched ? "Matched" : "Not found in resume",
+          status,
           isMatched,
-          evidence: isMatched
-            ? "Identified in candidate skills and experience"
-            : "No direct mention identified in resume text",
+          isAdjacent: !isMatched && adjacent !== undefined,
+          evidence,
+          evidenceQuote: evidenceDetail?.quote,
+          isProductionDepth: evidenceDetail?.isProduction,
           weightTier,
         });
       }
@@ -76,6 +111,8 @@ export default function AnalysisResult({
       for (const pref of jd.preferred_skills) {
         const norm = normalizeSkill(pref);
         const isMatched = matchedNormalized.has(norm);
+        const adjacent = adjacentMap.get(norm);
+        const evidenceDetail = evidenceMap.get(norm);
         const weight = getSkillWeight(pref);
         const weightTier =
           weight === 3.0
@@ -84,15 +121,29 @@ export default function AnalysisResult({
             ? "Tier 3: Auxiliary Tool"
             : "Tier 2: Framework/DB";
 
+        let status: "Matched" | "Adjacent Match" | "Not found in resume" = "Not found in resume";
+        let evidence = "Optional preference not detected in resume text";
+
+        if (isMatched) {
+          status = "Matched";
+          evidence = evidenceDetail?.isProduction
+            ? "Demonstrated with production scale & quantifiable impact"
+            : "Identified in candidate skills and experience";
+        } else if (adjacent) {
+          status = "Adjacent Match";
+          evidence = `Transferable Preferred: Candidate possesses ${adjacent.candidateSkill} (${adjacent.family})`;
+        }
+
         items.push({
           id: `pref-${pref}`,
           name: pref,
           category: "Preferred",
-          status: isMatched ? "Matched" : "Not found in resume",
+          status,
           isMatched,
-          evidence: isMatched
-            ? "Identified in candidate skills and experience"
-            : "Optional preference not detected in resume text",
+          isAdjacent: !isMatched && adjacent !== undefined,
+          evidence,
+          evidenceQuote: evidenceDetail?.quote,
+          isProductionDepth: evidenceDetail?.isProduction,
           weightTier,
         });
       }
@@ -103,12 +154,12 @@ export default function AnalysisResult({
 
   // Counts for filters
   const counts = useMemo(() => {
-    const matched = allRequirements.filter((r) => r.isMatched).length;
+    const matched = allRequirements.filter((r) => r.isMatched || r.isAdjacent).length;
     const missingReq = allRequirements.filter(
-      (r) => !r.isMatched && r.category === "Required"
+      (r) => !r.isMatched && !r.isAdjacent && r.category === "Required"
     ).length;
     const missingPref = allRequirements.filter(
-      (r) => !r.isMatched && r.category === "Preferred"
+      (r) => !r.isMatched && !r.isAdjacent && r.category === "Preferred"
     ).length;
     return {
       all: allRequirements.length,
@@ -121,9 +172,9 @@ export default function AnalysisResult({
   // Filtered requirements
   const filteredRequirements = useMemo(() => {
     return allRequirements.filter((item) => {
-      if (filter === "matched" && !item.isMatched) return false;
-      if (filter === "missing_required" && (item.isMatched || item.category !== "Required")) return false;
-      if (filter === "missing_preferred" && (item.isMatched || item.category !== "Preferred")) return false;
+      if (filter === "matched" && !item.isMatched && !item.isAdjacent) return false;
+      if (filter === "missing_required" && (item.isMatched || item.isAdjacent || item.category !== "Required")) return false;
+      if (filter === "missing_preferred" && (item.isMatched || item.isAdjacent || item.category !== "Preferred")) return false;
 
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -428,19 +479,32 @@ export default function AnalysisResult({
             </div>
 
             <p className="text-xs text-[#5C5E58] dark:text-[#9E9F97] max-w-xs leading-relaxed font-sans">
-              Weighted calculation: 75% core required technical skills + 25% preferred bonus qualifications.
+              {match?.scoringBreakdown?.isPreferredRedistributed
+                ? "Dynamic 5-Dimension Weighting: 65% Core + 15% Adjacent + 20% Seniority (Preferred redistributed)."
+                : "Dynamic 5-Dimension Weighting: 55% Core + 15% Preferred + 15% Adjacent + 15% Seniority."}
             </p>
           </div>
 
           {/* 3 Metric Cards Grid (7 Cols) */}
           <div className="lg:col-span-7 flex flex-col gap-4">
+            {/* Gate Cap Alert Banner (if applied) */}
+            {match?.scoringBreakdown?.dealbreakerCapApplied && (
+              <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300 text-xs flex items-center gap-3">
+                <span className="text-base">⚠️</span>
+                <div>
+                  <span className="font-bold block">Dealbreaker Gate Enforced</span>
+                  <span>{match?.scoringBreakdown?.capReason || "Missing primary required language; overall score capped at 55%."}</span>
+                </div>
+              </div>
+            )}
+
             {/* Metric 1: Core Technical Coverage */}
             <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] shadow-2xs">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500" />
                   <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#5C5E58] dark:text-[#9E9F97]">
-                    Core Technical Coverage (75% Weight)
+                    Core Technical Coverage ({match?.scoringBreakdown?.coreWeight ?? 55}% Weight)
                   </span>
                 </div>
                 <span className="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400">
@@ -469,36 +533,36 @@ export default function AnalysisResult({
               </div>
             </div>
 
-            {/* Metric 2: Preferred Skills Coverage */}
+            {/* Metric 2: Preferred Skills Coverage (with N/A redistribution support) */}
             <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] shadow-2xs">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-amber-500" />
                   <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#5C5E58] dark:text-[#9E9F97]">
-                    Preferred Qualifications (25% Weight)
+                    Preferred Qualifications ({match?.scoringBreakdown?.preferredWeight ?? 15}% Weight)
                   </span>
                 </div>
                 <span className="text-xs font-mono font-bold text-amber-700 dark:text-amber-400">
-                  {totalPrefCount === 0 ? "N/A" : `${match?.preferredMatchScore ?? 0}%`}
+                  {match?.scoringBreakdown?.isPreferredRedistributed ? "N/A (Redistributed)" : `${match?.preferredMatchScore ?? 0}%`}
                 </span>
               </div>
 
               <div className="w-full bg-[#EAE4DC] dark:bg-[#2A2B27] rounded-full h-2 overflow-hidden mb-2">
                 <div
                   className="bg-amber-500 dark:bg-amber-400 h-2 rounded-full transition-all duration-700"
-                  style={{ width: `${totalPrefCount === 0 ? 0 : match?.preferredMatchScore ?? 0}%` }}
+                  style={{ width: `${match?.scoringBreakdown?.isPreferredRedistributed ? 100 : match?.preferredMatchScore ?? 0}%` }}
                 />
               </div>
 
               <div className="flex items-center justify-between text-xs text-[#5C5E58] dark:text-[#9E9F97]">
                 <span>
-                  {totalPrefCount === 0
-                    ? "No bonus qualifications listed in job description."
+                  {match?.scoringBreakdown?.isPreferredRedistributed
+                    ? "No preferred section parsed in JD. Weight dynamically redistributed to core skills."
                     : (match?.missingPreferredSkills.length || 0) === 0
                     ? "All bonus qualifications detected in resume."
                     : `${match?.missingPreferredSkills.length} bonus qualification gap(s).`}
                 </span>
-                {totalPrefCount > 0 && (
+                {totalPrefCount > 0 && !match?.scoringBreakdown?.isPreferredRedistributed && (
                   <span className="font-mono font-medium">
                     {totalPrefCount - (match?.missingPreferredSkills.length || 0)} / {totalPrefCount} matched
                   </span>
@@ -506,26 +570,29 @@ export default function AnalysisResult({
               </div>
             </div>
 
-            {/* Metric 3: Seniority & Experience Alignment */}
+            {/* Metric 3: Seniority & Experience Alignment (Banded Nuance) */}
             <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] shadow-2xs flex items-center justify-between">
               <div>
                 <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#5C5E58] dark:text-[#9E9F97] block mb-1">
-                  Seniority Alignment
+                  Seniority & Tenure Alignment
                 </span>
                 <span className="text-sm font-semibold text-[#141514] dark:text-[#F4F2EE] block">
-                  {match?.seniorityMatch?.isMet
-                    ? "Candidate Meets Experience Prerequisites"
-                    : resume.structuredData.yearsOfExperience && jd?.minYearsExperience
-                    ? `Experience Gap: ${resume.structuredData.yearsOfExperience} yrs vs ${jd.minYearsExperience}+ yrs requested`
-                    : "Experience timeline evaluated without formal penalty"}
+                  {match?.seniorityMatch?.statusNote ||
+                    (match?.seniorityMatch?.isMet
+                      ? "Candidate Meets Experience Prerequisites"
+                      : resume.structuredData.yearsOfExperience && jd?.minYearsExperience
+                      ? `Experience: ${resume.structuredData.yearsOfExperience} yrs vs ${jd.minYearsExperience}+ yrs requested`
+                      : "Experience timeline evaluated without formal penalty")}
                 </span>
               </div>
               <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                match?.seniorityMatch?.isMet || !jd?.minYearsExperience
+                match?.seniorityMatch?.tenureBand === "Aligned" || !jd?.minYearsExperience
                   ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20"
+                  : match?.seniorityMatch?.tenureBand === "Borderline"
+                  ? "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20"
                   : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
               }`}>
-                {match?.seniorityMatch?.isMet || !jd?.minYearsExperience ? "Aligned" : "Review Required"}
+                {match?.seniorityMatch?.tenureBand || (match?.seniorityMatch?.isMet ? "Aligned" : "Review")}
               </span>
             </div>
           </div>
@@ -666,11 +733,25 @@ export default function AnalysisResult({
                     </td>
                     <td className="py-3.5 px-4">
                       {item.isMatched ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                        <div className="flex flex-col gap-1 items-start">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                            Matched
+                          </span>
+                          {item.isProductionDepth && (
+                            <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 dark:text-emerald-300">
+                              ⚡ Production Depth
+                            </span>
+                          )}
+                        </div>
+                      ) : item.isAdjacent ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/20">
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
                           </svg>
-                          Matched
+                          Adjacent (50%)
                         </span>
                       ) : (
                         <span
@@ -688,7 +769,13 @@ export default function AnalysisResult({
                       )}
                     </td>
                     <td className="py-3.5 px-5 text-[#5C5E58] dark:text-[#9E9F97]">
-                      {item.evidence}
+                      <span>{item.evidence}</span>
+                      {item.evidenceQuote && (
+                        <div className="mt-1.5 p-2 rounded-lg bg-[#FAF7F2] dark:bg-[#151614] border border-[#EAE4DC] dark:border-[#2F302C] text-[11px] text-[#141514] dark:text-[#F4F2EE] font-mono leading-relaxed">
+                          <span className="text-[#82847E] font-sans block text-[10px] uppercase font-semibold mb-0.5">Resume Evidence Quote:</span>
+                          &ldquo;{item.evidenceQuote}&rdquo;
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}

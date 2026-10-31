@@ -4,7 +4,7 @@ import { getGeminiClient, getGeminiModel } from "./gemini-client";
 import { JD_EXTRACTION_PROMPT, RESUME_EXTRACTION_PROMPT } from "./prompts";
 import { JDExtractedData, parseJD } from "../parser/jd-parser";
 import { StructuredResume, structureResume } from "../parser/resume-structurer";
-import { normalizeSkill } from "../skills/normalizer";
+import { normalizeSkill, extractParentheticalSkills } from "../skills/normalizer";
 
 // Strict timeout guard to prevent pending requests on external network spikes
 const AI_TIMEOUT_MS = 5000;
@@ -38,7 +38,7 @@ function sanitizeJsonString(raw: string): string {
 }
 
 /**
- * Clean and deduplicate an array of string items.
+ * Clean and deduplicate an array of string items, unpacking compound parentheticals.
  */
 function cleanStringArray(arr: unknown): string[] {
   if (!Array.isArray(arr)) return [];
@@ -47,11 +47,14 @@ function cleanStringArray(arr: unknown): string[] {
 
   for (const item of arr) {
     if (typeof item === "string") {
-      const trimmed = item.trim();
-      const norm = normalizeSkill(trimmed);
-      if (trimmed.length > 0 && !seen.has(norm || trimmed.toLowerCase())) {
-        seen.add(norm || trimmed.toLowerCase());
-        result.push(trimmed);
+      const tokens = extractParentheticalSkills(item);
+      for (const token of tokens) {
+        const trimmed = token.trim();
+        const norm = normalizeSkill(trimmed);
+        if (trimmed.length > 0 && !seen.has(norm || trimmed.toLowerCase())) {
+          seen.add(norm || trimmed.toLowerCase());
+          result.push(trimmed);
+        }
       }
     }
   }
@@ -121,14 +124,12 @@ async function extractJDWithGemini(jdText: string): Promise<Record<string, unkno
  */
 export async function extractJobDescriptionWithHarness(jdText: string): Promise<JDExtractedData> {
   let parsed: Record<string, unknown> | null = null;
-  let sourceUsed: "groq" | "gemini" | "local" = "local";
   const start = Date.now();
 
   // Tier 1: Try Groq
   if (getGroqClient()) {
     try {
       parsed = await extractJDWithGroq(jdText);
-      sourceUsed = "groq";
       console.log(
         `[AI Harness - JD] ⚡ Successfully extracted via GROQ API (Model: ${getGroqModel()}) in ${Date.now() - start}ms`
       );
@@ -144,7 +145,6 @@ export async function extractJobDescriptionWithHarness(jdText: string): Promise<
   if (!parsed && getGeminiClient()) {
     try {
       parsed = await extractJDWithGemini(jdText);
-      sourceUsed = "gemini";
       console.log(
         `[AI Harness - JD] ✨ Successfully extracted via GEMINI API (Model: ${getGeminiModel()}) in ${Date.now() - start}ms`
       );
@@ -158,7 +158,6 @@ export async function extractJobDescriptionWithHarness(jdText: string): Promise<
 
   // Tier 3: If no AI output obtained, fall back to hardened deterministic parser
   if (!parsed) {
-    sourceUsed = "local";
     console.log(
       `[AI Harness - JD] ⚙️ FALLBACK: Using Local Deterministic Regex Parser (Groq/Gemini offline or unconfigured)`
     );
@@ -266,14 +265,12 @@ async function extractResumeWithGemini(resumeText: string): Promise<Record<strin
  */
 export async function extractResumeWithHarness(resumeText: string): Promise<StructuredResume> {
   let parsed: Record<string, unknown> | null = null;
-  let sourceUsed: "groq" | "gemini" | "local" = "local";
   const start = Date.now();
 
   // Tier 1: Try Groq
   if (getGroqClient()) {
     try {
       parsed = await extractResumeWithGroq(resumeText);
-      sourceUsed = "groq";
       console.log(
         `[AI Harness - Resume] ⚡ Successfully extracted via GROQ API (Model: ${getGroqModel()}) in ${Date.now() - start}ms`
       );
@@ -289,7 +286,6 @@ export async function extractResumeWithHarness(resumeText: string): Promise<Stru
   if (!parsed && getGeminiClient()) {
     try {
       parsed = await extractResumeWithGemini(resumeText);
-      sourceUsed = "gemini";
       console.log(
         `[AI Harness - Resume] ✨ Successfully extracted via GEMINI API (Model: ${getGeminiModel()}) in ${Date.now() - start}ms`
       );
@@ -303,7 +299,6 @@ export async function extractResumeWithHarness(resumeText: string): Promise<Stru
 
   // Tier 3: If no AI output obtained, fall back to hardened deterministic structurer
   if (!parsed) {
-    sourceUsed = "local";
     console.log(
       `[AI Harness - Resume] ⚙️ FALLBACK: Using Local Deterministic Structurer (Groq/Gemini offline or unconfigured)`
     );
@@ -322,6 +317,7 @@ export async function extractResumeWithHarness(resumeText: string): Promise<Stru
 
     return {
       skills: skills.length > 0 ? skills : localFallback.skills,
+      rawText: resumeText,
       ...(yearsOfExperience !== undefined
         ? { yearsOfExperience }
         : localFallback.yearsOfExperience !== undefined

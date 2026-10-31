@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { AnalyzeApiResponse } from "@/types/analysis";
 
 interface AnalysisContextType {
@@ -12,7 +12,35 @@ interface AnalysisContextType {
 const AnalysisContext = createContext<AnalysisContextType | undefined>(undefined);
 
 export function AnalysisProvider({ children }: { children: React.ReactNode }) {
-  const [analysisResult, setAnalysisResult] = useState<AnalyzeApiResponse | null>(null);
+  const [analysisResult, setAnalysisResultState] = useState<AnalyzeApiResponse | null>(null);
+
+  // Hydrate from sessionStorage on page reload to prevent losing active report
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem("matchengine_analysis");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        queueMicrotask(() => {
+          setAnalysisResultState(parsed);
+        });
+      }
+    } catch {
+      // Safe fallback if storage unavailable
+    }
+  }, []);
+
+  const setAnalysisResult = (result: AnalyzeApiResponse | null) => {
+    setAnalysisResultState(result);
+    try {
+      if (result) {
+        sessionStorage.setItem("matchengine_analysis", JSON.stringify(result));
+      } else {
+        sessionStorage.removeItem("matchengine_analysis");
+      }
+    } catch {
+      // Safe fallback if storage quota exceeded
+    }
+  };
 
   const clearAnalysis = () => {
     setAnalysisResult(null);

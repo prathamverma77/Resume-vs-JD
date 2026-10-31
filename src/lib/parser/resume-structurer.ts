@@ -9,6 +9,7 @@ export interface StructuredResume {
   yearsOfExperience?: number;
   email?: string;
   phone?: string;
+  rawText?: string;
 }
 
 export function structureResume(text: string): StructuredResume {
@@ -38,6 +39,7 @@ export function structureResume(text: string): StructuredResume {
 
   return {
     skills: merged,
+    rawText: text,
     ...(years !== undefined && { yearsOfExperience: years }),
     ...(email && { email }),
     ...(phone && { phone }),

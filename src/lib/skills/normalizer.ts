@@ -89,7 +89,64 @@ export const ACRONYM_MAP: Record<string, string> = {
   "agile/scrum": "agile",
   "scrum": "agile",
   "agilescrum": "agile",
+  "apache airflow": "airflow",
+  "airflow dags": "airflow",
+  "airflow": "airflow",
+  "apache kafka": "kafka",
+  "apache spark": "spark",
+  "spark": "spark",
+  "apache flink": "flink",
+  "flink": "flink",
+  "apache cassandra": "cassandra",
+  "cassandra": "cassandra",
+  "apache hadoop": "hadoop",
+  "hadoop": "hadoop",
+  "github actions": "githubactions",
+  "github action": "githubactions",
+  "githubactions": "githubactions",
+  "gitlab ci": "gitlabci",
+  "gitlab ci/cd": "gitlabci",
+  "gitlabci": "gitlabci",
+  "spring boot": "springboot",
+  "springboot": "springboot",
+  "system design": "distributedsystems",
+  "distributed systems": "distributedsystems",
+  "microservices": "microservices",
+  "microservice architecture": "microservices",
+  "relational database": "rdbms",
+  "relational databases": "rdbms",
+  "rdbms": "rdbms",
 };
+
+/**
+ * Extracts and unpacks parenthetical and compound skill tokens.
+ * E.g., "AWS (EC2, S3, Lambda, EKS)" -> ["AWS", "EC2", "S3", "Lambda", "EKS"]
+ * E.g., "Airflow (DAGs)" -> ["Airflow", "DAGs"]
+ */
+export function extractParentheticalSkills(raw: string): string[] {
+  if (!raw || typeof raw !== "string") return [];
+  const trimmed = raw.trim();
+  const parenMatch = trimmed.match(/^([^(]+)\(([^)]+)\)$/);
+
+  if (!parenMatch) {
+    return [trimmed];
+  }
+
+  const parent = parenMatch[1].trim();
+  const children = parenMatch[2]
+    .split(/[,;/]+/)
+    .map((c) => c.trim())
+    .filter((c) => c.length > 0);
+
+  const results = new Set<string>();
+  if (parent) results.add(parent);
+  for (const child of children) {
+    results.add(child);
+  }
+
+  return Array.from(results);
+}
+
 
 /**
  * Normalizes any skill name:
