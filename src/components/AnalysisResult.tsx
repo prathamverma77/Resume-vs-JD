@@ -1,24 +1,25 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { AnalyzeApiResponse } from "@/types/analysis";
+import { AnalyzeApiResponse, ScoreAnalysisResult, StructuredResume } from "@/types/analysis";
 import { normalizeSkill } from "@/lib/skills/normalizer";
-import { getSkillWeight } from "@/lib/scoring/score-engine";
+import { getSkillWeight, calculateScore } from "@/lib/scoring/score-engine";
 
 interface AnalysisResultProps {
   data: AnalyzeApiResponse;
   onCompareAgain: () => void;
 }
 
-type RequirementFilter = "all" | "matched" | "missing_required" | "missing_preferred";
+type RequirementFilter = "all" | "matched" | "missing_required" | "missing_preferred" | "simulated";
 
 interface RequirementItem {
   id: string;
   name: string;
   category: "Required" | "Preferred";
-  status: "Matched" | "Adjacent Match" | "Not found in resume";
+  status: "Matched" | "Adjacent Match" | "Not found in resume" | "Simulated Match";
   isMatched: boolean;
   isAdjacent?: boolean;
+  isSimulated?: boolean;
   evidence: string;
   evidenceQuote?: string;
   isProductionDepth?: boolean;
@@ -32,13 +33,102 @@ export default function AnalysisResult({
   const [filter, setFilter] = useState<RequirementFilter>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [copied, setCopied] = useState<boolean>(false);
+  const [simulatedSkills, setSimulatedSkills] = useState<string[]>([]);
 
-  const match = data.matchAnalysis;
+  const baselineMatch = data.matchAnalysis;
   const resume = data.resume;
   const jd = data.jobDescription.parsedData;
+  const baselineScore = baselineMatch?.overallScore ?? 0;
 
+  const baseResume = resume.structuredData;
+  const baseRawText = baseResume.rawText || resume.extractedText || "";
+
+  // Dynamic simulated resume with simulated competencies injected
+  const simulatedResume: StructuredResume = useMemo(() => {
+    if (simulatedSkills.length === 0) return baseResume;
+    const combined = new Set([...(baseResume.skills || []), ...simulatedSkills]);
+    return {
+      ...baseResume,
+      skills: Array.from(combined),
+      rawText: `${baseRawText}\nSimulated Verified Competencies: ${simulatedSkills.join(", ")}.`,
+    };
+  }, [baseResume, baseRawText, simulatedSkills]);
+
+  // Recalculated active match analysis in-memory (<1ms client-side)
+  const activeMatch: ScoreAnalysisResult | null = useMemo(() => {
+    if (!jd) return baselineMatch;
+    if (simulatedSkills.length === 0) return baselineMatch;
+    return calculateScore(simulatedResume, jd);
+  }, [jd, baselineMatch, simulatedSkills.length, simulatedResume]);
+
+  const match = activeMatch;
   const score = match?.overallScore ?? 0;
+  const scoreDelta = score - baselineScore;
+  const isSimulating = simulatedSkills.length > 0;
   const matchLevel = match?.matchLevel || "Analysis Complete";
+
+  // Pre-calculate marginal ROI score boost for every missing skill
+  const missingSkillsWithImpact = useMemo(() => {
+    if (!jd || !baselineMatch) return [];
+
+    const missingReq = baselineMatch.missingRequiredSkills || [];
+    const missingPref = baselineMatch.missingPreferredSkills || [];
+
+    const allMissing: { name: string; category: "Required" | "Preferred" }[] = [
+      ...missingReq.map((s) => ({ name: s, category: "Required" as const })),
+      ...missingPref.map((s) => ({ name: s, category: "Preferred" as const })),
+    ];
+
+    const seen = new Set<string>();
+    const uniqueMissing: { name: string; category: "Required" | "Preferred" }[] = [];
+    for (const item of allMissing) {
+      const norm = normalizeSkill(item.name);
+      if (!seen.has(norm)) {
+        seen.add(norm);
+        uniqueMissing.push(item);
+      }
+    }
+
+    return uniqueMissing.map((item) => {
+      const testResume: StructuredResume = {
+        ...baseResume,
+        skills: [...(baseResume.skills || []), item.name],
+        rawText: `${baseRawText}\n${item.name}`,
+      };
+      const testResult = calculateScore(testResume, jd);
+      const boost = Math.max(0, testResult.overallScore - baselineScore);
+      const weight = getSkillWeight(item.name);
+      const weightTier =
+        weight === 3.0
+          ? "Tier 1: Core"
+          : weight === 1.0
+          ? "Tier 3: Tool"
+          : "Tier 2: Framework";
+
+      return {
+        name: item.name,
+        category: item.category,
+        boost,
+        weight,
+        weightTier,
+      };
+    }).sort((a, b) => b.boost - a.boost || b.weight - a.weight);
+  }, [baseResume, baseRawText, jd, baselineMatch, baselineScore]);
+
+  // Skill simulator toggle handlers
+  const toggleSimulateSkill = (skill: string) => {
+    setSimulatedSkills((prev) =>
+      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
+    );
+  };
+
+  const resetSimulation = () => {
+    setSimulatedSkills([]);
+  };
+
+  const simulateAllMissing = () => {
+    setSimulatedSkills(missingSkillsWithImpact.map((s) => s.name));
+  };
 
   // Build unified, structured requirements list with weight tiers
   const allRequirements: RequirementItem[] = useMemo(() => {
@@ -46,6 +136,7 @@ export default function AnalysisResult({
     const matchedNormalized = new Set(
       (match?.matchingSkills || []).map((s) => normalizeSkill(s))
     );
+    const simulatedNormSet = new Set(simulatedSkills.map((s) => normalizeSkill(s)));
 
     const adjacentMap = new Map<string, { candidateSkill: string; family: string }>();
     for (const adj of match?.adjacentMatches || []) {
@@ -67,6 +158,7 @@ export default function AnalysisResult({
     if (jd?.technical_req) {
       for (const req of jd.technical_req) {
         const norm = normalizeSkill(req);
+        const isSimulated = simulatedNormSet.has(norm);
         const isMatched = matchedNormalized.has(norm);
         const adjacent = adjacentMap.get(norm);
         const evidenceDetail = evidenceMap.get(norm);
@@ -78,10 +170,13 @@ export default function AnalysisResult({
             ? "Tier 3: Auxiliary Tool"
             : "Tier 2: Framework/DB";
 
-        let status: "Matched" | "Adjacent Match" | "Not found in resume" = "Not found in resume";
+        let status: "Matched" | "Adjacent Match" | "Not found in resume" | "Simulated Match" = "Not found in resume";
         let evidence = "Searched resume text; no direct or adjacent mention detected";
 
-        if (isMatched) {
+        if (isSimulated) {
+          status = "Simulated Match";
+          evidence = "Live Simulator: Candidate simulated acquiring this competency";
+        } else if (isMatched) {
           status = "Matched";
           evidence = evidenceDetail?.isProduction
             ? "Demonstrated with production scale & quantifiable impact"
@@ -98,9 +193,10 @@ export default function AnalysisResult({
           status,
           isMatched,
           isAdjacent: !isMatched && adjacent !== undefined,
+          isSimulated,
           evidence,
-          evidenceQuote: evidenceDetail?.quote,
-          isProductionDepth: evidenceDetail?.isProduction,
+          evidenceQuote: isSimulated ? undefined : evidenceDetail?.quote,
+          isProductionDepth: isSimulated ? false : evidenceDetail?.isProduction,
           weightTier,
         });
       }
@@ -110,6 +206,7 @@ export default function AnalysisResult({
     if (jd?.preferred_skills) {
       for (const pref of jd.preferred_skills) {
         const norm = normalizeSkill(pref);
+        const isSimulated = simulatedNormSet.has(norm);
         const isMatched = matchedNormalized.has(norm);
         const adjacent = adjacentMap.get(norm);
         const evidenceDetail = evidenceMap.get(norm);
@@ -121,10 +218,13 @@ export default function AnalysisResult({
             ? "Tier 3: Auxiliary Tool"
             : "Tier 2: Framework/DB";
 
-        let status: "Matched" | "Adjacent Match" | "Not found in resume" = "Not found in resume";
+        let status: "Matched" | "Adjacent Match" | "Not found in resume" | "Simulated Match" = "Not found in resume";
         let evidence = "Optional preference not detected in resume text";
 
-        if (isMatched) {
+        if (isSimulated) {
+          status = "Simulated Match";
+          evidence = "Live Simulator: Candidate simulated acquiring this bonus qualification";
+        } else if (isMatched) {
           status = "Matched";
           evidence = evidenceDetail?.isProduction
             ? "Demonstrated with production scale & quantifiable impact"
@@ -141,16 +241,17 @@ export default function AnalysisResult({
           status,
           isMatched,
           isAdjacent: !isMatched && adjacent !== undefined,
+          isSimulated,
           evidence,
-          evidenceQuote: evidenceDetail?.quote,
-          isProductionDepth: evidenceDetail?.isProduction,
+          evidenceQuote: isSimulated ? undefined : evidenceDetail?.quote,
+          isProductionDepth: isSimulated ? false : evidenceDetail?.isProduction,
           weightTier,
         });
       }
     }
 
     return items;
-  }, [jd, match]);
+  }, [jd, match, simulatedSkills]);
 
   // Counts for filters
   const counts = useMemo(() => {
@@ -161,11 +262,13 @@ export default function AnalysisResult({
     const missingPref = allRequirements.filter(
       (r) => !r.isMatched && !r.isAdjacent && r.category === "Preferred"
     ).length;
+    const simulated = allRequirements.filter((r) => r.isSimulated).length;
     return {
       all: allRequirements.length,
       matched,
       missing_required: missingReq,
       missing_preferred: missingPref,
+      simulated,
     };
   }, [allRequirements]);
 
@@ -175,6 +278,7 @@ export default function AnalysisResult({
       if (filter === "matched" && !item.isMatched && !item.isAdjacent) return false;
       if (filter === "missing_required" && (item.isMatched || item.isAdjacent || item.category !== "Required")) return false;
       if (filter === "missing_preferred" && (item.isMatched || item.isAdjacent || item.category !== "Preferred")) return false;
+      if (filter === "simulated" && !item.isSimulated) return false;
 
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -259,8 +363,15 @@ export default function AnalysisResult({
       `Candidate Exp:     ${resume.structuredData.yearsOfExperience ? `${resume.structuredData.yearsOfExperience} years` : "Not explicitly detected"}`,
       `JD Required Exp:   ${jd?.minYearsExperience ? `${jd.minYearsExperience}+ years` : "Not specified"}`,
       `Overall Score:     ${score}% (${matchLevel})`,
-      `Core Technical:    ${match.technicalMatchScore}% (75% weight)`,
-      `Preferred Skills:  ${jd?.preferred_skills?.length === 0 ? "N/A" : `${match.preferredMatchScore}% (25% weight)`}`,
+      ...(isSimulating
+        ? [
+            `*** LIVE WHAT-IF SIMULATION ACTIVE ***`,
+            `Baseline Score:    ${baselineScore}% -> Simulated Score: ${score}% (Delta: ▲ +${scoreDelta}%)`,
+            `Simulated Skills:  ${simulatedSkills.join(", ")}`,
+          ]
+        : []),
+      `Core Technical:    ${match.technicalMatchScore}% (${match.scoringBreakdown?.coreWeight ?? 70}% weight)`,
+      `Preferred Skills:  ${match.scoringBreakdown?.isPreferredRedistributed ? "N/A (Redistributed)" : `${match.preferredMatchScore}% (${match.scoringBreakdown?.preferredWeight ?? 15}% weight)`}`,
       "",
       `Matching Skills (${match.matchingSkills.length}):`,
       match.matchingSkills.length > 0 ? match.matchingSkills.join(", ") : "None identified",
@@ -436,9 +547,16 @@ export default function AnalysisResult({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Radial SVG Circular Score Gauge (5 Cols) */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] shadow-xs text-center">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-[#82847E] dark:text-[#72736C] mb-4">
-              Overall Compatibility Score
-            </span>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-[11px] font-mono uppercase tracking-widest text-[#82847E] dark:text-[#72736C]">
+                Overall Compatibility Score
+              </span>
+              {isSimulating && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30">
+                  Simulated
+                </span>
+              )}
+            </div>
 
             {/* Circular Gauge */}
             <div className="relative w-44 h-44 flex items-center justify-center mb-4">
@@ -475,20 +593,46 @@ export default function AnalysisResult({
                 <span className={`text-[11px] font-semibold mt-1 px-2.5 py-0.5 rounded-full border ${theme.bgLight} ${theme.badgeBorder} ${theme.badgeText}`}>
                   {matchLevel}
                 </span>
+                {isSimulating && scoreDelta !== 0 && (
+                  <span className="mt-1.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30 animate-pulse">
+                    ▲ {scoreDelta > 0 ? `+${scoreDelta}%` : `${scoreDelta}%`} Lift
+                  </span>
+                )}
               </div>
             </div>
 
-            <p className="text-xs text-[#5C5E58] dark:text-[#9E9F97] max-w-xs leading-relaxed font-sans">
-              {match?.scoringBreakdown?.isPreferredRedistributed
-                ? "Dynamic 5-Dimension Weighting: 65% Core + 15% Adjacent + 20% Seniority (Preferred redistributed)."
-                : "Dynamic 5-Dimension Weighting: 55% Core + 15% Preferred + 15% Adjacent + 15% Seniority."}
-            </p>
+            {isSimulating ? (
+              <div className="text-xs font-mono text-[#5C5E58] dark:text-[#9E9F97] flex items-center justify-center gap-2">
+                <span>Baseline: <strong className="text-[#141514] dark:text-[#F4F2EE]">{baselineScore}%</strong></span>
+                <span>&rarr;</span>
+                <span className="font-bold text-cyan-600 dark:text-cyan-400">Simulated: {score}%</span>
+              </div>
+            ) : (
+              <p className="text-xs text-[#5C5E58] dark:text-[#9E9F97] max-w-xs leading-relaxed font-sans">
+                {match?.scoringBreakdown?.isPreferredRedistributed
+                  ? "Dynamic 5-Dimension Weighting: 65% Core + 15% Adjacent + 20% Seniority (Preferred redistributed)."
+                  : "Dynamic 5-Dimension Weighting: 55% Core + 15% Preferred + 15% Adjacent + 15% Seniority."}
+              </p>
+            )}
           </div>
 
           {/* 3 Metric Cards Grid (7 Cols) */}
           <div className="lg:col-span-7 flex flex-col gap-4">
-            {/* Gate Cap Alert Banner (if applied) */}
-            {match?.scoringBreakdown?.dealbreakerCapApplied && (
+            {/* Gate Cap Alert Banner or Gate Lifted Banner */}
+            {baselineMatch?.scoringBreakdown?.dealbreakerCapApplied && !match?.scoringBreakdown?.dealbreakerCapApplied ? (
+              <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-500/15 via-cyan-500/15 to-emerald-500/15 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200 text-xs flex items-center gap-3 shadow-xs">
+                <span className="text-xl">🎉</span>
+                <div>
+                  <span className="font-bold block text-emerald-800 dark:text-emerald-300">
+                    Dealbreaker Gate Constraint Lifted!
+                  </span>
+                  <span>
+                    Simulating a primary required language satisfied gate prerequisites, releasing your compatibility score from the 55% cap up to{" "}
+                    <strong className="font-mono text-emerald-700 dark:text-emerald-300">{score}%</strong>.
+                  </span>
+                </div>
+              </div>
+            ) : match?.scoringBreakdown?.dealbreakerCapApplied ? (
               <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300 text-xs flex items-center gap-3">
                 <span className="text-base">⚠️</span>
                 <div>
@@ -496,7 +640,7 @@ export default function AnalysisResult({
                   <span>{match?.scoringBreakdown?.capReason || "Missing primary required language; overall score capped at 55%."}</span>
                 </div>
               </div>
-            )}
+            ) : null}
 
             {/* Metric 1: Core Technical Coverage */}
             <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] shadow-2xs">
@@ -507,16 +651,37 @@ export default function AnalysisResult({
                     Core Technical Coverage ({match?.scoringBreakdown?.coreWeight ?? 55}% Weight)
                   </span>
                 </div>
-                <span className="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400">
-                  {match?.technicalMatchScore ?? 0}%
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400">
+                    {match?.technicalMatchScore ?? 0}%
+                  </span>
+                  {isSimulating && (match?.technicalMatchScore ?? 0) > (baselineMatch?.technicalMatchScore ?? 0) && (
+                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30">
+                      +{(match?.technicalMatchScore ?? 0) - (baselineMatch?.technicalMatchScore ?? 0)}% simulated
+                    </span>
+                  )}
+                </div>
               </div>
 
-              <div className="w-full bg-[#EAE4DC] dark:bg-[#2A2B27] rounded-full h-2 overflow-hidden mb-2">
+              {/* Dual-tone Progress Bar */}
+              <div className="w-full bg-[#EAE4DC] dark:bg-[#2A2B27] rounded-full h-2.5 overflow-hidden mb-2 relative flex">
                 <div
-                  className="bg-emerald-600 dark:bg-emerald-500 h-2 rounded-full transition-all duration-700"
-                  style={{ width: `${match?.technicalMatchScore ?? 0}%` }}
+                  className="bg-emerald-600 dark:bg-emerald-500 h-2.5 rounded-l-full transition-all duration-500 shrink-0"
+                  style={{ width: `${Math.min(100, baselineMatch?.technicalMatchScore ?? 0)}%` }}
+                  title={`Baseline: ${baselineMatch?.technicalMatchScore ?? 0}%`}
                 />
+                {isSimulating && (match?.technicalMatchScore ?? 0) > (baselineMatch?.technicalMatchScore ?? 0) && (
+                  <div
+                    className="bg-gradient-to-r from-cyan-500 to-teal-400 h-2.5 rounded-r-full transition-all duration-500 animate-pulse"
+                    style={{
+                      width: `${Math.min(
+                        100 - (baselineMatch?.technicalMatchScore ?? 0),
+                        (match?.technicalMatchScore ?? 0) - (baselineMatch?.technicalMatchScore ?? 0)
+                      )}%`,
+                    }}
+                    title={`Simulated Boost: +${(match?.technicalMatchScore ?? 0) - (baselineMatch?.technicalMatchScore ?? 0)}%`}
+                  />
+                )}
               </div>
 
               <div className="flex items-center justify-between text-xs text-[#5C5E58] dark:text-[#9E9F97]">
@@ -542,16 +707,39 @@ export default function AnalysisResult({
                     Preferred Qualifications ({match?.scoringBreakdown?.preferredWeight ?? 15}% Weight)
                   </span>
                 </div>
-                <span className="text-xs font-mono font-bold text-amber-700 dark:text-amber-400">
-                  {match?.scoringBreakdown?.isPreferredRedistributed ? "N/A (Redistributed)" : `${match?.preferredMatchScore ?? 0}%`}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold text-amber-700 dark:text-amber-400">
+                    {match?.scoringBreakdown?.isPreferredRedistributed ? "N/A (Redistributed)" : `${match?.preferredMatchScore ?? 0}%`}
+                  </span>
+                  {isSimulating && !match?.scoringBreakdown?.isPreferredRedistributed && (match?.preferredMatchScore ?? 0) > (baselineMatch?.preferredMatchScore ?? 0) && (
+                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30">
+                      +{(match?.preferredMatchScore ?? 0) - (baselineMatch?.preferredMatchScore ?? 0)}% simulated
+                    </span>
+                  )}
+                </div>
               </div>
 
-              <div className="w-full bg-[#EAE4DC] dark:bg-[#2A2B27] rounded-full h-2 overflow-hidden mb-2">
+              {/* Dual-tone Progress Bar */}
+              <div className="w-full bg-[#EAE4DC] dark:bg-[#2A2B27] rounded-full h-2.5 overflow-hidden mb-2 relative flex">
                 <div
-                  className="bg-amber-500 dark:bg-amber-400 h-2 rounded-full transition-all duration-700"
-                  style={{ width: `${match?.scoringBreakdown?.isPreferredRedistributed ? 100 : match?.preferredMatchScore ?? 0}%` }}
+                  className="bg-amber-500 dark:bg-amber-400 h-2.5 rounded-l-full transition-all duration-500 shrink-0"
+                  style={{
+                    width: `${match?.scoringBreakdown?.isPreferredRedistributed ? 100 : Math.min(100, baselineMatch?.preferredMatchScore ?? 0)}%`,
+                  }}
+                  title={`Baseline: ${baselineMatch?.preferredMatchScore ?? 0}%`}
                 />
+                {isSimulating && !match?.scoringBreakdown?.isPreferredRedistributed && (match?.preferredMatchScore ?? 0) > (baselineMatch?.preferredMatchScore ?? 0) && (
+                  <div
+                    className="bg-gradient-to-r from-amber-400 to-yellow-300 h-2.5 rounded-r-full transition-all duration-500 animate-pulse"
+                    style={{
+                      width: `${Math.min(
+                        100 - (baselineMatch?.preferredMatchScore ?? 0),
+                        (match?.preferredMatchScore ?? 0) - (baselineMatch?.preferredMatchScore ?? 0)
+                      )}%`,
+                    }}
+                    title={`Simulated Boost: +${(match?.preferredMatchScore ?? 0) - (baselineMatch?.preferredMatchScore ?? 0)}%`}
+                  />
+                )}
               </div>
 
               <div className="flex items-center justify-between text-xs text-[#5C5E58] dark:text-[#9E9F97]">
@@ -597,6 +785,219 @@ export default function AnalysisResult({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* ============================================================
+          2.2 LIVE "WHAT-IF" SKILL SIMULATOR (DYNAMIC RE-CALCULATOR)
+      ============================================================ */}
+      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-gradient-to-b from-white via-[#FAF7F2]/50 to-white dark:from-[#181917] dark:via-[#161715] dark:to-[#181917] transition-all">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-[#EAE4DC] dark:border-[#2F302C]">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+              </span>
+              <span className="text-[10px] font-mono font-semibold tracking-wider uppercase text-cyan-600 dark:text-cyan-400">
+                Deterministic Recalculation Engine (&lt;1ms)
+              </span>
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em] flex items-center gap-2.5">
+              <span>Live &ldquo;What-If&rdquo; Skill Simulator</span>
+              {isSimulating && (
+                <span className="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30">
+                  Active
+                </span>
+              )}
+            </h2>
+            <p className="text-xs sm:text-sm text-[#5C5E58] dark:text-[#9E9F97] mt-1 font-sans">
+              Click missing qualifications below to dynamically simulate score lift and see the exact marginal ROI of acquiring each skill.
+            </p>
+          </div>
+
+          {/* Simulator Control Actions */}
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {isSimulating ? (
+              <>
+                <div className="px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30 flex items-center gap-2 shadow-2xs">
+                  <span>{simulatedSkills.length} Simulated</span>
+                  <span className="text-emerald-700 dark:text-emerald-400 font-bold">
+                    ▲ +{scoreDelta}% Lift
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={resetSimulation}
+                  className="px-3.5 py-1.5 text-xs font-semibold rounded-full border border-[#EAE4DC] dark:border-[#2F302C] bg-white dark:bg-[#222320] text-[#141514] dark:text-[#F4F2EE] hover:bg-[#FAF7F2] dark:hover:bg-[#2A2B27] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-[0.98]"
+                >
+                  <svg className="w-3.5 h-3.5 text-[#82847E]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                  </svg>
+                  <span>Reset Simulation</span>
+                </button>
+              </>
+            ) : (
+              missingSkillsWithImpact.length >= 3 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const topThree = missingSkillsWithImpact.slice(0, 3).map((s) => s.name);
+                    setSimulatedSkills(topThree);
+                  }}
+                  className="px-3.5 py-1.5 text-xs font-semibold rounded-full border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-800 dark:text-cyan-300 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-[0.98]"
+                >
+                  <svg className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                  </svg>
+                  <span>Simulate Top 3 ROI Skills</span>
+                </button>
+              )
+            )}
+
+            {missingSkillsWithImpact.length > 0 && simulatedSkills.length < missingSkillsWithImpact.length && (
+              <button
+                type="button"
+                onClick={simulateAllMissing}
+                className="px-3.5 py-1.5 text-xs font-semibold rounded-full border border-[#EAE4DC] dark:border-[#2F302C] bg-[#FAF7F2] dark:bg-[#1E1F1D] text-[#5C5E58] dark:text-[#9E9F97] hover:text-[#141514] dark:hover:text-[#F4F2EE] transition-all cursor-pointer shadow-2xs active:scale-[0.98]"
+              >
+                Simulate All Gaps ({missingSkillsWithImpact.length})
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Missing Skills Interactive Grid */}
+        {missingSkillsWithImpact.length === 0 ? (
+          <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center text-xs text-emerald-800 dark:text-emerald-300 font-medium">
+            <span className="block font-semibold text-sm mb-1">
+              🌟 Flawless Technical Match
+            </span>
+            <span>
+              All technical requirements and preferred bonus qualifications are already verified in the candidate profile. No missing skills to simulate!
+            </span>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between text-xs text-[#5C5E58] dark:text-[#9E9F97]">
+              <span className="font-mono text-[10px] uppercase tracking-wider font-semibold">
+                Missing Target Skills (Ranked by Score Lift)
+              </span>
+              <span className="text-[11px] font-mono">
+                Click any chip to toggle simulation
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {missingSkillsWithImpact.map((item) => {
+                const isSelected = simulatedSkills.includes(item.name);
+                return (
+                  <button
+                    key={item.name}
+                    type="button"
+                    onClick={() => toggleSimulateSkill(item.name)}
+                    className={`p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between gap-3 group relative overflow-hidden ${
+                      isSelected
+                        ? "bg-gradient-to-br from-cyan-500/15 via-emerald-500/10 to-cyan-500/15 border-cyan-500 dark:border-cyan-400 shadow-[0_0_16px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50"
+                        : "bg-white dark:bg-[#1E1F1D] border-[#EAE4DC] dark:border-[#2F302C] hover:border-cyan-500/50 hover:bg-[#FAF7F2]/60 dark:hover:bg-[#252623] shadow-2xs hover:shadow-xs"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-xs sm:text-sm text-[#141514] dark:text-[#F4F2EE] group-hover:text-cyan-700 dark:group-hover:text-cyan-300 transition-colors">
+                          {item.name}
+                        </span>
+                        <span className="text-[10px] font-mono text-[#82847E] dark:text-[#72736C] mt-0.5">
+                          {item.weightTier}
+                        </span>
+                      </div>
+
+                      <span
+                        className={`text-[9px] font-mono font-semibold uppercase px-2 py-0.5 rounded-full shrink-0 ${
+                          item.category === "Required"
+                            ? "bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20"
+                            : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
+                        }`}
+                      >
+                        {item.category === "Required" ? "Req" : "Pref"}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-[#EAE4DC]/60 dark:border-[#2F302C]/60 text-xs">
+                      {/* Score Lift Pill */}
+                      <div className="flex items-center gap-1 font-mono">
+                        <span
+                          className={`text-[11px] font-bold ${
+                            isSelected
+                              ? "text-cyan-700 dark:text-cyan-300"
+                              : "text-emerald-700 dark:text-emerald-400"
+                          }`}
+                        >
+                          +{item.boost}%
+                        </span>
+                        <span className="text-[10px] text-[#82847E] dark:text-[#72736C]">
+                          lift
+                        </span>
+                      </div>
+
+                      {/* State Indicator */}
+                      <div
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold flex items-center gap-1 transition-all ${
+                          isSelected
+                            ? "bg-cyan-500 text-white shadow-2xs"
+                            : "bg-[#FAF7F2] dark:bg-[#141514] text-[#82847E] dark:text-[#72736C] group-hover:text-cyan-600 dark:group-hover:text-cyan-400 border border-[#EAE4DC] dark:border-[#2F302C]"
+                        }`}
+                      >
+                        {isSelected ? (
+                          <>
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                            <span>Simulated</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>+</span>
+                            <span>Add</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Simulator Guidance Footer */}
+            <div className="mt-4 p-4 rounded-2xl bg-[#FAF7F2]/80 dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] flex items-start gap-3 text-xs">
+              <span className="text-base leading-none">💡</span>
+              <div className="space-y-1">
+                <span className="font-semibold text-[#141514] dark:text-[#F4F2EE] block">
+                  {isSimulating
+                    ? `Dynamic Simulation Active (${simulatedSkills.length} skill${simulatedSkills.length > 1 ? "s" : ""} added)`
+                    : "Simulator Insights & ROI Prioritization"}
+                </span>
+                <p className="text-[#5C5E58] dark:text-[#9E9F97] leading-relaxed">
+                  {isSimulating ? (
+                    <>
+                      With simulated skills (<span className="font-mono text-cyan-700 dark:text-cyan-400">{simulatedSkills.join(", ")}</span>), your overall match score shifts from{" "}
+                      <span className="font-mono font-semibold">{baselineScore}%</span> to{" "}
+                      <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">{score}%</span> (▲ +{scoreDelta}%). Remember to substantiate these skills on your resume with concrete business outcomes and architecture bullets.
+                    </>
+                  ) : (
+                    <>
+                      Skills are weighted using 3-tier taxonomy (Tier 1 Core Languages &amp; Cloud Platforms = 3.0x, Tier 2 Frameworks = 2.0x, Tier 3 Tools = 1.0x).
+                      {missingSkillsWithImpact[0] && (
+                        <span>
+                          {" "}Prioritizing <strong className="text-[#141514] dark:text-[#F4F2EE] font-mono">{missingSkillsWithImpact[0].name}</strong> yields the greatest individual return (<strong className="text-emerald-700 dark:text-emerald-400">+{missingSkillsWithImpact[0].boost}% boost</strong>).
+                        </span>
+                      )}
+                    </>
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ============================================================
@@ -806,6 +1207,21 @@ export default function AnalysisResult({
             Matched ({counts.matched})
           </button>
 
+          {isSimulating && (
+            <button
+              type="button"
+              onClick={() => setFilter("simulated")}
+              className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer flex items-center gap-1.5 ${
+                filter === "simulated"
+                  ? "bg-cyan-600 text-white shadow-xs"
+                  : "bg-cyan-500/10 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/20"
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-ping" />
+              Simulated ({counts.simulated})
+            </button>
+          )}
+
           <button
             type="button"
             onClick={() => setFilter("missing_required")}
@@ -877,7 +1293,14 @@ export default function AnalysisResult({
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
-                      {item.isMatched ? (
+                      {item.isSimulated ? (
+                        <div className="flex flex-col gap-1 items-start">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.15)]">
+                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-ping" />
+                            Simulated Match
+                          </span>
+                        </div>
+                      ) : item.isMatched ? (
                         <div className="flex flex-col gap-1 items-start">
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -951,17 +1374,35 @@ export default function AnalysisResult({
           </span>
           {match?.matchingSkills && match.matchingSkills.length > 0 ? (
             <div className="flex flex-wrap gap-2">
-              {match.matchingSkills.map((skill, idx) => (
-                <span
-                  key={idx}
-                  className="px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 inline-flex items-center gap-1.5 shadow-2xs"
-                >
-                  <svg className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                  </svg>
-                  {skill}
-                </span>
-              ))}
+              {match.matchingSkills.map((skill, idx) => {
+                const isSim = simulatedSkills.some(
+                  (s) => normalizeSkill(s) === normalizeSkill(skill)
+                );
+                return (
+                  <span
+                    key={idx}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-medium inline-flex items-center gap-1.5 shadow-2xs transition-all ${
+                      isSim
+                        ? "bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30"
+                        : "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20"
+                    }`}
+                  >
+                    {isSim ? (
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-ping" />
+                    ) : (
+                      <svg className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                      </svg>
+                    )}
+                    {skill}
+                    {isSim && (
+                      <span className="text-[9px] font-mono font-bold uppercase tracking-wide opacity-80">
+                        (Simulated)
+                      </span>
+                    )}
+                  </span>
+                );
+              })}
             </div>
           ) : (
             <p className="text-xs text-[#5C5E58] dark:text-[#9E9F97] italic font-sans">
