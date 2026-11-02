@@ -13,7 +13,7 @@ export default function Navbar({ showBack, onBack }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="w-full border-b border-[#EAE4DC]/60 dark:border-[#2F302C]/60 bg-[#FFFDF9]/80 dark:bg-[#121312]/80 backdrop-blur-md sticky top-0 z-30 transition-colors">
+    <header className="w-full border-b border-[#EAE4DC]/60 dark:border-[#2F302C]/60 bg-[#FFFDF9]/80 dark:bg-[#121312]/80 backdrop-blur-md sticky top-0 z-30 transition-colors print:hidden">
       <div className="max-w-[1060px] mx-auto px-6 sm:px-8 md:px-10 h-14 flex items-center justify-between">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2.5">

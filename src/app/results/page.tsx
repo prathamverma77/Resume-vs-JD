@@ -18,15 +18,15 @@ export default function ResultsPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between bg-[#FFFDF9] dark:bg-[#121312] text-[#141514] dark:text-[#F4F2EE] font-sans antialiased overflow-x-hidden transition-colors">
+    <div className="relative min-h-screen flex flex-col justify-between bg-[#FFFDF9] dark:bg-[#121312] text-[#141514] dark:text-[#F4F2EE] font-sans antialiased overflow-x-hidden transition-colors print:bg-white print:text-black print:min-h-0 print:overflow-visible">
       {/* Balanced Atmospheric Aura for Results Dashboard */}
       <div 
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[600px] bg-gradient-to-b from-[#FFEBE4]/45 via-[#F3ECE4]/25 to-transparent dark:from-[#2A2B27]/40 dark:via-[#1B1C1A]/20 dark:to-transparent blur-3xl pointer-events-none -z-0" 
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[600px] bg-gradient-to-b from-[#FFEBE4]/45 via-[#F3ECE4]/25 to-transparent dark:from-[#2A2B27]/40 dark:via-[#1B1C1A]/20 dark:to-transparent blur-3xl pointer-events-none -z-0 print:hidden" 
         aria-hidden="true" 
       />
       <Navbar showBack={true} onBack={handleCompareAgain} />
 
-      <main className="relative z-10 flex-1 max-w-[1140px] w-full mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-12 flex flex-col">
+      <main className="relative z-10 flex-1 max-w-[1140px] w-full mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-12 flex flex-col print:p-0 print:m-0 print:max-w-full">
         {analysisResult ? (
           <div className="w-full">
             <AnalysisResult

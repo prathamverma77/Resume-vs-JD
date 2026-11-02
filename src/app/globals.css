@@ -162,3 +162,50 @@ div::-webkit-scrollbar-thumb:hover {
 .animate-fade-in {
   animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ============================================================
+   EXECUTIVE PDF & PRINT AUDIT STYLES
+============================================================ */
+@media print {
+  @page {
+    margin: 12mm 14mm;
+    size: auto;
+  }
+
+  /* Force background colors, badges, and progress bar fills in PDF export */
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #141514 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 13px !important;
+  }
+
+  /* Hide decorative luminous atmosphere */
+  .luminous-glow,
+  .luminous-glow::after {
+    display: none !important;
+  }
+
+  /* Clean page break avoidance for document sections and cards */
+  .print-avoid-break {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Remove sticky positioning during print */
+  header,
+  nav,
+  .sticky {
+    position: static !important;
+  }
+}
+

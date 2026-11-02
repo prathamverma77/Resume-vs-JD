@@ -412,11 +412,11 @@ export default function AnalysisResult({
   const totalPrefCount = jd?.preferred_skills?.length || 0;
 
   return (
-    <div className="w-full bg-white/95 dark:bg-[#181917]/95 border border-[#EAE4DC] dark:border-[#2F302C] rounded-3xl shadow-[0_16px_40px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.45)] overflow-hidden text-[#141514] dark:text-[#F4F2EE] backdrop-blur-md transition-all">
+    <div className="w-full bg-white/95 dark:bg-[#181917]/95 border border-[#EAE4DC] dark:border-[#2F302C] rounded-3xl shadow-[0_16px_40px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.45)] overflow-hidden text-[#141514] dark:text-[#F4F2EE] backdrop-blur-md transition-all print:border-none print:shadow-none print:rounded-none print:bg-white print:text-black">
       {/* ============================================================
           1. REPORT DOCUMENT HEADER
       ============================================================ */}
-      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C]">
+      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:p-0 print:pb-6">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-[#EAE4DC] dark:border-[#2F302C]">
           <div className="max-w-2xl">
             <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -439,7 +439,7 @@ export default function AnalysisResult({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0 print:hidden">
             <button
               type="button"
               onClick={handleCopyReport}
@@ -543,7 +543,7 @@ export default function AnalysisResult({
       {/* ============================================================
           2. ANALYTICAL SHOWCASE (CIRCULAR GAUGE + METRIC CARDS)
       ============================================================ */}
-      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-[#FAF7F2]/30 dark:bg-[#161715]/40">
+      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-[#FAF7F2]/30 dark:bg-[#161715]/40 print:bg-white print-avoid-break">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Radial SVG Circular Score Gauge (5 Cols) */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] shadow-xs text-center">
@@ -790,7 +790,7 @@ export default function AnalysisResult({
       {/* ============================================================
           2.2 LIVE "WHAT-IF" SKILL SIMULATOR (DYNAMIC RE-CALCULATOR)
       ============================================================ */}
-      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-gradient-to-b from-white via-[#FAF7F2]/50 to-white dark:from-[#181917] dark:via-[#161715] dark:to-[#181917] transition-all">
+      <div className={`p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-gradient-to-b from-white via-[#FAF7F2]/50 to-white dark:from-[#181917] dark:via-[#161715] dark:to-[#181917] transition-all print:bg-white print-avoid-break ${isSimulating ? "" : "print:hidden"}`}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-[#EAE4DC] dark:border-[#2F302C]">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -816,7 +816,7 @@ export default function AnalysisResult({
           </div>
 
           {/* Simulator Control Actions */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 shrink-0 print:hidden">
             {isSimulating ? (
               <>
                 <div className="px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30 flex items-center gap-2 shadow-2xs">
@@ -878,7 +878,25 @@ export default function AnalysisResult({
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs text-[#5C5E58] dark:text-[#9E9F97]">
+            {/* Print-only active simulation projection banner */}
+            {isSimulating && (
+              <div className="hidden print:flex items-center justify-between p-4 rounded-xl border border-cyan-500/40 bg-cyan-50 text-xs mb-3">
+                <div>
+                  <span className="font-semibold text-cyan-950 block">
+                    Modeled What-If Skills Projection Active:
+                  </span>
+                  <span className="text-cyan-800 font-mono mt-0.5 block">
+                    {simulatedSkills.join(", ")}
+                  </span>
+                </div>
+                <div className="text-right font-mono">
+                  <span className="text-[11px] text-cyan-700 block">Projected Score: {score}%</span>
+                  <span className="font-bold text-emerald-700 block">▲ +{scoreDelta}% Lift</span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between text-xs text-[#5C5E58] dark:text-[#9E9F97] print:hidden">
               <span className="font-mono text-[10px] uppercase tracking-wider font-semibold">
                 Missing Target Skills (Ranked by Score Lift)
               </span>
@@ -887,7 +905,7 @@ export default function AnalysisResult({
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 print:hidden">
               {missingSkillsWithImpact.map((item) => {
                 const isSelected = simulatedSkills.includes(item.name);
                 return (
@@ -1003,7 +1021,7 @@ export default function AnalysisResult({
       {/* ============================================================
           2.5 CAREER CHRONOLOGY & VERIFIED EMPLOYMENT TIMELINE
       ============================================================ */}
-      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-white dark:bg-[#181917]">
+      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-white dark:bg-[#181917] print:bg-white print-avoid-break">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#EAE4DC] dark:border-[#2F302C]">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
@@ -1148,7 +1166,7 @@ export default function AnalysisResult({
       {/* ============================================================
           3. REQUIREMENT COMPARISON MATRIX (PRIMARY REPORT TABLE)
       ============================================================ */}
-      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C]">
+      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:bg-white print-avoid-break">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
@@ -1160,7 +1178,7 @@ export default function AnalysisResult({
           </div>
 
           {/* Quick Search */}
-          <div className="relative w-full sm:w-72">
+          <div className="relative w-full sm:w-72 print:hidden">
             <input
               type="text"
               value={searchQuery}
@@ -1181,7 +1199,7 @@ export default function AnalysisResult({
         </div>
 
         {/* Filter Pills */}
-        <div className="flex flex-wrap items-center gap-2 mb-6">
+        <div className="flex flex-wrap items-center gap-2 mb-6 print:hidden">
           <button
             type="button"
             onClick={() => setFilter("all")}
@@ -1356,7 +1374,7 @@ export default function AnalysisResult({
       {/* ============================================================
           4. SKILL BREAKDOWN SUMMARY
       ============================================================ */}
-      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] space-y-6">
+      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] space-y-6 print:bg-white print-avoid-break">
         <div>
           <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
             Categorized Skill Inventory
@@ -1479,7 +1497,7 @@ export default function AnalysisResult({
       {/* ============================================================
           5. PRIORITIZED ACTIONABLE OPTIMIZATION
       ============================================================ */}
-      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C]">
+      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:bg-white print-avoid-break">
         <div className="mb-6">
           <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
             Prioritized Optimization Guidance
@@ -1513,7 +1531,7 @@ export default function AnalysisResult({
       {/* ============================================================
           6. ROLE RESPONSIBILITIES & ACADEMIC INTEL
       ============================================================ */}
-      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C]">
+      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:bg-white print-avoid-break">
         <div className="mb-6">
           <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
             Target Role Deliverables & Prerequisites
@@ -1574,12 +1592,12 @@ export default function AnalysisResult({
       {/* ============================================================
           7. REPORT FOOTER
       ============================================================ */}
-      <div className="p-6 bg-[#FAF7F2]/80 dark:bg-[#161715] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div className="p-6 bg-[#FAF7F2]/80 dark:bg-[#161715] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs print:bg-white print-avoid-break">
         <span className="text-[11px] text-[#82847E] dark:text-[#72736C] font-mono">
           Evaluated locally &bull; Zero document retention &bull; MatchEngine v2.4
         </span>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 print:hidden">
           <button
             type="button"
             onClick={handleCopyReport}
