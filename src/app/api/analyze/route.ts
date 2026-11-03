@@ -6,6 +6,8 @@ import {
     extractResumeWithHarness,
     extractJobDescriptionWithHarness,
 } from "@/lib/ai/extraction-harness";
+import { structureResume } from "@/lib/parser/resume-structurer";
+import { parseJD } from "@/lib/parser/jd-parser";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MIN_JD_LENGTH = 30; // 30 characters
@@ -223,15 +225,28 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // 9. Extract Resume & Job Description via AI Harness (parallel execution with local fallback)
+        // 9. Extract Resume & Job Description (Air-Gapped Local vs Deep AI Harness)
+        const rawMode = formData.get("mode") as string | null;
+        const isAirGap = rawMode === "airgap" || rawMode === "strict_privacy";
+        const analysisMode: "airgap" | "deep_ai" = isAirGap ? "airgap" : "deep_ai";
+
         console.log("\n========================================================");
         console.log(`[POST /api/analyze] Processing new candidate analysis request...`);
+        console.log(`[POST /api/analyze] Mode: ${isAirGap ? "🔒 AIR-GAPPED (100% Local Regex, 0 Network Calls)" : "⚡ DEEP AI SEMANTIC (Groq LPU / Gemini Flash Harness)"}`);
         console.log(`[POST /api/analyze] Resume Size: ${resume.size}B | JD Length: ${cleanJDText.length} chars`);
 
-        const [structuredResume, parsedJD] = await Promise.all([
-            extractResumeWithHarness(cleanResumeText),
-            extractJobDescriptionWithHarness(cleanJDText),
-        ]);
+        let structuredResume;
+        let parsedJD;
+
+        if (isAirGap) {
+            structuredResume = structureResume(cleanResumeText);
+            parsedJD = parseJD(cleanJDText);
+        } else {
+            [structuredResume, parsedJD] = await Promise.all([
+                extractResumeWithHarness(cleanResumeText),
+                extractJobDescriptionWithHarness(cleanJDText),
+            ]);
+        }
 
         // 10. Calculate Match Score (Deterministic Engine)
         const matchAnalysis = calculateScore(structuredResume, parsedJD);
@@ -245,6 +260,7 @@ export async function POST(req: NextRequest) {
             {
                 success: true,
                 message: "Resume and Job Description processed successfully",
+                mode: analysisMode,
                 matchAnalysis,
                 resume: {
                     fileInfo: {

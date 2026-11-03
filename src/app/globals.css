@@ -201,7 +201,7 @@ div::-webkit-scrollbar-thumb:hover {
     page-break-inside: avoid !important;
   }
 
-  /* Remove sticky positioning during print */
+  /* Remove sticky positioning during the print */
   header,
   nav,
   .sticky {
