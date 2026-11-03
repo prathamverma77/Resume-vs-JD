@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Privacy Policy — MatchEngine",
   description:
-    "Learn how MatchEngine handles your data. We do not store, log, or share your resume or job description content. All analysis runs strictly in volatile memory.",
+    "Learn how MatchEngine handles your data. Ephemeral in-memory execution, zero persistent database retention, zero AI model training, and auditable scoring.",
 };
 
 const pillars = [
@@ -29,8 +29,8 @@ const pillars = [
     ),
   },
   {
-    title: "No Third-Party AI Sharing",
-    desc: "Deterministic in-house parsing engine. Your career records are never transmitted to external LLM APIs for AI model training.",
+    title: "Zero AI Model Training",
+    desc: "Your documents are never used to train or fine-tune AI models. AI extraction is strictly stateless and ephemeral.",
     icon: (
       <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
@@ -44,25 +44,25 @@ const sections = [
     id: "overview",
     tag: "Core Charter",
     title: "Overview & Privacy Philosophy",
-    content: `MatchEngine ("we", "our", or "us") operates on a simple, privacy-first premise: your professional background belongs strictly to you.\n\nMost modern HR tools silently compile candidate dossiers, sell aggregate hiring data, or pipe resumes into public generative AI APIs. MatchEngine is architected to be the exact opposite: an ephemeral, client-focused audit utility that provides transparent ATS matching with zero cloud retention.`,
+    content: `MatchEngine ("we", "our", or "us") operates on a simple, privacy-first premise: your professional background belongs strictly to you.\n\nMost modern HR tools silently compile candidate dossiers, sell aggregate hiring data, or retain candidate profiles. MatchEngine is architected to be the exact opposite: an ephemeral audit utility that provides transparent ATS matching with zero persistent data retention.`,
   },
   {
     id: "no-login",
     tag: "Anonymity",
     title: "No Account or Identity Required",
-    content: `MatchEngine is engineered to be 100% anonymous.\n\nWe do not require you to create an account, verify an email address, link a LinkedIn profile, or submit your name. You can use every feature of the engine without identifying yourself.`,
+    content: `MatchEngine is engineered to be 100% anonymous.\n\nWe do not require you to create an account, verify an email address, link a LinkedIn profile, or submit your personal identity. You can evaluate as many resumes and job descriptions as you need with complete anonymity.`,
   },
   {
     id: "data-processing",
     tag: "Lifecycle",
     title: "Volatile In-Memory Processing",
-    content: `When you upload a resume (.pdf or .docx) and provide job description text, the document data is read directly into ephemeral server memory (RAM).\n\nThe text is parsed strictly to normalize skills, compute weighted compatibility scores, extract seniority timelines, and generate actionable feedback. Once the JSON response is delivered back to your browser, all memory allocated to that request is immediately freed. Your text is never written to a disk, cache, or persistent database.`,
+    content: `When you upload a resume (.pdf or .docx) and provide job description text, the document data is read directly into ephemeral server memory (RAM).\n\nThe text is parsed strictly to normalize skills, compute weighted compatibility scores, extract seniority timelines, and generate actionable feedback. Once the JSON response is delivered back to your browser, all memory allocated to that request is immediately released. Your text is never written to a disk, permanent cache, or database.`,
   },
   {
-    id: "zero-ai-apis",
-    tag: "Model Privacy",
-    title: "No External AI API Sharing",
-    content: `All parsing and matching algorithms run in-engine using our proprietary deterministic taxonomy and tokenizer.\n\nYour resume content, work history, contact details, and employer job specifications are never transmitted to OpenAI, Anthropic, Google Gemini, or any external third-party AI provider. Your career history will never be used to train large language models.`,
+    id: "ai-transparency",
+    tag: "AI & Model Privacy",
+    title: "AI Extraction & Zero Model Training",
+    content: `To accurately parse complex, unstructured natural language across diverse engineering resumes and job postings, MatchEngine utilizes high-speed LLM inference (via Groq Cloud LPU or Google Gemini APIs) as a structural text-to-JSON extractor.\n\n• Zero Model Training: Document text processed through our AI extraction harness is completely stateless. Your resume content, employment history, and personal contact details are never stored, logged, or utilized to train, fine-tune, or improve any artificial intelligence models.\n\n• Deterministic Scoring Governor: The AI model makes zero evaluation or grading decisions. All compatibility calculations, 3-tier skill weighting, adjacent skill credit, seniority tenure banding, and dealbreaker constraints are computed 100% by deterministic code on our application server.\n\n• Offline Fallback: If external AI APIs are unreachable, the engine automatically cascades to our built-in deterministic regex tokenizer and vocabulary taxonomy to ensure uninterrupted service.`,
   },
   {
     id: "cookies",
@@ -110,7 +110,7 @@ export default function PrivacyPolicyPage() {
           </h1>
 
           <p className="text-sm sm:text-base text-[#5C5E58] dark:text-[#9E9F97] leading-relaxed max-w-2xl font-sans">
-            MatchEngine is built on an unwavering principle: your data belongs to you. No logins, no candidate profiling, zero persistent database storage, and zero external AI model data sharing.
+            MatchEngine is built on an unwavering principle: your data belongs to you. No logins, no candidate profiling, zero persistent database storage, zero external AI model training, and 100% ephemeral in-memory processing.
           </p>
 
           <div className="mt-3 inline-flex items-center gap-2 text-xs text-[#82847E] dark:text-[#72736C] font-mono">
