@@ -73,7 +73,6 @@ export interface JDExtractedData {
 export interface AnalyzeApiResponse {
     success: boolean;
     message: string;
-    mode?: "airgap" | "deep_ai";
     matchAnalysis: ScoreAnalysisResult | null;
     resume: {
         fileInfo: {
