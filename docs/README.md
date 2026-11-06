@@ -7,6 +7,8 @@
 ## 📁 Documentation Map
 
 ### 1. Implementation Guides & Reports (`docs/implementation/`)
+* [**`API_RATE_LIMITER_AND_PROTECTION_PLAN.md`**](./implementation/API_RATE_LIMITER_AND_PROTECTION_PLAN.md)  
+  *Engineering implementation plan and architecture for in-memory sliding-window IP rate limiting, RFC-compliant headers, PDF hard page cap guards, text length sanitization, and automated verification matrix.*
 * [**`ADVANCED_SCORING_AND_SEMANTIC_MATCHING_REPORT.md`**](./implementation/ADVANCED_SCORING_AND_SEMANTIC_MATCHING_REPORT.md)  
   *Execution report of the 5-Dimension Scoring Engine: adjacent/transferable skills (0.5 credit), parenthetical unpacking, banded seniority fit, evidence depth quotes (+1.2x boost), dynamic weight redistribution ($N/A \neq 0$), and dealbreaker gates.*
 * [**`AI_EXTRACTION_HARNESS_IMPLEMENTATION_REPORT.md`**](./implementation/AI_EXTRACTION_HARNESS_IMPLEMENTATION_REPORT.md)  
