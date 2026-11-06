@@ -7,10 +7,17 @@ export interface PDFParseResult {
     textLength: number;
 }
 
-export class PDFParseError extends Error {
-    public code: "EMPTY_FILE" | "INVALID_HEADER" | "CORRUPTED_OR_LOCKED" | "PARSING_FAILED";
+export interface PDFParseOptions {
+    maxPages?: number;
+}
 
-    constructor(message: string, code: "EMPTY_FILE" | "INVALID_HEADER" | "CORRUPTED_OR_LOCKED" | "PARSING_FAILED") {
+export class PDFParseError extends Error {
+    public code: "EMPTY_FILE" | "INVALID_HEADER" | "CORRUPTED_OR_LOCKED" | "PARSING_FAILED" | "PAGE_LIMIT_EXCEEDED";
+
+    constructor(
+        message: string,
+        code: "EMPTY_FILE" | "INVALID_HEADER" | "CORRUPTED_OR_LOCKED" | "PARSING_FAILED" | "PAGE_LIMIT_EXCEEDED"
+    ) {
         super(message);
         this.name = "PDFParseError";
         this.code = code;
@@ -20,7 +27,10 @@ export class PDFParseError extends Error {
 /**
  * Extracts text and metadata from a PDF File, Buffer, or ArrayBuffer.
  */
-export async function parsePDF(input: File | Buffer | ArrayBuffer): Promise<PDFParseResult> {
+export async function parsePDF(
+    input: File | Buffer | ArrayBuffer,
+    options?: PDFParseOptions
+): Promise<PDFParseResult> {
     let buffer: Buffer;
 
     if (input instanceof File) {
@@ -47,14 +57,26 @@ export async function parsePDF(input: File | Buffer | ArrayBuffer): Promise<PDFP
 
     try {
         const pdfData = await pdf(buffer);
+        const totalPages = pdfData?.numpages || 1;
+
+        if (options?.maxPages && totalPages > options.maxPages) {
+            throw new PDFParseError(
+                `The uploaded PDF has ${totalPages} pages, exceeding the maximum allowed limit of ${options.maxPages} pages. Please upload a standard 1–4 page resume.`,
+                "PAGE_LIMIT_EXCEEDED"
+            );
+        }
+
         const extractedText = typeof pdfData?.text === "string" ? pdfData.text : "";
 
         return {
             text: extractedText,
-            pageCount: pdfData?.numpages || 1,
+            pageCount: totalPages,
             textLength: extractedText.length,
         };
     } catch (err: unknown) {
+        if (err instanceof PDFParseError) {
+            throw err;
+        }
         const message = err instanceof Error ? err.message : String(err);
         throw new PDFParseError(
             `Unable to read the PDF. The file may be password-protected, encrypted, or corrupted (${message}).`,
