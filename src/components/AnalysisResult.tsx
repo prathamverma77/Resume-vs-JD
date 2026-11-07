@@ -317,6 +317,7 @@ export default function AnalysisResult({
         : []),
       `Core Technical:    ${match.technicalMatchScore}% (${match.scoringBreakdown?.coreWeight ?? 70}% weight)`,
       `Preferred Skills:  ${match.scoringBreakdown?.isPreferredRedistributed ? "N/A (Redistributed)" : `${match.preferredMatchScore}% (${match.scoringBreakdown?.preferredWeight ?? 15}% weight)`}`,
+      `Seniority/Tenure:  ${match.scoringBreakdown?.isSeniorityRedistributed ? "N/A (Redistributed to Core)" : `${match.scoringBreakdown?.seniorityScore ?? 100}% (${match.scoringBreakdown?.seniorityWeight ?? 15}% weight)`}`,
       "",
       `Matching Skills (${match.matchingSkills.length}):`,
       match.matchingSkills.length > 0 ? match.matchingSkills.join(", ") : "None identified",

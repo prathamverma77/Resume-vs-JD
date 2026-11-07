@@ -18,16 +18,17 @@ export interface SkillEvidenceDetail {
 }
 
 export interface ScoringBreakdown {
-    coreWeight: number; // e.g. 60 or redistributed 75
+    coreWeight: number; // e.g. 70, 85, or 100 when redistributed
     preferredWeight: number; // e.g. 15 or 0 when N/A
     adjacentWeight: number; // 10
-    seniorityWeight: number; // 15
+    seniorityWeight: number; // e.g. 15 or 0 when N/A
     coreRequiredScore: number;
     preferredScore: number;
     adjacentScore: number;
     seniorityScore: number;
     evidenceDepthBonus: number;
     isPreferredRedistributed: boolean;
+    isSeniorityRedistributed: boolean;
     dealbreakerCapApplied: boolean;
     capReason?: string;
 }

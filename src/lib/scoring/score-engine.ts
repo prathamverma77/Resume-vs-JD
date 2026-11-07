@@ -363,10 +363,11 @@ export function calculateScore(
   // ----------------------------------------------------
   let seniorityMatch: ScoreAnalysisResult["seniorityMatch"] | undefined = undefined;
   let seniorityScore = 100;
+  const hasSeniority = jd.minYearsExperience !== undefined && jd.minYearsExperience > 0;
 
-  if (jd.minYearsExperience !== undefined && jd.minYearsExperience > 0) {
+  if (hasSeniority) {
     const candidateYears = resume.yearsOfExperience ?? 0;
-    const requiredYears = jd.minYearsExperience;
+    const requiredYears = jd.minYearsExperience!;
     const isMet = candidateYears >= requiredYears;
 
     let tenureBand: "Aligned" | "Borderline" | "Stretch" | "Significant Stretch" | "Unspecified" = "Aligned";
@@ -397,6 +398,16 @@ export function calculateScore(
       tenureBand,
       statusNote,
     };
+  } else {
+    // When JD specifies no minimum years, candidate is not penalized or given free inflation
+    seniorityMatch = {
+      candidateYears: resume.yearsOfExperience ?? 0,
+      requiredYears: 0,
+      isMet: true,
+      tenureBand: "Unspecified",
+      statusNote: "No minimum experience specified in JD (Weight dynamically redistributed to core skills)",
+    };
+    seniorityScore = 100;
   }
 
   // ----------------------------------------------------
@@ -407,17 +418,50 @@ export function calculateScore(
   const adjacentWeight = adjacentScore > 0 ? 10 : 0;
   let seniorityWeight: number;
   let isPreferredRedistributed = false;
+  let isSeniorityRedistributed = false;
 
-  if (!hasPreferred) {
-    // When JD lists no preferred skills, redistribute the 15% preferred weight to Core & Seniority
+  // Baseline allocation: Core = 70, Preferred = 15, Seniority = 15
+  if (!hasPreferred && !hasSeniority) {
+    // Neither preferred nor seniority is required: 100% Core Technical
     isPreferredRedistributed = true;
+    isSeniorityRedistributed = true;
+    coreWeight = 100;
+    preferredWeight = 0;
+    seniorityWeight = 0;
+  } else if (!hasPreferred && hasSeniority) {
+    // No preferred skills: Preferred 15% redistributed to Core
+    isPreferredRedistributed = true;
+    isSeniorityRedistributed = false;
     coreWeight = 85;
     preferredWeight = 0;
     seniorityWeight = 15;
+  } else if (hasPreferred && !hasSeniority) {
+    // No seniority requirement: Seniority 15% redistributed to Core
+    isPreferredRedistributed = false;
+    isSeniorityRedistributed = true;
+    coreWeight = 85;
+    preferredWeight = 15;
+    seniorityWeight = 0;
   } else {
+    // Both preferred skills and seniority requirements are active
+    isPreferredRedistributed = false;
+    isSeniorityRedistributed = false;
     coreWeight = 70;
     preferredWeight = 15;
     seniorityWeight = 15;
+  }
+
+  // Edge case: If JD has no technical requirements at all, but has preferred skills
+  if (!hasRequired && hasPreferred) {
+    if (!hasSeniority) {
+      coreWeight = 0;
+      preferredWeight = 100;
+      seniorityWeight = 0;
+    } else {
+      coreWeight = 0;
+      preferredWeight = 85;
+      seniorityWeight = 15;
+    }
   }
 
   // Calculate weighted overall composite score
@@ -529,6 +573,7 @@ export function calculateScore(
     seniorityScore,
     evidenceDepthBonus: Math.round(matchedReqWeightedPoints - matchingRequired.reduce((s, k) => s + getSkillWeight(k), 0)),
     isPreferredRedistributed,
+    isSeniorityRedistributed,
     dealbreakerCapApplied,
     ...(capReason && { capReason }),
   };

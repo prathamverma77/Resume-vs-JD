@@ -257,7 +257,7 @@ export default function ScoreGauge({
           <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] shadow-2xs flex items-center justify-between">
             <div>
               <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#5C5E58] dark:text-[#9E9F97] block mb-1">
-                Seniority & Tenure Alignment
+                Seniority & Tenure Alignment {match?.scoringBreakdown?.isSeniorityRedistributed ? "(N/A - Redistributed)" : `(${match?.scoringBreakdown?.seniorityWeight ?? 15}% Weight)`}
               </span>
               <span className="text-sm font-semibold text-[#141514] dark:text-[#F4F2EE] block">
                 {match?.seniorityMatch?.statusNote ||
@@ -265,17 +265,21 @@ export default function ScoreGauge({
                     ? "Candidate Meets Experience Prerequisites"
                     : resume.yearsOfExperience && jd?.minYearsExperience
                     ? `Experience: ${resume.yearsOfExperience} yrs vs ${jd.minYearsExperience}+ yrs requested`
-                    : "Experience timeline evaluated without formal penalty")}
+                    : "No minimum experience specified in JD (Weight redistributed to core skills)")}
               </span>
             </div>
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-              match?.seniorityMatch?.tenureBand === "Aligned" || !jd?.minYearsExperience
+              match?.scoringBreakdown?.isSeniorityRedistributed || match?.seniorityMatch?.tenureBand === "Unspecified"
+                ? "bg-neutral-500/10 text-neutral-700 dark:text-neutral-400 border border-neutral-500/20"
+                : match?.seniorityMatch?.tenureBand === "Aligned"
                 ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20"
                 : match?.seniorityMatch?.tenureBand === "Borderline"
                 ? "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20"
                 : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
             }`}>
-              {match?.seniorityMatch?.tenureBand || (match?.seniorityMatch?.isMet ? "Aligned" : "Review")}
+              {match?.scoringBreakdown?.isSeniorityRedistributed
+                ? "Unspecified (0% Weight)"
+                : match?.seniorityMatch?.tenureBand || (match?.seniorityMatch?.isMet ? "Aligned" : "Review")}
             </span>
           </div>
         </div>

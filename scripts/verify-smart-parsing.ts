@@ -150,6 +150,25 @@ Minimum 4+ years of professional experience required.
     expectedMinScore: 90,
     expectedMatchingSkills: ["Python", "TypeScript", "Docker", "PostgreSQL"],
   },
+  {
+    name: "12. Dynamic Seniority Redistribution (Zero score inflation on undefined JD seniority)",
+    resumeText: `
+Skills: Python
+Experience:
+Junior Developer
+- Wrote basic Python scripts for 6 months.
+    `,
+    jdText: `
+Requirements:
+- Python
+- Docker
+- Kubernetes
+- Terraform
+    `,
+    expectedMinScore: 25,
+    expectedMaxScore: 30, // Python (wt 3) of 11 total weight = 27%. Zero seniority inflation!
+    expectedMatchingSkills: ["Python"],
+  },
 ];
 
 console.log("=================================================");
