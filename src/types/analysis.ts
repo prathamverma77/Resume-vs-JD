@@ -58,9 +58,10 @@ import type {
     EmploymentPeriod,
     AcademicPeriod,
     StructuredResume,
+    CandidateLinks,
 } from "../lib/parser/resume-structurer";
 
-export type { EmploymentPeriod, AcademicPeriod, StructuredResume };
+export type { EmploymentPeriod, AcademicPeriod, StructuredResume, CandidateLinks };
 
 export interface JDExtractedData {
     role: string;

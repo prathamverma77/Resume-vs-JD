@@ -305,6 +305,10 @@ export default function AnalysisResult({
       `Resume File:       ${resume.fileInfo.name} (${resume.pageCount} page(s))`,
       `Candidate Email:   ${resume.structuredData.email || "Not detected"}`,
       `Candidate Phone:   ${resume.structuredData.phone || "Not detected"}`,
+      ...(resume.structuredData.links?.github ? [`Candidate GitHub:  ${resume.structuredData.links.github}`] : []),
+      ...(resume.structuredData.links?.linkedin ? [`Candidate LinkedIn:${resume.structuredData.links.linkedin}`] : []),
+      ...(resume.structuredData.links?.portfolio ? [`Candidate Portfolio:${resume.structuredData.links.portfolio}`] : []),
+      ...(resume.structuredData.links?.leetcode ? [`Candidate LeetCode: ${resume.structuredData.links.leetcode}`] : []),
       `Candidate Exp:     ${resume.structuredData.yearsOfExperience ? `${resume.structuredData.yearsOfExperience} years` : "Not explicitly detected"}`,
       `JD Required Exp:   ${jd?.minYearsExperience ? `${jd.minYearsExperience}+ years` : "Not specified"}`,
       `Overall Score:     ${score}% (${matchLevel})`,
@@ -364,6 +368,7 @@ export default function AnalysisResult({
         pageCount={resume.pageCount}
         email={resume.structuredData.email}
         phone={resume.structuredData.phone}
+        links={resume.structuredData.links}
         candidateYears={resume.structuredData.yearsOfExperience}
         jdMinYears={jd?.minYearsExperience}
         matchedSkillsCount={match?.matchingSkills.length || 0}

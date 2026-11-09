@@ -344,6 +344,7 @@ export async function extractResumeWithHarness(resumeText: string): Promise<Stru
       phone: typeof parsed.phone === "string" && parsed.phone.trim() !== ""
         ? parsed.phone.trim()
         : localFallback.phone,
+      ...(localFallback.links && { links: localFallback.links }),
     };
   } catch (err) {
     console.warn(`[AI Harness - Resume] ⚙️ Error building structured resume, falling back to local parser:`, err);

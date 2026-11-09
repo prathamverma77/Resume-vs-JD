@@ -3,6 +3,7 @@ import {
   extractYearsOfExperience,
   extractEmploymentTimeline,
 } from "../src/lib/parser/resume-structurer";
+import { extractCandidateLinks } from "../src/lib/parser/link-extractor";
 import { parseJD } from "../src/lib/parser/jd-parser";
 import { calculateScore } from "../src/lib/scoring/score-engine";
 import { normalizeSkill, calculateSimilarity } from "../src/lib/skills/normalizer";
@@ -280,6 +281,75 @@ if (explicitClaimYears === 6) {
 } else {
   failedCount++;
   console.error(`  ❌ Failed explicit claim test: got ${explicitClaimYears}`);
+}
+
+// Unit Tests for Link & Online Presence Extractor
+console.log("\n--- Unit Tests: link-extractor.ts ---");
+const sampleHeader = `
+Alex Rivera
+Software Engineer | San Francisco, CA
+alex@example.com | (555) 019-2834
+GitHub: github.com/alex-rivera-dev
+LinkedIn: https://www.linkedin.com/in/alexrivera/
+Portfolio: https://alexrivera.dev
+LeetCode: leetcode.com/u/alex_coder
+X: https://x.com/alex_builds
+`;
+const extractedLinks = extractCandidateLinks(sampleHeader);
+
+if (extractedLinks.github === "https://github.com/alex-rivera-dev") {
+  passedCount++;
+  console.log("  ✅ Candidate GitHub link extracted correctly");
+} else {
+  failedCount++;
+  console.error(`  ❌ Failed GitHub link extraction: got "${extractedLinks.github}"`);
+}
+
+if (extractedLinks.linkedin === "https://linkedin.com/in/alexrivera") {
+  passedCount++;
+  console.log("  ✅ Candidate LinkedIn link extracted correctly");
+} else {
+  failedCount++;
+  console.error(`  ❌ Failed LinkedIn link extraction: got "${extractedLinks.linkedin}"`);
+}
+
+if (extractedLinks.portfolio === "https://alexrivera.dev") {
+  passedCount++;
+  console.log("  ✅ Candidate Portfolio website link extracted correctly");
+} else {
+  failedCount++;
+  console.error(`  ❌ Failed Portfolio extraction: got "${extractedLinks.portfolio}"`);
+}
+
+if (extractedLinks.leetcode === "https://leetcode.com/u/alex_coder") {
+  passedCount++;
+  console.log("  ✅ Candidate LeetCode link extracted correctly");
+} else {
+  failedCount++;
+  console.error(`  ❌ Failed LeetCode extraction: got "${extractedLinks.leetcode}"`);
+}
+
+if (extractedLinks.twitter === "https://x.com/alex_builds") {
+  passedCount++;
+  console.log("  ✅ Candidate X/Twitter link extracted correctly");
+} else {
+  failedCount++;
+  console.error(`  ❌ Failed Twitter/X extraction: got "${extractedLinks.twitter}"`);
+}
+
+// Ensure reserved words & emails are filtered out
+const negativeText = `
+Contact me: help@gmail.com
+Pricing info at github.com/pricing
+Share on x.com/intent
+`;
+const filteredLinks = extractCandidateLinks(negativeText);
+if (!filteredLinks.github && !filteredLinks.twitter && !filteredLinks.portfolio) {
+  passedCount++;
+  console.log("  ✅ Reserved words (github.com/pricing, x.com/intent, gmail.com) correctly excluded");
+} else {
+  failedCount++;
+  console.error("  ❌ Failed negative filter test on reserved words");
 }
 
 console.log("\n--- Integration Tests: End-to-End Pipeline ---");

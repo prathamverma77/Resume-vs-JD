@@ -7,14 +7,16 @@ import {
   EmploymentPeriod,
   AcademicPeriod,
 } from "./timeline-extractor";
+import { extractCandidateLinks, CandidateLinks } from "./link-extractor";
 
-export type { EmploymentPeriod, AcademicPeriod };
+export type { EmploymentPeriod, AcademicPeriod, CandidateLinks };
 
 export interface StructuredResume {
   skills: string[];
   yearsOfExperience?: number;
   email?: string;
   phone?: string;
+  links?: CandidateLinks;
   rawText?: string;
   employmentTimeline?: EmploymentPeriod[];
   academicTimeline?: AcademicPeriod[];
@@ -44,6 +46,7 @@ export function structureResume(text: string): StructuredResume {
 
   const email = extractEmail(text);
   const phone = extractPhone(text);
+  const links = extractCandidateLinks(text);
   const timelineResult = extractEmploymentTimeline(text);
   const years = timelineResult.totalYears > 0 ? timelineResult.totalYears : timelineResult.explicitClaimYears;
 
@@ -58,6 +61,7 @@ export function structureResume(text: string): StructuredResume {
     totalDurationFormatted: timelineResult.totalDurationFormatted,
     ...(email && { email }),
     ...(phone && { phone }),
+    ...(Object.keys(links).length > 0 && { links }),
   };
 }
 
@@ -71,4 +75,4 @@ function extractPhone(text: string): string | undefined {
   return match ? match[0] : undefined;
 }
 
-export { extractYearsOfExperience, extractEmploymentTimeline };
+export { extractYearsOfExperience, extractEmploymentTimeline, extractCandidateLinks };
