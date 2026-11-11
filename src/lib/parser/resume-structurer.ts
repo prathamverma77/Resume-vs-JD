@@ -18,6 +18,7 @@ export interface StructuredResume {
   phone?: string;
   links?: CandidateLinks;
   rawText?: string;
+  extractionEngine?: string;
   employmentTimeline?: EmploymentPeriod[];
   academicTimeline?: AcademicPeriod[];
   totalDurationFormatted?: string;
@@ -53,6 +54,7 @@ export function structureResume(text: string): StructuredResume {
   return {
     skills: merged,
     rawText: text,
+    extractionEngine: "Local Deterministic Regex",
     ...(years !== undefined && { yearsOfExperience: years }),
     ...(timelineResult.periods.length > 0 && { employmentTimeline: timelineResult.periods }),
     ...(timelineResult.academicPeriods && timelineResult.academicPeriods.length > 0 && {

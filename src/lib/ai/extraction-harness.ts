@@ -124,12 +124,14 @@ async function extractJDWithGemini(jdText: string): Promise<Record<string, unkno
  */
 export async function extractJobDescriptionWithHarness(jdText: string): Promise<JDExtractedData> {
   let parsed: Record<string, unknown> | null = null;
+  let usedEngine = "Local Deterministic Regex";
   const start = Date.now();
 
   // Tier 1: Try Groq
   if (getGroqClient()) {
     try {
       parsed = await extractJDWithGroq(jdText);
+      usedEngine = `Groq LPU (${getGroqModel()})`;
       console.log(
         `[AI Harness - JD] ⚡ Successfully extracted via GROQ API (Model: ${getGroqModel()}) in ${Date.now() - start}ms`
       );
@@ -145,6 +147,7 @@ export async function extractJobDescriptionWithHarness(jdText: string): Promise<
   if (!parsed && getGeminiClient()) {
     try {
       parsed = await extractJDWithGemini(jdText);
+      usedEngine = `Google Gemini (${getGeminiModel()})`;
       console.log(
         `[AI Harness - JD] ✨ Successfully extracted via GEMINI API (Model: ${getGeminiModel()}) in ${Date.now() - start}ms`
       );
@@ -191,6 +194,7 @@ export async function extractJobDescriptionWithHarness(jdText: string): Promise<
       education: Array.isArray(parsed.education) && parsed.education.length > 0
         ? parsed.education.map((e: unknown) => String(e).trim()).filter((e: string) => e.length > 0)
         : localFallback.education,
+      extractionEngine: usedEngine,
       ...(minYearsExperience !== undefined
         ? { minYearsExperience }
         : localFallback.minYearsExperience !== undefined
@@ -265,12 +269,14 @@ async function extractResumeWithGemini(resumeText: string): Promise<Record<strin
  */
 export async function extractResumeWithHarness(resumeText: string): Promise<StructuredResume> {
   let parsed: Record<string, unknown> | null = null;
+  let usedEngine = "Local Deterministic Regex";
   const start = Date.now();
 
   // Tier 1: Try Groq
   if (getGroqClient()) {
     try {
       parsed = await extractResumeWithGroq(resumeText);
+      usedEngine = `Groq LPU (${getGroqModel()})`;
       console.log(
         `[AI Harness - Resume] ⚡ Successfully extracted via GROQ API (Model: ${getGroqModel()}) in ${Date.now() - start}ms`
       );
@@ -286,6 +292,7 @@ export async function extractResumeWithHarness(resumeText: string): Promise<Stru
   if (!parsed && getGeminiClient()) {
     try {
       parsed = await extractResumeWithGemini(resumeText);
+      usedEngine = `Google Gemini (${getGeminiModel()})`;
       console.log(
         `[AI Harness - Resume] ✨ Successfully extracted via GEMINI API (Model: ${getGeminiModel()}) in ${Date.now() - start}ms`
       );
@@ -326,6 +333,7 @@ export async function extractResumeWithHarness(resumeText: string): Promise<Stru
     return {
       skills: skills.length > 0 ? skills : localFallback.skills,
       rawText: resumeText,
+      extractionEngine: usedEngine,
       ...(yearsOfExperience !== undefined
         ? { yearsOfExperience }
         : localFallback.yearsOfExperience !== undefined

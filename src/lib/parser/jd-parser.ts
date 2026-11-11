@@ -10,6 +10,7 @@ export interface JDExtractedData {
     preferred_skills: string[];
     education: string[];
     minYearsExperience?: number;
+    extractionEngine?: string;
 }
 
 /**
@@ -33,6 +34,7 @@ export function parseJD(text: string): JDExtractedData {
         technical_req: technical.length > 0 ? technical : rawTechnical,
         preferred_skills: preferred,
         education: extractEducation(cleanText),
+        extractionEngine: "Local Deterministic Regex",
         ...(minYearsExperience !== undefined && { minYearsExperience })
     };
 }

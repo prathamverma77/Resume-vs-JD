@@ -272,6 +272,9 @@ export async function POST(req: NextRequest) {
             extractJobDescriptionWithHarness(cleanJDText),
         ]);
 
+        console.log(`[POST /api/analyze] 🧠 Resume Engine: ${structuredResume.extractionEngine || "Local Deterministic Regex"}`);
+        console.log(`[POST /api/analyze] 🧠 JD Engine:     ${parsedJD.extractionEngine || "Local Deterministic Regex"}`);
+
         // 10. Calculate Match Score (Deterministic Engine)
         const matchAnalysis = calculateScore(structuredResume, parsedJD);
         console.log(
@@ -279,11 +282,21 @@ export async function POST(req: NextRequest) {
         );
         console.log("========================================================\n");
 
+        const responseHeaders = {
+            ...rateLimitHeaders,
+            "X-Extraction-Engine-Resume": structuredResume.extractionEngine || "Local Deterministic Regex",
+            "X-Extraction-Engine-JD": parsedJD.extractionEngine || "Local Deterministic Regex",
+        };
+
         // 11. Return unified response with Resume, JD, and Match Score Analysis
         return NextResponse.json(
             {
                 success: true,
                 message: "Resume and Job Description processed successfully",
+                extractionEngine: {
+                    resume: structuredResume.extractionEngine || "Local Deterministic Regex",
+                    jobDescription: parsedJD.extractionEngine || "Local Deterministic Regex",
+                },
                 matchAnalysis,
                 resume: {
                     fileInfo: {
@@ -301,7 +314,7 @@ export async function POST(req: NextRequest) {
                     parsedData: parsedJD,
                 },
             },
-            { status: 200, headers: rateLimitHeaders }
+            { status: 200, headers: responseHeaders }
         );
     } catch (error) {
         console.error("Error processing analyze request:", error);

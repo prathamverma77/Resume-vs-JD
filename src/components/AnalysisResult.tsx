@@ -376,6 +376,7 @@ export default function AnalysisResult({
         totalPrefCount={jd?.preferred_skills?.length || 0}
         theme={theme}
         copied={copied}
+        extractionEngine={data.extractionEngine}
         onCopyReport={handleCopyReport}
         onCompareAgain={onCompareAgain}
       />

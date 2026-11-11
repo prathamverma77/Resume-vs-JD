@@ -19,6 +19,10 @@ interface ReportHeaderProps {
   totalPrefCount: number;
   theme: ScoreTheme;
   copied: boolean;
+  extractionEngine?: {
+    resume: string;
+    jobDescription: string;
+  };
   onCopyReport: () => void;
   onCompareAgain: () => void;
 }
@@ -38,6 +42,7 @@ export default function ReportHeader({
   totalPrefCount,
   theme,
   copied,
+  extractionEngine,
   onCopyReport,
   onCompareAgain,
 }: ReportHeaderProps) {
@@ -60,7 +65,7 @@ export default function ReportHeader({
               ATS Compatibility Audit
             </span>
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono text-[#5C5E58] dark:text-[#A8A9A2] bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
-              100% In-Memory &bull; Zero Cloud Retention
+              {extractionEngine?.resume ? `Engine: ${extractionEngine.resume}` : "100% In-Memory \u2022 Zero Cloud Retention"}
             </span>
           </div>
 

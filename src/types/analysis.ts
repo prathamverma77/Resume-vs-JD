@@ -70,11 +70,16 @@ export interface JDExtractedData {
     preferred_skills: string[];
     education: string[];
     minYearsExperience?: number;
+    extractionEngine?: string;
 }
 
 export interface AnalyzeApiResponse {
     success: boolean;
     message: string;
+    extractionEngine?: {
+        resume: string;
+        jobDescription: string;
+    };
     matchAnalysis: ScoreAnalysisResult | null;
     resume: {
         fileInfo: {
