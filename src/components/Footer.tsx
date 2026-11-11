@@ -43,8 +43,20 @@ export default function Footer() {
           </Link>
         </nav>
 
-        <div className="text-[11px] text-[#82847E] dark:text-[#72736C] font-mono">
-          &copy; {new Date().getFullYear()} MatchEngine
+        <div className="text-[11px] text-[#82847E] dark:text-[#72736C] font-mono flex flex-wrap items-center justify-center gap-1.5">
+          <span>&copy; {new Date().getFullYear()} MatchEngine</span>
+          <span>&bull;</span>
+          <span>
+            Built by{" "}
+            <a
+              href="https://pratham-portfolio-sooty.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#141514] dark:text-[#F4F2EE] font-semibold underline underline-offset-4 decoration-[#D4CFC7] dark:decoration-[#40423D] hover:decoration-[#141514] dark:hover:decoration-[#F4F2EE] transition-colors"
+            >
+              Pratham Verma
+            </a>
+          </span>
         </div>
       </div>
     </footer>
