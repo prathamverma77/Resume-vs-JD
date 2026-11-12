@@ -38,11 +38,11 @@ export default function ScoreGauge({
   const strokeOffset = circumference - (score / 100) * circumference;
 
   return (
-    <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-[#FAF7F2]/30 dark:bg-[#161715]/40 print:bg-white print-avoid-break">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+    <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-[#FAF7F2]/30 dark:bg-[#161715]/40 print:bg-white print:p-4 print-avoid-break">
+      <div className="grid grid-cols-1 lg:grid-cols-12 print:grid-cols-12 gap-8 print:gap-4 items-center">
         {/* Radial SVG Circular Score Gauge (5 Cols) */}
-        <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] shadow-xs text-center">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="lg:col-span-5 print:col-span-5 flex flex-col items-center justify-center p-6 sm:p-8 print:p-4 rounded-3xl print:rounded-2xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] shadow-xs text-center print-avoid-break">
+          <div className="flex items-center gap-2 mb-4 print:mb-2">
             <span className="text-[11px] font-mono uppercase tracking-widest text-[#82847E] dark:text-[#72736C]">
               Overall Compatibility Score
             </span>
@@ -54,14 +54,14 @@ export default function ScoreGauge({
           </div>
 
           {/* Circular Gauge */}
-          <div className="relative w-44 h-44 flex items-center justify-center mb-4">
+          <div className="relative w-44 h-44 print:w-36 print:h-36 flex items-center justify-center mb-4 print:mb-2">
             <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 140 140">
               {/* Background Track */}
               <circle
                 cx="70"
                 cy="70"
                 r={radius}
-                className="stroke-[#EAE4DC] dark:stroke-[#2A2B27]"
+                className="stroke-[#EAE4DC] dark:stroke-[#2A2B27] print:stroke-[#EAE4DC]"
                 strokeWidth="10"
                 fill="transparent"
               />
@@ -82,7 +82,7 @@ export default function ScoreGauge({
 
             {/* Centered Percentage */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-[#141514] dark:text-[#F4F2EE]">
+              <span className="text-4xl sm:text-5xl print:text-3xl font-bold font-sans tracking-tight text-[#141514] dark:text-[#F4F2EE]">
                 {score}%
               </span>
               <span className={`text-[11px] font-semibold mt-1 px-2.5 py-0.5 rounded-full border ${theme.bgLight} ${theme.badgeBorder} ${theme.badgeText}`}>
@@ -112,10 +112,10 @@ export default function ScoreGauge({
         </div>
 
         {/* 3 Metric Cards Grid (7 Cols) */}
-        <div className="lg:col-span-7 flex flex-col gap-4">
+        <div className="lg:col-span-7 print:col-span-7 flex flex-col gap-4 print:gap-2.5 print-avoid-break">
           {/* Gate Cap Alert Banner or Gate Lifted Banner */}
           {baselineMatch?.scoringBreakdown?.dealbreakerCapApplied && !match?.scoringBreakdown?.dealbreakerCapApplied ? (
-            <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-500/15 via-cyan-500/15 to-emerald-500/15 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200 text-xs flex items-center gap-3 shadow-xs">
+            <div className="p-4 print:p-2.5 rounded-xl bg-gradient-to-r from-emerald-500/15 via-cyan-500/15 to-emerald-500/15 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200 text-xs flex items-center gap-3 shadow-xs print-avoid-break">
               <span className="text-xl">🎉</span>
               <div>
                 <span className="font-bold block text-emerald-800 dark:text-emerald-300">
@@ -128,7 +128,7 @@ export default function ScoreGauge({
               </div>
             </div>
           ) : match?.scoringBreakdown?.dealbreakerCapApplied ? (
-            <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300 text-xs flex items-center gap-3">
+            <div className="p-4 print:p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300 text-xs flex items-center gap-3 print-avoid-break">
               <span className="text-base">⚠️</span>
               <div>
                 <span className="font-bold block">Dealbreaker Gate Enforced</span>
@@ -138,8 +138,8 @@ export default function ScoreGauge({
           ) : null}
 
           {/* Metric 1: Core Technical Coverage */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] shadow-2xs">
-            <div className="flex items-center justify-between mb-2">
+          <div className="p-5 sm:p-6 print:p-3 rounded-2xl print:rounded-xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] shadow-2xs print-avoid-break">
+            <div className="flex items-center justify-between mb-2 print:mb-1">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#5C5E58] dark:text-[#9E9F97]">
@@ -159,15 +159,15 @@ export default function ScoreGauge({
             </div>
 
             {/* Dual-tone Progress Bar */}
-            <div className="w-full bg-[#EAE4DC] dark:bg-[#2A2B27] rounded-full h-2.5 overflow-hidden mb-2 relative flex">
+            <div className="w-full bg-[#EAE4DC] dark:bg-[#2A2B27] rounded-full h-2.5 print:h-2 overflow-hidden mb-2 print:mb-1 relative flex">
               <div
-                className="bg-emerald-600 dark:bg-emerald-500 h-2.5 rounded-l-full transition-all duration-500 shrink-0"
+                className="bg-emerald-600 dark:bg-emerald-500 h-2.5 print:h-2 rounded-l-full transition-all duration-500 shrink-0"
                 style={{ width: `${Math.min(100, baselineMatch?.technicalMatchScore ?? 0)}%` }}
                 title={`Baseline: ${baselineMatch?.technicalMatchScore ?? 0}%`}
               />
               {isSimulating && (match?.technicalMatchScore ?? 0) > (baselineMatch?.technicalMatchScore ?? 0) && (
                 <div
-                  className="bg-gradient-to-r from-cyan-500 to-teal-400 h-2.5 rounded-r-full transition-all duration-500 animate-pulse"
+                  className="bg-gradient-to-r from-cyan-500 to-teal-400 h-2.5 print:h-2 rounded-r-full transition-all duration-500 animate-pulse"
                   style={{
                     width: `${Math.min(
                       100 - (baselineMatch?.technicalMatchScore ?? 0),
@@ -179,7 +179,7 @@ export default function ScoreGauge({
               )}
             </div>
 
-            <div className="flex items-center justify-between text-xs text-[#5C5E58] dark:text-[#9E9F97]">
+            <div className="flex items-center justify-between text-xs print:text-[11px] text-[#5C5E58] dark:text-[#9E9F97]">
               <span>
                 {totalReqCount === 0
                   ? "No mandatory technical skills detected in JD."
@@ -194,8 +194,8 @@ export default function ScoreGauge({
           </div>
 
           {/* Metric 2: Preferred Skills Coverage (with N/A redistribution support) */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] shadow-2xs">
-            <div className="flex items-center justify-between mb-2">
+          <div className="p-5 sm:p-6 print:p-3 rounded-2xl print:rounded-xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] shadow-2xs print-avoid-break">
+            <div className="flex items-center justify-between mb-2 print:mb-1">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-amber-500" />
                 <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#5C5E58] dark:text-[#9E9F97]">
@@ -215,9 +215,9 @@ export default function ScoreGauge({
             </div>
 
             {/* Dual-tone Progress Bar */}
-            <div className="w-full bg-[#EAE4DC] dark:bg-[#2A2B27] rounded-full h-2.5 overflow-hidden mb-2 relative flex">
+            <div className="w-full bg-[#EAE4DC] dark:bg-[#2A2B27] rounded-full h-2.5 print:h-2 overflow-hidden mb-2 print:mb-1 relative flex">
               <div
-                className="bg-amber-500 dark:bg-amber-400 h-2.5 rounded-l-full transition-all duration-500 shrink-0"
+                className="bg-amber-500 dark:bg-amber-400 h-2.5 print:h-2 rounded-l-full transition-all duration-500 shrink-0"
                 style={{
                   width: `${match?.scoringBreakdown?.isPreferredRedistributed ? 100 : Math.min(100, baselineMatch?.preferredMatchScore ?? 0)}%`,
                 }}
@@ -225,7 +225,7 @@ export default function ScoreGauge({
               />
               {isSimulating && !match?.scoringBreakdown?.isPreferredRedistributed && (match?.preferredMatchScore ?? 0) > (baselineMatch?.preferredMatchScore ?? 0) && (
                 <div
-                  className="bg-gradient-to-r from-amber-400 to-yellow-300 h-2.5 rounded-r-full transition-all duration-500 animate-pulse"
+                  className="bg-gradient-to-r from-amber-400 to-yellow-300 h-2.5 print:h-2 rounded-r-full transition-all duration-500 animate-pulse"
                   style={{
                     width: `${Math.min(
                       100 - (baselineMatch?.preferredMatchScore ?? 0),
@@ -237,7 +237,7 @@ export default function ScoreGauge({
               )}
             </div>
 
-            <div className="flex items-center justify-between text-xs text-[#5C5E58] dark:text-[#9E9F97]">
+            <div className="flex items-center justify-between text-xs print:text-[11px] text-[#5C5E58] dark:text-[#9E9F97]">
               <span>
                 {match?.scoringBreakdown?.isPreferredRedistributed
                   ? "No preferred section parsed in JD. Weight dynamically redistributed to core skills."
@@ -254,12 +254,12 @@ export default function ScoreGauge({
           </div>
 
           {/* Metric 3: Seniority & Experience Alignment (Banded Nuance) */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] shadow-2xs flex items-center justify-between">
+          <div className="p-5 sm:p-6 print:p-3 rounded-2xl print:rounded-xl bg-white dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] shadow-2xs flex items-center justify-between print-avoid-break">
             <div>
               <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#5C5E58] dark:text-[#9E9F97] block mb-1">
                 Seniority & Tenure Alignment {match?.scoringBreakdown?.isSeniorityRedistributed ? "(N/A - Redistributed)" : `(${match?.scoringBreakdown?.seniorityWeight ?? 15}% Weight)`}
               </span>
-              <span className="text-sm font-semibold text-[#141514] dark:text-[#F4F2EE] block">
+              <span className="text-sm print:text-xs font-semibold text-[#141514] dark:text-[#F4F2EE] block">
                 {match?.seniorityMatch?.statusNote ||
                   (match?.seniorityMatch?.isMet
                     ? "Candidate Meets Experience Prerequisites"

@@ -29,11 +29,11 @@ export default function WhatIfSimulator({
   onSimulateTopThree,
 }: WhatIfSimulatorProps) {
   return (
-    <div className={`p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-gradient-to-b from-white via-[#FAF7F2]/50 to-white dark:from-[#181917] dark:via-[#161715] dark:to-[#181917] transition-all print:bg-white print-avoid-break ${isSimulating ? "" : "print:hidden"}`}>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-[#EAE4DC] dark:border-[#2F302C]">
+    <div className={`p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-gradient-to-b from-white via-[#FAF7F2]/50 to-white dark:from-[#181917] dark:via-[#161715] dark:to-[#181917] transition-all print:bg-white print:p-4 print-avoid-break ${isSimulating ? "" : "print:hidden"}`}>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-[#EAE4DC] dark:border-[#2F302C] print:mb-3 print:pb-3">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="relative flex h-2.5 w-2.5">
+          <div className="flex items-center gap-2 mb-2 print:mb-1">
+            <span className="relative flex h-2.5 w-2.5 print:hidden">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
             </span>
@@ -41,7 +41,7 @@ export default function WhatIfSimulator({
               Deterministic Recalculation Engine (&lt;1ms)
             </span>
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em] flex items-center gap-2.5">
+          <h2 className="font-serif text-2xl sm:text-3xl print:text-xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em] flex items-center gap-2.5">
             <span>Live &ldquo;What-If&rdquo; Skill Simulator</span>
             {isSimulating && (
               <span className="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30">
@@ -222,7 +222,7 @@ export default function WhatIfSimulator({
           </div>
 
           {/* Simulator Guidance Footer */}
-          <div className="mt-4 p-4 rounded-2xl bg-[#FAF7F2]/80 dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] flex items-start gap-3 text-xs">
+          <div className="mt-4 p-4 rounded-2xl bg-[#FAF7F2]/80 dark:bg-[#1B1C1A] border border-[#EAE4DC] dark:border-[#2F302C] flex items-start gap-3 text-xs print:hidden">
             <span className="text-base leading-none">💡</span>
             <div className="space-y-1">
               <span className="font-semibold text-[#141514] dark:text-[#F4F2EE] block">

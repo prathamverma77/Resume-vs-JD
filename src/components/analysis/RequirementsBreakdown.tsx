@@ -31,10 +31,10 @@ export default function RequirementsBreakdown({
   onSearchChange,
 }: RequirementsBreakdownProps) {
   return (
-    <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:bg-white print-avoid-break">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:bg-white print:p-4 print-page-break-before">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 print:mb-3">
         <div>
-          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
+          <h2 className="font-serif text-2xl sm:text-3xl print:text-xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
             Requirement Comparison Matrix
           </h2>
           <p className="text-xs sm:text-sm text-[#5C5E58] dark:text-[#9E9F97] mt-1 font-sans">
@@ -140,23 +140,23 @@ export default function RequirementsBreakdown({
             : "No qualifications match the active filter or search query."}
         </div>
       ) : (
-        <div className="overflow-x-auto border border-[#EAE4DC] dark:border-[#2F302C] rounded-2xl bg-white dark:bg-[#1B1C1A]">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-[#FAF7F2]/80 dark:bg-[#161715] text-[#5C5E58] dark:text-[#9E9F97] border-b border-[#EAE4DC] dark:border-[#2F302C] font-mono uppercase text-[10px] tracking-wider">
-                <th className="py-3.5 px-5 font-semibold">Requirement / Skill</th>
-                <th className="py-3.5 px-4 font-semibold w-28">Category</th>
-                <th className="py-3.5 px-4 font-semibold w-40">Status</th>
-                <th className="py-3.5 px-5 font-semibold">Evidence / Verification Note</th>
+        <div className="overflow-x-auto print:overflow-visible border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] rounded-2xl print:rounded-xl bg-white dark:bg-[#1B1C1A]">
+          <table className="w-full text-left text-xs print:text-[11px] border-collapse">
+            <thead className="print:table-header-group">
+              <tr className="bg-[#FAF7F2]/80 dark:bg-[#161715] print:bg-[#FAF7F2] text-[#5C5E58] dark:text-[#9E9F97] border-b border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] font-mono uppercase text-[10px] tracking-wider print-avoid-break">
+                <th className="py-3.5 px-5 print:py-2 print:px-3 font-semibold">Requirement / Skill</th>
+                <th className="py-3.5 px-4 print:py-2 print:px-2.5 font-semibold w-28">Category</th>
+                <th className="py-3.5 px-4 print:py-2 print:px-2.5 font-semibold w-40">Status</th>
+                <th className="py-3.5 px-5 print:py-2 print:px-3 font-semibold">Evidence / Verification Note</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#EAE4DC] dark:divide-[#2F302C]">
+            <tbody className="divide-y divide-[#EAE4DC] dark:divide-[#2F302C] print:divide-[#EAE4DC]">
               {requirements.map((item) => (
                 <tr
                   key={item.id}
-                  className="hover:bg-[#FAF7F2]/60 dark:hover:bg-[#1F201D] transition-colors"
+                  className="hover:bg-[#FAF7F2]/60 dark:hover:bg-[#1F201D] transition-colors print-avoid-break"
                 >
-                  <td className="py-3.5 px-5">
+                  <td className="py-3.5 px-5 print:py-2 print:px-3">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-[#141514] dark:text-[#F4F2EE] text-xs sm:text-sm">
                         {item.name}
@@ -166,7 +166,7 @@ export default function RequirementsBreakdown({
                       </span>
                     </div>
                   </td>
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 print:py-2 print:px-2.5">
                     <span className={`text-[11px] font-mono font-medium px-2 py-0.5 rounded-full ${
                       item.category === "Required"
                         ? "bg-neutral-100 dark:bg-neutral-800 text-[#141514] dark:text-[#F4F2EE]"
@@ -175,7 +175,7 @@ export default function RequirementsBreakdown({
                       {item.category}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 print:py-2 print:px-2.5">
                     {item.isSimulated ? (
                       <div className="flex flex-col gap-1 items-start">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.15)]">
@@ -219,10 +219,10 @@ export default function RequirementsBreakdown({
                       </span>
                     )}
                   </td>
-                  <td className="py-3.5 px-5 text-[#5C5E58] dark:text-[#9E9F97]">
+                  <td className="py-3.5 px-5 print:py-2 print:px-3 text-[#5C5E58] dark:text-[#9E9F97]">
                     <span>{item.evidence}</span>
                     {item.evidenceQuote && (
-                      <div className="mt-1.5 p-2 rounded-lg bg-[#FAF7F2] dark:bg-[#151614] border border-[#EAE4DC] dark:border-[#2F302C] text-[11px] text-[#141514] dark:text-[#F4F2EE] font-mono leading-relaxed">
+                      <div className="mt-1.5 p-2 rounded-lg bg-[#FAF7F2] dark:bg-[#151614] print:bg-white border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] text-[11px] text-[#141514] dark:text-[#F4F2EE] font-mono leading-relaxed print-avoid-break">
                         <span className="text-[#82847E] font-sans block text-[10px] uppercase font-semibold mb-0.5">Resume Evidence Quote:</span>
                         &ldquo;{item.evidenceQuote}&rdquo;
                       </div>

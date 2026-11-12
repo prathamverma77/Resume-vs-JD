@@ -359,7 +359,7 @@ export default function AnalysisResult({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto rounded-3xl bg-white dark:bg-[#1A1B18] border border-[#EAE4DC] dark:border-[#2F302C] shadow-sm overflow-hidden font-sans print:border-none print:shadow-none">
+    <div className="w-full max-w-5xl mx-auto rounded-3xl bg-white dark:bg-[#1A1B18] border border-[#EAE4DC] dark:border-[#2F302C] shadow-sm overflow-hidden font-sans print:border-none print:shadow-none print:rounded-none print:max-w-full print:overflow-visible print:bg-white">
       {/* 1. REPORT HEADER */}
       <ReportHeader
         role={jd?.role}

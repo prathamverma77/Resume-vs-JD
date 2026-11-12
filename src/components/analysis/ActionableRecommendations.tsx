@@ -24,9 +24,9 @@ export function ActionableRecommendations({
       {/* ============================================================
           5. PRIORITIZED ACTIONABLE OPTIMIZATION
       ============================================================ */}
-      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:bg-white print-avoid-break">
-        <div className="mb-6">
-          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
+      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:bg-white print:p-4 print-avoid-break">
+        <div className="mb-6 print:mb-3">
+          <h2 className="font-serif text-2xl sm:text-3xl print:text-xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
             Prioritized Optimization Guidance
           </h2>
           <p className="text-xs sm:text-sm text-[#5C5E58] dark:text-[#9E9F97] mt-1 font-sans">
@@ -34,12 +34,12 @@ export function ActionableRecommendations({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-3.5">
+        <div className="grid grid-cols-1 gap-3.5 print:gap-2.5">
           {recommendations && recommendations.length > 0 ? (
             recommendations.map((rec, idx) => (
               <div
                 key={idx}
-                className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] border border-[#EAE4DC] dark:border-[#2F302C] flex items-start gap-4 text-xs sm:text-sm text-[#141514] dark:text-[#F4F2EE] shadow-2xs"
+                className="p-4 sm:p-5 print:p-3 rounded-2xl print:rounded-xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] print:bg-white border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] flex items-start gap-4 text-xs sm:text-sm text-[#141514] dark:text-[#F4F2EE] shadow-2xs print:shadow-none print-avoid-break"
               >
                 <span className="w-7 h-7 rounded-xl bg-[#141514] text-white dark:bg-[#F4F2EE] dark:text-[#141514] font-mono font-bold text-xs flex items-center justify-center shrink-0">
                   0{idx + 1}
@@ -58,9 +58,9 @@ export function ActionableRecommendations({
       {/* ============================================================
           6. ROLE RESPONSIBILITIES & ACADEMIC INTEL
       ============================================================ */}
-      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:bg-white print-avoid-break">
-        <div className="mb-6">
-          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
+      <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:bg-white print:p-4 print-avoid-break">
+        <div className="mb-6 print:mb-3">
+          <h2 className="font-serif text-2xl sm:text-3xl print:text-xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
             Target Role Deliverables & Prerequisites
           </h2>
           <p className="text-xs sm:text-sm text-[#5C5E58] dark:text-[#9E9F97] mt-1 font-sans">
@@ -68,14 +68,14 @@ export function ActionableRecommendations({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+        <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-6 print:gap-4 text-xs">
           {/* Key Role Responsibilities */}
-          <div className="p-5 rounded-2xl bg-[#FAF7F2]/40 dark:bg-[#1E1F1D] border border-[#EAE4DC] dark:border-[#2F302C]">
-            <span className="font-mono text-[10px] uppercase tracking-wider text-[#82847E] dark:text-[#72736C] block mb-3 font-semibold">
+          <div className="p-5 print:p-3.5 rounded-2xl print:rounded-xl bg-[#FAF7F2]/40 dark:bg-[#1E1F1D] print:bg-white border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] print-avoid-break">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#82847E] dark:text-[#72736C] block mb-3 print:mb-1.5 font-semibold">
               CORE RESPONSIBILITIES (FROM JD)
             </span>
             {responsibilities && responsibilities.length > 0 ? (
-              <ul className="text-xs text-[#141514] dark:text-[#F4F2EE] space-y-2.5 max-h-56 overflow-y-auto pr-2">
+              <ul className="text-xs text-[#141514] dark:text-[#F4F2EE] space-y-2.5 print:space-y-1.5 max-h-56 print:max-h-none overflow-y-auto print:overflow-visible pr-2">
                 {responsibilities.map((resp, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#141514] dark:bg-[#F4F2EE] shrink-0 mt-1.5" />
@@ -88,18 +88,18 @@ export function ActionableRecommendations({
                 No explicit responsibilities section parsed from JD.
               </p>
             )}
-            <p className="text-[11px] text-[#82847E] dark:text-[#72736C] pt-3 border-t border-[#EAE4DC] dark:border-[#2F302C] mt-3">
+            <p className="text-[11px] text-[#82847E] dark:text-[#72736C] pt-3 border-t border-[#EAE4DC] dark:border-[#2F302C] mt-3 print:hidden">
               Use these duties to align your past project accomplishments with employer expectations.
             </p>
           </div>
 
           {/* Education Prerequisites */}
-          <div className="p-5 rounded-2xl bg-[#FAF7F2]/40 dark:bg-[#1E1F1D] border border-[#EAE4DC] dark:border-[#2F302C]">
-            <span className="font-mono text-[10px] uppercase tracking-wider text-[#82847E] dark:text-[#72736C] block mb-3 font-semibold">
+          <div className="p-5 print:p-3.5 rounded-2xl print:rounded-xl bg-[#FAF7F2]/40 dark:bg-[#1E1F1D] print:bg-white border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] print-avoid-break">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#82847E] dark:text-[#72736C] block mb-3 print:mb-1.5 font-semibold">
               ACADEMIC PREREQUISITES (FROM JD)
             </span>
             {education && education.length > 0 ? (
-              <ul className="text-xs text-[#141514] dark:text-[#F4F2EE] space-y-2">
+              <ul className="text-xs text-[#141514] dark:text-[#F4F2EE] space-y-2 print:space-y-1.5">
                 {education.map((edu, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#141514] dark:bg-[#F4F2EE] shrink-0 mt-1.5" />
@@ -119,9 +119,9 @@ export function ActionableRecommendations({
       {/* ============================================================
           7. REPORT FOOTER
       ============================================================ */}
-      <div className="p-6 bg-[#FAF7F2]/80 dark:bg-[#161715] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs print:bg-white print-avoid-break">
+      <div className="p-6 print:p-3 bg-[#FAF7F2]/80 dark:bg-[#161715] print:bg-white flex flex-col sm:flex-row items-center justify-between gap-4 text-xs print:text-[11px] print-avoid-break">
         <span className="text-[11px] text-[#82847E] dark:text-[#72736C] font-mono">
-          Evaluated locally &bull; Zero document retention &bull; MatchEngine v2.4
+          Evaluated locally &bull; Zero document retention &bull; MatchEngine v2.4 &bull; Confidential ATS Audit
         </span>
 
         <div className="flex items-center gap-3 print:hidden">

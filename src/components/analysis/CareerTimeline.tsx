@@ -9,16 +9,16 @@ interface CareerTimelineProps {
 
 export default function CareerTimeline({ resume }: CareerTimelineProps) {
   return (
-    <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-white dark:bg-[#181917] print:bg-white print-avoid-break">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#EAE4DC] dark:border-[#2F302C]">
+    <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] bg-white dark:bg-[#181917] print:bg-white print:p-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#EAE4DC] dark:border-[#2F302C] print:mb-4 print:pb-3">
         <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+          <div className="flex items-center gap-2 mb-1.5 print:mb-0.5">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse print:hidden" />
             <span className="text-[10px] font-mono font-semibold tracking-wider uppercase text-blue-600 dark:text-blue-400">
               Deterministic Timeline Engine
             </span>
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
+          <h2 className="font-serif text-2xl sm:text-3xl print:text-xl font-normal text-[#141514] dark:text-[#F4F2EE] tracking-[-0.015em]">
             Career Chronology &amp; Employment Timeline
           </h2>
           <p className="text-xs sm:text-sm text-[#5C5E58] dark:text-[#9E9F97] mt-1 font-sans">
@@ -27,8 +27,8 @@ export default function CareerTimeline({ resume }: CareerTimelineProps) {
         </div>
 
         {/* Metric Chips */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="px-3.5 py-1.5 rounded-full text-xs font-mono bg-[#FAF7F2] dark:bg-[#222320] border border-[#EAE4DC] dark:border-[#2F302C] text-[#141514] dark:text-[#F4F2EE] flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5 print:gap-1.5">
+          <div className="px-3.5 py-1.5 print:px-2.5 print:py-1 rounded-full text-xs font-mono bg-[#FAF7F2] dark:bg-[#222320] print:bg-white border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] text-[#141514] dark:text-[#F4F2EE] flex items-center gap-2">
             <span className="text-[#82847E] dark:text-[#72736C]">Verified Tenure:</span>
             <span className="font-bold text-emerald-600 dark:text-emerald-400">
               {resume.totalDurationFormatted ||
@@ -39,7 +39,7 @@ export default function CareerTimeline({ resume }: CareerTimelineProps) {
           </div>
 
           {resume.employmentTimeline && resume.employmentTimeline.length > 0 && (
-            <div className="px-3 py-1.5 rounded-full text-xs font-mono bg-[#FAF7F2] dark:bg-[#222320] border border-[#EAE4DC] dark:border-[#2F302C] text-[#5C5E58] dark:text-[#9E9F97]">
+            <div className="px-3 py-1.5 print:px-2.5 print:py-1 rounded-full text-xs font-mono bg-[#FAF7F2] dark:bg-[#222320] print:bg-white border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] text-[#5C5E58] dark:text-[#9E9F97]">
               {resume.employmentTimeline.length} Positions Analyzed
             </div>
           )}
@@ -48,26 +48,26 @@ export default function CareerTimeline({ resume }: CareerTimelineProps) {
 
       {/* Timeline Nodes */}
       {resume.employmentTimeline && resume.employmentTimeline.length > 0 ? (
-        <div className="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-2.5 sm:before:left-3 before:top-3 before:bottom-3 before:w-0.5 before:bg-gradient-to-b before:from-emerald-500 before:via-blue-500/50 before:to-[#EAE4DC] dark:before:to-[#2F302C]">
+        <div className="relative pl-6 sm:pl-8 print:pl-6 space-y-6 print:space-y-3 before:absolute before:left-2.5 sm:before:left-3 before:top-3 before:bottom-3 before:w-0.5 before:bg-gradient-to-b before:from-emerald-500 before:via-blue-500/50 before:to-[#EAE4DC] dark:before:to-[#2F302C]">
           {resume.employmentTimeline.map((period, idx) => (
-            <div key={idx} className="relative group">
+            <div key={idx} className="relative group print-avoid-break">
               {/* Node Icon */}
               <div
-                className={`absolute -left-6 sm:-left-8 top-1.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                className={`absolute -left-6 sm:-left-8 print:-left-6 top-1.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                   period.isCurrent
-                    ? "bg-emerald-500 border-white dark:border-[#181917] shadow-[0_0_12px_rgba(16,185,129,0.5)]"
-                    : "bg-white dark:bg-[#181917] border-[#82847E] dark:border-[#72736C]"
+                    ? "bg-emerald-500 border-white dark:border-[#181917] print:border-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]"
+                    : "bg-white dark:bg-[#181917] border-[#82847E] dark:border-[#72736C] print:border-[#82847E]"
                 }`}
               >
                 {period.isCurrent ? (
-                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping print:bg-emerald-500" />
                 ) : (
                   <span className="w-1.5 h-1.5 rounded-full bg-[#82847E] dark:bg-[#72736C]" />
                 )}
               </div>
 
               {/* Role Card */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] border border-[#EAE4DC] dark:border-[#2F302C] hover:border-[#141514]/30 dark:hover:border-white/30 transition-all shadow-2xs">
+              <div className="p-4 sm:p-5 print:p-3 rounded-2xl print:rounded-xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] print:bg-white border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7] hover:border-[#141514]/30 dark:hover:border-white/30 transition-all shadow-2xs print-avoid-break">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-semibold text-sm sm:text-base text-[#141514] dark:text-[#F4F2EE]">

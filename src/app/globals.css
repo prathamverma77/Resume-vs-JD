@@ -164,48 +164,108 @@ div::-webkit-scrollbar-thumb:hover {
 }
 
 /* ============================================================
-   EXECUTIVE PDF & PRINT AUDIT STYLES
+   EXECUTIVE PDF & PRINT AUDIT STYLES (@media print)
 ============================================================ */
 @media print {
   @page {
-    margin: 12mm 14mm;
-    size: auto;
+    size: A4 portrait;
+    margin: 10mm 12mm 10mm 12mm;
   }
 
-  /* Force background colors, badges, and progress bar fills in PDF export */
+  /* Force background colors, badges, gauge strokes, and progress bar fills */
   *,
   *::before,
   *::after {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
   }
 
   html,
   body {
     background: #ffffff !important;
+    background-color: #ffffff !important;
     color: #141514 !important;
     padding: 0 !important;
     margin: 0 !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    overflow: visible !important;
   }
 
-  /* Hide decorative luminous atmosphere */
+  /* Force all scrollable containers to be visible and paginatable */
+  .overflow-x-hidden,
+  .overflow-x-auto,
+  .overflow-y-auto,
+  .overflow-hidden {
+    overflow: visible !important;
+  }
+
+  /* Hide decorative luminous atmosphere and non-printable elements */
   .luminous-glow,
-  .luminous-glow::after {
+  .luminous-glow::after,
+  header,
+  nav,
+  footer,
+  .sticky {
     display: none !important;
+    position: static !important;
   }
 
-  /* Clean page break avoidance for document sections and cards */
+  /* Page Break Utilities */
   .print-avoid-break {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
   }
 
-  /* Remove sticky positioning during the print */
-  header,
-  nav,
-  .sticky {
-    position: static !important;
+  .print-page-break-before {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  .print-page-break-after {
+    break-after: page !important;
+    page-break-after: always !important;
+  }
+
+  /* Clean Table Pagination */
+  table {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  thead {
+    display: table-header-group !important;
+  }
+
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  td, th {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* SVG Circular Gauges */
+  svg {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Clean print links: suppress browser URL appending */
+  a[href^="http"]:after,
+  a[href^="/"]:after {
+    content: "" !important;
   }
 }
 

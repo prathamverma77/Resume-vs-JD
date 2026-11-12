@@ -57,10 +57,51 @@ export default function ReportHeader({
   };
 
   return (
-    <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:p-0 print:pb-6">
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-[#EAE4DC] dark:border-[#2F302C]">
+    <div className="p-6 sm:p-8 md:p-10 border-b border-[#EAE4DC] dark:border-[#2F302C] print:p-0 print:pb-4 print:bg-white print-avoid-break">
+      {/* ============================================================
+          PRINT-ONLY: ATS EXECUTIVE SUMMARY COVER HEADER
+      ============================================================ */}
+      <div className="hidden print:block pb-4 mb-4 border-b-2 border-[#141514] print-avoid-break">
+        <div className="flex items-center justify-between gap-4 pb-2.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-md bg-[#141514] text-white flex items-center justify-center font-bold text-xs tracking-tight shrink-0">
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="9" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
+            </div>
+            <div>
+              <span className="font-bold text-base tracking-tight text-[#141514] block leading-none">
+                MatchEngine&trade; ATS COMPATIBILITY AUDIT
+              </span>
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#5C5E58] block mt-0.5">
+                Executive Candidate &amp; Requisition Alignment Brief
+              </span>
+            </div>
+          </div>
+
+          <div className="text-right font-mono text-[10px] text-[#5C5E58]">
+            <span className="px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-neutral-100 text-[#141514] border border-neutral-300 inline-block mb-0.5">
+              CONFIDENTIAL &bull; FOR HIRING USE ONLY
+            </span>
+            <div className="text-[9px]">
+              Document Audit ID: ME-{Math.abs(fileSize * 31).toString(16).toUpperCase().padStart(6, "0")}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-[#EAE4DC] dark:border-[#2F302C] print:pb-3">
         <div className="max-w-2xl">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
+          <div className="flex flex-wrap items-center gap-2 mb-3 print:mb-1.5">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-wider uppercase bg-[#141514]/5 dark:bg-white/10 text-[#5C5E58] dark:text-[#A8A9A2] border border-[#EAE4DC] dark:border-[#2F302C]">
               ATS Compatibility Audit
             </span>
@@ -69,13 +110,13 @@ export default function ReportHeader({
             </span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-[40px] font-normal tracking-[-0.025em] text-[#141514] dark:text-[#F4F2EE] leading-tight">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-[40px] print:text-2xl font-normal tracking-[-0.025em] text-[#141514] dark:text-[#F4F2EE] leading-tight">
             {role && role !== "Role not specified" && role !== "Not specified"
               ? role
               : "Target Role Compatibility Report"}
           </h1>
 
-          <p className="text-xs sm:text-sm text-[#5C5E58] dark:text-[#9E9F97] mt-2 font-sans leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#5C5E58] dark:text-[#9E9F97] mt-2 print:mt-1 print:text-xs font-sans leading-relaxed">
             Deterministic parsing and 3-tier weighted evaluation of candidate skills, qualifications, and seniority.
           </p>
         </div>
@@ -128,8 +169,8 @@ export default function ReportHeader({
       </div>
 
       {/* Metadata Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 pt-6 text-xs">
-        <div className="p-3.5 rounded-2xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] border border-[#EAE4DC] dark:border-[#2F302C]">
+      <div className="grid grid-cols-2 md:grid-cols-4 print:grid-cols-4 gap-5 print:gap-2.5 pt-6 print:pt-3 text-xs print:text-[11px]">
+        <div className="p-3.5 print:p-2.5 rounded-2xl print:rounded-xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] print:bg-white border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7]">
           <span className="text-[10px] font-mono uppercase tracking-wider text-[#82847E] dark:text-[#72736C] block mb-1">
             Candidate Resume
           </span>
@@ -141,7 +182,7 @@ export default function ReportHeader({
           </span>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] border border-[#EAE4DC] dark:border-[#2F302C]">
+        <div className="p-3.5 print:p-2.5 rounded-2xl print:rounded-xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] print:bg-white border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7]">
           <span className="text-[10px] font-mono uppercase tracking-wider text-[#82847E] dark:text-[#72736C] block mb-1">
             Contact Verified
           </span>
@@ -153,7 +194,7 @@ export default function ReportHeader({
           </span>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] border border-[#EAE4DC] dark:border-[#2F302C]">
+        <div className="p-3.5 print:p-2.5 rounded-2xl print:rounded-xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] print:bg-white border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7]">
           <span className="text-[10px] font-mono uppercase tracking-wider text-[#82847E] dark:text-[#72736C] block mb-1">
             Seniority & Tenure
           </span>
@@ -167,7 +208,7 @@ export default function ReportHeader({
           </span>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] border border-[#EAE4DC] dark:border-[#2F302C]">
+        <div className="p-3.5 print:p-2.5 rounded-2xl print:rounded-xl bg-[#FAF7F2]/60 dark:bg-[#1E1F1D] print:bg-white border border-[#EAE4DC] dark:border-[#2F302C] print:border-[#D4CFC7]">
           <span className="text-[10px] font-mono uppercase tracking-wider text-[#82847E] dark:text-[#72736C] block mb-1">
             Skill Alignment
           </span>
@@ -181,7 +222,7 @@ export default function ReportHeader({
       </div>
 
       {/* Social & Portfolio Intel Strip */}
-      <div className="mt-5 pt-4 border-t border-[#EAE4DC] dark:border-[#2F302C] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+      <div className="mt-5 print:mt-3 pt-4 print:pt-2.5 border-t border-[#EAE4DC] dark:border-[#2F302C] print:border-[#EAE4DC] flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:gap-2 text-xs">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
           <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-[#5C5E58] dark:text-[#A8A9A2]">
