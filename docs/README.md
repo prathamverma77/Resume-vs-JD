@@ -7,6 +7,8 @@
 ## 📁 Documentation Map
 
 ### 1. Implementation Guides & Reports (`docs/implementation/`)
+* [**`RESUME_TAILORING_INTEGRATION_PLAN.md`**](./implementation/RESUME_TAILORING_INTEGRATION_PLAN.md)  
+  *Comprehensive system design, Low-Level Design (LLD), anti-hallucination guardrails, interactive before/after diff UI, and closed-loop re-scoring architecture for dynamic resume tailoring.*
 * [**`API_RATE_LIMITER_AND_PROTECTION_PLAN.md`**](./implementation/API_RATE_LIMITER_AND_PROTECTION_PLAN.md)  
   *Engineering implementation plan and architecture for in-memory sliding-window IP rate limiting, RFC-compliant headers, PDF hard page cap guards, text length sanitization, and automated verification matrix.*
 * [**`ADVANCED_SCORING_AND_SEMANTIC_MATCHING_REPORT.md`**](./implementation/ADVANCED_SCORING_AND_SEMANTIC_MATCHING_REPORT.md)  
