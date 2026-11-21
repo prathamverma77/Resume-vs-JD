@@ -435,6 +435,7 @@ export default function AnalysisResult({
         hasTechnicalReq={Boolean(jd?.technical_req && jd.technical_req.length > 0)}
         hasPreferredSkills={Boolean(jd?.preferred_skills && jd.preferred_skills.length > 0)}
       />
+      //hi
 
       {/* 7 & 8. ACTIONABLE RECOMMENDATIONS & FOOTER */}
       <ActionableRecommendations
