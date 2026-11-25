@@ -12,8 +12,10 @@ const METRIC_PATTERNS = [
   /\b\d+(?:\.\d+)?x\b/gi,
   // Latency & performance: 200ms, 1.5s, 50μs, 100ns
   /\b\d+(?:\.\d+)?\s*(?:ms|μs|ns|seconds?|secs?)\b/gi,
-  // Throughput & volume: 500k, 10M, 2B, 10k rps, 50k req/s
-  /\b\d+(?:,\d{3})*(?:\.\d+)?\s*(?:k|m|b|rps|qps|req\/s|tps)\b/gi,
+  // Throughput & rate metrics: 500k rps, 10k qps, 50 req/s, 100 tps
+  /\b\d+(?:,\d{3})*(?:\.\d+)?\s*(?:[kmbKMB]\s*)?(?:rps|qps|req\/s|tps)\b/gi,
+  // Volume & counts with multipliers: 500k, 10M, 2B
+  /\b\d+(?:,\d{3})*(?:\.\d+)?\s*[kmbKMB]\b/g,
   // Distinct counts with common business units: 4 microservices, 12 engineers, 5 databases
   /\b\d+\s+(?:microservices?|services?|engineers?|developers?|users?|clients?|customers?|nodes?|clusters?|servers?|endpoints?|databases?|pipelines?|tables?|queries|records?)\b/gi,
 ];

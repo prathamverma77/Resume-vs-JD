@@ -6,3 +6,4 @@ export { default as CareerTimeline } from "./CareerTimeline";
 export { default as RequirementsBreakdown } from "./RequirementsBreakdown";
 export { default as SkillBreakdownSummary } from "./SkillBreakdownSummary";
 export { default as ActionableRecommendations } from "./ActionableRecommendations";
+export { default as TailoringStudio } from "./TailoringStudio";

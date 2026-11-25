@@ -11,8 +11,7 @@ import {
 } from "@/types/tailoring";
 import { calculateScore } from "../scoring/score-engine";
 import { structureResume, StructuredResume } from "../parser/resume-structurer";
-import { parseJD, JDExtractedData } from "../parser/jd-parser";
-import { normalizeSkill } from "../skills/normalizer";
+import { JDExtractedData } from "../parser/jd-parser";
 
 // Strict timeout guard to prevent hung HTTP connections on external network latency spikes
 const AI_TIMEOUT_MS = 5000;
@@ -311,7 +310,6 @@ export async function executeTailoringWithHarness(
     baselineScore = baseResult.overallScore;
 
     // Simulate candidate profile with injected keywords
-    const injectedNormSet = new Set(allInjectedKeywords.map((k) => normalizeSkill(k)));
     const simulatedSkills = Array.from(
       new Set([...(baseResume.skills || []), ...allInjectedKeywords])
     );

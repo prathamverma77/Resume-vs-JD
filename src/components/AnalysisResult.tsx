@@ -15,6 +15,7 @@ import {
   RequirementsBreakdown,
   SkillBreakdownSummary,
   ActionableRecommendations,
+  TailoringStudio,
 } from "./analysis";
 
 interface AnalysisResultProps {
@@ -411,10 +412,21 @@ export default function AnalysisResult({
         onSimulateTopThree={simulateTopThree}
       />
 
-      {/* 4. CAREER CHRONOLOGY & TIMELINE */}
+      {/* 4. AI RESUME TAILORING STUDIO */}
+      <TailoringStudio
+        resumeText={baseRawText}
+        targetRole={jd?.role}
+        missingRequiredSkills={match?.missingRequiredSkills || []}
+        missingPreferredSkills={match?.missingPreferredSkills || []}
+        adjacentMatches={match?.adjacentMatches}
+        responsibilities={jd?.responsibilities}
+        baselineScore={score}
+      />
+
+      {/* 5. CAREER CHRONOLOGY & TIMELINE */}
       <CareerTimeline resume={resume.structuredData} />
 
-      {/* 5. REQUIREMENTS COMPARISON MATRIX */}
+      {/* 6. REQUIREMENTS COMPARISON MATRIX */}
       <RequirementsBreakdown
         requirements={filteredRequirements}
         filter={filter}
